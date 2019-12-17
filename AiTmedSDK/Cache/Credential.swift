@@ -29,6 +29,12 @@ struct Credential {
         }
     }
     
+    var status: Status {
+        get {
+            return sk == nil ? .locked : .login
+        }
+    }
+    
     init(phoneNumber: String, pk: Key, esk: Key, sk: Key? = nil, userId: Data, jwt: String) {
         self.phoneNumber = phoneNumber
         self.pk = pk
@@ -66,6 +72,11 @@ struct Credential {
         if let sk = sk {
             keyChain["sk" + phoneNumber] = sk
         }
+    }
+    
+    enum Status {
+        case login
+        case locked
     }
 }
 

@@ -14,6 +14,9 @@ public enum AiTmedNameKey: String {
     case OPTCode = "verification_code"
     case pk = "pk"
     case esk = "esk"
+    
+    //Prynote
+    case title
 }
 
 extension Dictionary where Key == AiTmedNameKey {

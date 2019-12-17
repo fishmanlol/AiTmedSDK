@@ -7,6 +7,8 @@
 //
 
 //Edge
+import Foundation
+
 public struct SendOPTCodeArgs {
     let phoneNumber: String
     
@@ -36,10 +38,22 @@ public struct RetrieveCredentialArgs {
 }
 
 public struct RetrieveNotebooksArgs{
-    let phoneNumber: String
+    let ids: [Data]
     
-    init(phoneNumber: String) {
-        self.phoneNumber = phoneNumber
+    public init(ids: [Data] = []) {
+        self.ids = ids
+    }
+}
+
+public struct CreateNotebookArgs {
+    let title: String
+    let isEncrypt: Bool
+    let type: Int
+    
+    public init(title: String, isEncrypt: Bool, type: Int = 7) {
+        self.title = title
+        self.isEncrypt = isEncrypt
+        self.type = type
     }
 }
 

@@ -14,6 +14,9 @@ public struct AiTmedType {
     static let login: Int32 = 1030
     static let retrieveCredential: Int32 = 1040
     
+    //Retreieve edge
+    static let notebook: Int32 = 10001
+    
     //CreateVertex
     static let createUser: Int32 = 1
     

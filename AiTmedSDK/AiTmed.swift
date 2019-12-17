@@ -14,7 +14,7 @@ typealias Doc = Aitmed_Ecos_V1beta1_Doc
 
 public class AiTmed {
     ///Only use credential after login or create user!!!
-    private var c: Credential!
+    private var c: Credential?
     ///Encryption tool
     private let e = Encryption()
     private let host = "testapi2.aitmed.com:443"
@@ -24,15 +24,52 @@ public class AiTmed {
     private var OPTCodeJwt: [String: String] = [:]
     
     public static func hasCredential(for phoneNumber: String) -> Bool {
-        return Credential(phoneNumber: phoneNumber) != nil
+        if shared.c == nil {
+            shared.c =  Credential(phoneNumber: phoneNumber)
+        }
+        return shared.c != nil
     }
     
     public static func logout() {
-        return shared.c.sk = nil
+        shared.c?.sk = nil
     }
     
-    public static func retrieveNotebooks(args: RetrieveNotebooksArgs, completion: @escaping (Result<Void, RetrieveNotebooksError>) -> Void) {
-        shared.tran
+    public static func retrieveNotebooks(args: RetrieveNotebooksArgs, completion: @escaping (Result<Void, AiTmedError>) -> Void) {
+        shared.transform(args: args) { (result) in
+            switch result {
+            case .failure(let error):
+                completion(.failure(error))
+            case .success(_):
+                shared._retreiveEdge(ids: args.ids, type: AiTmedType.notebook, jwt: shared.c!.jwt, completion: { (result: Result<([Edge], String), AiTmedError>) in
+                    switch result {
+                    case .failure(let error):
+                        completion(.failure(error))
+                    case .success(let (edges, jwt)):
+                        shared.c?.jwt = jwt
+                        completion(.success(()))
+                    }
+                })
+            }
+        }
+    }
+    
+    public static func createNoteBook(args: CreateNotebookArgs, completion: @escaping (Result<Void, AiTmedError>) -> Void) {
+        shared.transform(args: args) { (result) in
+            switch result {
+            case .failure(let error):
+                completion(.failure(error))
+            case .success(let edge):
+                shared._createEdge(edge: edge, jwt: shared.c!.jwt, completion: { (result: Result<(Edge, String), AiTmedError>) in
+                    switch result {
+                    case .failure(let error):
+                        completion(.failure(error))
+                    case .success(let (edge, jwt)):
+                        shared.c?.jwt = jwt
+                        completion(.success(()))
+                    }
+                })
+            }
+        }
     }
     
     public static func sendOPTCode(args: SendOPTCodeArgs, completion: @escaping (Result<Void, AiTmedError>) -> Void) {
@@ -96,7 +133,7 @@ public class AiTmed {
                         completion(.failure(error))
                     case .success(let (_, jwt)):
                         shared.c = credential
-                        shared.c.jwt = jwt
+                        shared.c?.jwt = jwt
                         completion(.success(()))
                     }
                 })
@@ -157,7 +194,7 @@ extension AiTmed {
             try client.ce(request) { (response, result) in
                 guard let response = response else {
                     print("create edge has no response(\(result.statusCode)): \(result.description)")
-                    completion(.failure(.level1Error))
+                    completion(.failure(.grpcFailed(.unkown)))
                     return
                 }
                 
@@ -166,15 +203,47 @@ extension AiTmed {
                 if response.code == 0 {
                     completion(.success((response.edge, response.jwt)))
                 } else if response.code == 1020 {
-                    completion(.failure(.userNotExist))
+                    completion(.failure(.apiResultFailed(.userNotExist)))
                 } else {
-                    completion(.failure(.level1Error))
+                    completion(.failure(.apiResultFailed(.unkown)))
                 }
-                
             }
         } catch {
             print("grpc error: \(error.localizedDescription)")
-            completion(.failure(.level1Error))
+            completion(.failure(.grpcFailed(.unkown)))
+        }
+    }
+    
+    ///Retreive edge
+    private func _retreiveEdge(ids: [Data], type: Int32, jwt: String, completion: @escaping (Result<([Edge], String), AiTmedError>) -> Void) {
+        var request = Aitmed_Ecos_V1beta1_rxReq()
+        request.id = ids
+        request.objType = ObjectType.edge.code
+        request.jwt = jwt
+        request.xfname = "id"
+        request.type = type
+        
+        print("retreive edge request json: \n", (try? request.jsonString()) ?? "")
+        
+        do {
+            try client.re(request) { (response, result) in
+                guard let response = response else {
+                    print("retrieve edge has no response(\(result.statusCode)): \(result.description)")
+                    completion(.failure(.grpcFailed(.unkown)))
+                    return
+                }
+                
+                print("retrieve edge response: \n", (try? response.jsonString()) ?? "")
+                
+                if response.code == 0 {
+                    completion(.success((response.edge, response.jwt)))
+                } else {
+                    completion(.failure(.apiResultFailed(.unkown)))
+                }
+            }
+        } catch {
+            print("grpc error: \(error.localizedDescription)")
+            completion(.failure(.grpcFailed(.unkown)))
         }
     }
     
@@ -190,7 +259,7 @@ extension AiTmed {
             try client.cv(request, completion: { (response, result) in
                 guard let response = response else {
                     print("Create vertex has no response(\(result.statusCode)): \(result.description)")
-                    completion(.failure(.level1Error))
+                    completion(.failure(.grpcFailed(.unkown)))
                     return
                 }
 
@@ -199,11 +268,11 @@ extension AiTmed {
                 if response.code == 0 {
                     completion(.success((response.vertex, response.jwt)))
                 } else {
-                    completion(.failure(.level1Error))
+                    completion(.failure(.apiResultFailed(.unkown)))
                 }
             })
         } catch {
-            completion(.failure(.level1Error))
+            completion(.failure(.grpcFailed(.unkown)))
         }
     }
 }
@@ -249,13 +318,13 @@ extension AiTmed {
         //Valid parameter
         guard Validator.password(args.password),
                 Validator.phoneNumber(args.phoneNumber) else {
-            completion(.failure(.level2Error))
+            completion(.failure(.unkown))
             return
         }
         
         //Is new device?
-        guard var credential = Credential(phoneNumber: args.phoneNumber) else {
-            completion(.failure(.credentialRequired))
+        guard var credential = c != nil ? c : Credential(phoneNumber: args.phoneNumber) else {
+            completion(.failure(.credentialFailed(.credentialRequired)))
             return
         }
         
@@ -271,7 +340,7 @@ extension AiTmed {
             credential.sk = sk
             completion(.success((edge, credential)))
         } else {
-            completion(.failure(.wrongPassword))
+            completion(.failure(.credentialFailed(.passwordFailed)))
         }
     }
     
@@ -288,7 +357,37 @@ extension AiTmed {
         completion(.success(edge))
     }
     
-    func transform(args: RetrieveNotebooksArgs, completion: (Result<Edge, RetrieveNotebooksError>) -> Void) {
-        guard
+    func transform(args: RetrieveNotebooksArgs, completion: (Result<Void, AiTmedError>) -> Void) {
+        guard let c = c, c.status == .login else {
+            completion(.failure(.credentialFailed(.signinRequired)))
+            return
+        }
+        completion(.success(()))
+    }
+    
+    func transform(args: CreateNotebookArgs, completion: (Result<Edge, AiTmedError>) -> Void) {
+        guard let name = [AiTmedNameKey.title: args.title].toJSON() else {
+            completion(.failure(.unkown))
+            return
+        }
+        
+        guard let c = c, c.status == .login else {
+            completion(.failure(.credentialFailed(.signinRequired)))
+            return
+        }
+        
+        var edge = Edge()
+        edge.type = AiTmedType.notebook
+        edge.name = name
+        
+        if args.isEncrypt {
+            guard let besak = e.generateXESAK(sendSecretKey: c.sk!, recvPublicKey: c.pk).0 else {
+                completion(.failure(.credentialFailed(.signinRequired)))
+                return
+            }
+            edge.besak = besak.toData()
+        }
+        
+        completion(.success(edge))
     }
 }

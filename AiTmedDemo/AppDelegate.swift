@@ -1,8 +1,8 @@
 //
 //  AppDelegate.swift
-//  AiTmedDemo
+//  Prynote1
 //
-//  Created by Yi Tong on 12/16/19.
+//  Created by Yi Tong on 11/27/19.
 //  Copyright © 2019 Yi Tong. All rights reserved.
 //
 
