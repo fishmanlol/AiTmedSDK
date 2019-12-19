@@ -37,15 +37,15 @@ public struct RetrieveCredentialArgs {
     }
 }
 
-public struct RetrieveNotebooksArgs{
-    let ids: [Data]
-    
-    public init(ids: [Data] = []) {
-        self.ids = ids
+public class RetrieveNotebooksArgs: RetrieveEdgeArgs {
+    public override init(ids: [Data] = [], maxCount: Int32? = nil) {
+        super.init(ids: ids, maxCount: maxCount)
+        
+        type = AiTmedType.notebook
     }
 }
 
-public struct CreateNotebookArgs {
+public struct CreateOrUpdateNotebookArgs {
     let title: String
     let isEncrypt: Bool
     let type: Int
@@ -54,6 +54,25 @@ public struct CreateNotebookArgs {
         self.title = title
         self.isEncrypt = isEncrypt
         self.type = type
+    }
+}
+
+public struct RemoveArgs {
+    let id: [Data]
+    init(id: [Data]) {
+        self.id = id
+    }
+}
+
+///Application can not use this directly
+public class RetrieveEdgeArgs {
+    let ids: [Data]
+    let maxCount: Int32?
+    var type: Int32!
+    
+    public init(ids: [Data] = [], maxCount: Int32? = nil) {
+        self.ids = ids
+        self.maxCount = maxCount
     }
 }
 

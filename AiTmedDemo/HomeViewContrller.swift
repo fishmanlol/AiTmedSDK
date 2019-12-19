@@ -35,15 +35,21 @@ class HomeViewController: UIViewController {
         }
     }
     @IBAction func newNoteTapped(_ sender: UIBarButtonItem) {
-        AiTmed.createNoteBook(args: AiTmedSDK.CreateNotebookArgs(title: "TItle", isEncrypt: true)) { (result) in
-            switch result {
-            case .success(let _):
-                print("success")
-            case .failure(let error):
-                print("failed: \(error.localizedDescription)")
+        
+        let alert = UIAlertController(title: "Notebook name", message: nil, preferredStyle: .alert)
+        alert.addTextField(configurationHandler: nil)
+        alert.addAction(UIAlertAction(title: "ok", style: .default, handler: { (_) in
+            let text = alert.textFields![0].text!
+            AiTmed.createNoteBook(args: AiTmedSDK.CreateOrUpdateNotebookArgs(title: text, isEncrypt: true)) { (result) in
+                switch result {
+                case .success(let _):
+                    print("success")
+                case .failure(let error):
+                    print("failed: \(error.localizedDescription)")
+                }
             }
-
-        }
-
+            self.dismiss(animated: true, completion: nil)
+        }))
+        present(alert, animated: true, completion: nil)
     }
 }
