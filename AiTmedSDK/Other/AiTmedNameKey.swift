@@ -32,6 +32,13 @@ extension Dictionary where Key == AiTmedNameKey {
     }
 }
 
+extension Dictionary where Key == String {
+    func toJSON() -> String? {
+        guard let data = try? JSONSerialization.data(withJSONObject: self, options: []) else { return nil }
+        return String(bytes: data, encoding: .utf8)
+    }
+}
+
 extension String {
     func toJSONDict() -> [String: Any]? {
         if let data = self.data(using: .utf8) {

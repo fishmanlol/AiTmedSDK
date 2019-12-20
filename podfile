@@ -6,6 +6,8 @@ target 'AiTmedDemo' do
   use_frameworks!
   pod 'SnapKit'
   pod 'PhoneNumberKit'
+  pod 'DZNEmptyDataSet'
+  pod 'R.swift'
   # Pods for AiTmedDemo
 
 end

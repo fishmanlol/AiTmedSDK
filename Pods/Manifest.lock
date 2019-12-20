@@ -5,6 +5,7 @@ PODS:
   - BoringSSL-GRPC/Implementation (0.0.3):
     - BoringSSL-GRPC/Interface (= 0.0.3)
   - BoringSSL-GRPC/Interface (0.0.3)
+  - DZNEmptyDataSet (1.8.1)
   - gRPC-Core (1.23.1):
     - gRPC-Core/Implementation (= 1.23.1)
     - gRPC-Core/Interface (= 1.23.1)
@@ -25,6 +26,9 @@ PODS:
   - PhoneNumberKit/PhoneNumberKitCore (3.1.0)
   - PhoneNumberKit/UIKit (3.1.0):
     - PhoneNumberKit/PhoneNumberKitCore
+  - R.swift (5.1.0):
+    - R.swift.Library (~> 5.1.0)
+  - R.swift.Library (5.1.0)
   - SnapKit (5.0.1)
   - Sodium (0.8.0)
   - SwiftGRPC (0.10.0):
@@ -33,8 +37,10 @@ PODS:
   - SwiftProtobuf (1.7.0)
 
 DEPENDENCIES:
+  - DZNEmptyDataSet
   - KeychainAccess
   - PhoneNumberKit
+  - R.swift
   - SnapKit
   - Sodium
   - SwiftGRPC
@@ -42,10 +48,13 @@ DEPENDENCIES:
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
     - BoringSSL-GRPC
+    - DZNEmptyDataSet
     - gRPC-Core
     - KeychainAccess
     - nanopb
     - PhoneNumberKit
+    - R.swift
+    - R.swift.Library
     - SnapKit
     - Sodium
     - SwiftGRPC
@@ -53,15 +62,18 @@ SPEC REPOS:
 
 SPEC CHECKSUMS:
   BoringSSL-GRPC: db8764df3204ccea016e1c8dd15d9a9ad63ff318
+  DZNEmptyDataSet: 9525833b9e68ac21c30253e1d3d7076cc828eaa7
   gRPC-Core: 4b1148eb8596225178e5a154e40e35141a3cdf0f
   KeychainAccess: 445e28864fe6d3458b41fa211bcdc39890e8bd5a
   nanopb: 18003b5e52dab79db540fe93fe9579f399bd1ccd
   PhoneNumberKit: adffe4e128af1918386e09e7421d3d851a2987af
+  R.swift: 8cbc4fc69b740305b6a17c8a8ed968eb788962d9
+  R.swift.Library: fa85ce1e0d0b7e818cd9e080df910ba54d2776cc
   SnapKit: 97b92857e3df3a0c71833cce143274bf6ef8e5eb
   Sodium: 63c0ca312a932e6da481689537d4b35568841bdc
   SwiftGRPC: f8fcfecb547c96cc6913de619f95fa3cd09838ee
   SwiftProtobuf: 4fd9645e69b72cbae6ec8da5be0cdd20ca6565dd
 
-PODFILE CHECKSUM: 86d1d07bcfa2f8bf2ffa18eee5d3f48a66a4757d
+PODFILE CHECKSUM: 2d4822e90f0677764f5f7e04b9235649de2313a4
 
-COCOAPODS: 1.7.5
+COCOAPODS: 1.7.1

@@ -14,95 +14,60 @@ typealias Doc = Aitmed_Ecos_V1beta1_Doc
 
 public class AiTmed {
     ///Only use credential after login or create user!!!
-    private var c: Credential?
+    var c: Credential!
     ///Encryption tool
-    private let e = Encryption()
-    private let host = "testapi2.aitmed.com:443"
-    private var client: Aitmed_Ecos_V1beta1_EcosAPIServiceClient
-    private static let shared = AiTmed()
-    private init() { client = Aitmed_Ecos_V1beta1_EcosAPIServiceClient(address: host, secure: true) }
-    private var OPTCodeJwt: [String: String] = [:]
+    let e = Encryption()
+    let host = "testapi2.aitmed.com:443"
+    var client: Aitmed_Ecos_V1beta1_EcosAPIServiceClient
+    static let shared = AiTmed()
+    init() { client = Aitmed_Ecos_V1beta1_EcosAPIServiceClient(address: host, secure: true) }
+    var OPTCodeJwt: [String: String] = [:]
     
     public static func hasCredential(for phoneNumber: String) -> Bool {
-        if shared.c == nil {
-            shared.c =  Credential(phoneNumber: phoneNumber)
+        if let _ = shared.c {
+            return true
+        } else if let _ = Credential(phoneNumber: phoneNumber) {
+            return true
+        } else {
+            return false
         }
-        return shared.c != nil
     }
     
     public static func logout() {
         shared.c?.sk = nil
     }
     
-    public static func retrieveNotebooks(args: RetrieveNotebooksArgs, completion: @escaping (Result<Void, AiTmedError>) -> Void) {
+    public static func createFile(args: CreateFileArgs, completion: @escaping (Result<File, AiTmedError>) -> Void) {
         shared.transform(args: args) { (result) in
             switch result {
             case .failure(let error):
                 completion(.failure(error))
-            case .success(let retrieveEdgeArgs):
-                shared._retreiveEdge(args: retrieveEdgeArgs, jwt: shared.c!.jwt, completion: { (result: Result<([Edge], String), AiTmedError>) in
+            case .success(let doc):
+                shared._createDoc(doc: doc, jwt: shared.c.jwt, completion: { (result) in
                     switch result {
                     case .failure(let error):
                         completion(.failure(error))
-                    case .success(let (edges, jwt)):
-                        shared.c?.jwt = jwt
-                        completion(.success(()))
+                    case .success(let (doc, jwt)):
+                        shared.c.jwt = jwt
+//                        let file = generateFile(doc)
+//                        completion(.success(file))
                     }
                 })
             }
         }
     }
     
-    public static func createNoteBook(args: CreateOrUpdateNotebookArgs, completion: @escaping (Result<Void, AiTmedError>) -> Void) {
-        shared.transform(args: args) { (result) in
-            switch result {
-            case .failure(let error):
-                completion(.failure(error))
-            case .success(let edge):
-                shared._createEdge(edge: edge, jwt: shared.c!.jwt, completion: { (result: Result<(Edge, String), AiTmedError>) in
-                    switch result {
-                    case .failure(let error):
-                        completion(.failure(error))
-                    case .success(let (edge, jwt)):
-                        shared.c?.jwt = jwt
-                        completion(.success(()))
-                    }
-                })
-            }
-        }
-    }
-    
-    public static func updateNotebook(args: CreateOrUpdateNotebookArgs, completion: @escaping (Result<Void, AiTmedError>) -> Void) {
-        shared.transform(args: args) { (result) in
-            switch result {
-            case .failure(let error):
-                completion(.failure(error))
-            case .success(var edge):
-                edge.id = shared.c!.userId
-                shared._createEdge(edge: edge, jwt: shared.c!.jwt, completion: { (result: Result<(Edge, String), AiTmedError>) in
-                    switch result {
-                    case .failure(let error):
-                        completion(.failure(error))
-                    case .success(let (edge, jwt)):
-                        shared.c?.jwt = jwt
-                        completion(.success(()))
-                    }
-                })
-            }
-        }
-    }
-    
-    public static func removeNotebook(ids: [Data], completion: @escaping (Result<Void, AiTmedError>) -> Void) {
+    public static func delete(ids: [Data], completion: @escaping (Result<Void, AiTmedError>) -> Void) {
         guard let c = shared.c, c.status == .login else {
             completion(.failure(.credentialFailed(.signinRequired)))
             return
         }
-        shared._deleteEdge(ids: ids, jwt: shared.c!.jwt) { (result: Result<String, AiTmedError>) in
+        shared._delete(ids: ids, jwt: shared.c!.jwt) { (result: Result<String, AiTmedError>) in
             switch result {
             case .failure(let error):
                 completion(.failure(error))
             case .success(let jwt):
-                shared.c?.jwt = jwt
+                shared.c.jwt = jwt
                 completion(.success(()))
             }
         }
@@ -213,13 +178,33 @@ public class AiTmed {
             }
         }
     }
+    
+    private func generateFile(_ doc: Doc) -> File? {
+        guard let nameDict = doc.name.toJSONDict(),
+                let title = nameDict["title"] as? String,
+                let type = nameDict["type"] as? String, let mimeType = MimeType(rawValue: type),
+                let isEncrypt = nameDict["isEncrypt"] as? Bool,
+                let isOnS3 = nameDict["isOnS3"] as? Bool,
+                let isGzip = nameDict["isGzip"] as? Bool,
+                let deatDict = doc.deat.toJSONDict() else { return nil }
+        
+        if isOnS3, let down {
+            
+        }
+        
+        guard let deatDict = doc.deat.toJSONDict()
+                let uploadUrl = deatDict["url"],
+                let sig = deatDict["sig"],
+                let data =
+        fatalError()
+    }
 }
 
 //MARK: - grpc layer
 extension AiTmed {
     
     ///Create edge: pass out jwt
-    private func _createEdge(edge: Edge, jwt: String, completion: @escaping (Result<(Edge, String), AiTmedError>) -> Void) {
+    func _createEdge(edge: Edge, jwt: String, completion: @escaping (Result<(Edge, String), AiTmedError>) -> Void) {
         var request = Aitmed_Ecos_V1beta1_ceReq()
         request.edge = edge
         request.jwt = jwt
@@ -251,7 +236,7 @@ extension AiTmed {
     }
     
     ///Retreive edge
-    private func _retreiveEdge(args: RetrieveEdgeArgs, jwt: String, completion: @escaping (Result<([Edge], String), AiTmedError>) -> Void) {
+    func _retreiveEdge(args: RetrieveEdgeArgs, jwt: String, completion: @escaping (Result<([Edge], String), AiTmedError>) -> Void) {
         var request = Aitmed_Ecos_V1beta1_rxReq()
         request.id = args.ids
         request.objType = ObjectType.edge.code
@@ -286,7 +271,7 @@ extension AiTmed {
         }
     }
     
-    private func _deleteEdge(ids: [Data], jwt: String, completion: @escaping (Result<String, AiTmedError>) -> Void) {
+    func _delete(ids: [Data], jwt: String, completion: @escaping (Result<String, AiTmedError>) -> Void) {
         var request = Aitmed_Ecos_V1beta1_dxReq()
         request.id = ids
         do {
@@ -312,7 +297,7 @@ extension AiTmed {
     }
     
     ///Update edge
-    private func _updateEdge(edge: Edge, jwt: String, completion: @escaping (Result<(Edge, String), AiTmedError>) -> Void) {
+    func _updateEdge(edge: Edge, jwt: String, completion: @escaping (Result<(Edge, String), AiTmedError>) -> Void) {
         var request = Aitmed_Ecos_V1beta1_ceReq()
         request.edge = edge
         request.jwt = jwt
@@ -342,7 +327,7 @@ extension AiTmed {
     }
     
     ///Create vertex: pass out jwt
-    private func _createVertex(vertex: Vertex, jwt: String, completion: @escaping (Result<(Vertex, String), AiTmedError>) -> Void) {
+    func _createVertex(vertex: Vertex, jwt: String, completion: @escaping (Result<(Vertex, String), AiTmedError>) -> Void) {
         var request = Aitmed_Ecos_V1beta1_cvReq()
         request.vertex = vertex
         request.jwt = jwt
@@ -352,15 +337,44 @@ extension AiTmed {
         do {
             try client.cv(request, completion: { (response, result) in
                 guard let response = response else {
-                    print("Create vertex has no response(\(result.statusCode)): \(result.description)")
+                    print("create vertex has no response(\(result.statusCode)): \(result.description)")
                     completion(.failure(.grpcFailed(.unkown)))
                     return
                 }
 
-                print("Create vertex response: \n", (try? response.jsonString()) ?? "")
+                print("create vertex response: \n", (try? response.jsonString()) ?? "")
 
                 if response.code == 0 {
                     completion(.success((response.vertex, response.jwt)))
+                } else {
+                    completion(.failure(.apiResultFailed(.unkown)))
+                }
+            })
+        } catch {
+            completion(.failure(.grpcFailed(.unkown)))
+        }
+    }
+    
+    ///Create doc
+    func _createDoc(doc: Doc, jwt: String, completion: @escaping (Result<(Doc, String), AiTmedError>) -> Void) {
+        var request = Aitmed_Ecos_V1beta1_cdReq()
+        request.doc = doc
+        request.jwt = jwt
+        
+        print("create doc request json: \n", (try? request.jsonString()) ?? "")
+        
+        do {
+            try client.cd(request, completion: { (response, result) in
+                guard let response = response else {
+                    print("create doc has no response(\(result.statusCode)): \(result.description)")
+                    completion(.failure(.grpcFailed(.unkown)))
+                    return
+                }
+                
+                print("create doc response: \n", (try? response.jsonString()) ?? "")
+                
+                if response.code == 0 {
+                    completion(.success((response.doc, response.jwt)))
                 } else {
                     completion(.failure(.apiResultFailed(.unkown)))
                 }
@@ -460,7 +474,7 @@ extension AiTmed {
         completion(.success(args))
     }
     
-    func transform(args: CreateOrUpdateNotebookArgs, completion: (Result<Edge, AiTmedError>) -> Void) {
+    func transform(args: CreateNotebookArgs, completion: (Result<Edge, AiTmedError>) -> Void) {
         guard let name = [AiTmedNameKey.title: args.title].toJSON() else {
             completion(.failure(.unkown))
             return
@@ -484,5 +498,61 @@ extension AiTmed {
         }
         
         completion(.success(edge))
+    }
+    
+    func transform(args: UpdateNotebookArgs, completion: (Result<Edge, AiTmedError>) -> Void) {
+        guard let c = c, c.status == .login else {
+            completion(.failure(.credentialFailed(.signinRequired)))
+            return
+        }
+        
+        var edge = Edge()
+        edge.type = AiTmedType.notebook
+        
+        if let title = args.title {
+            guard let name = [AiTmedNameKey.title: title].toJSON() else {
+                completion(.failure(.unkown))
+                return
+            }
+            
+            edge.name = name
+        }
+        
+        if let isEncrypt = args.isEncrypt {
+            if isEncrypt {
+                guard let besak = e.generateXESAK(sendSecretKey: c.sk!, recvPublicKey: c.pk).0 else {
+                    completion(.failure(.credentialFailed(.signinRequired)))
+                    return
+                }
+                edge.besak = besak.toData()
+            } else {
+                edge.besak = Data()
+            }
+        }
+        
+        completion(.success(edge))
+    }
+    
+    func transform(args: CreateFileArgs, completion: (Result<Doc, AiTmedError>) -> Void) {
+        guard let c = c, c.status == .login else {
+            completion(.failure(.credentialFailed(.signinRequired)))
+            return
+        }
+        
+        if args.title == nil && args.content == nil {
+            completion(.failure(.unkown))
+            return
+        }
+        
+        guard let name: String = ["title": args.title ?? ""].toJSON() else {
+            completion(.failure(.unkown))
+            return
+        }
+        
+        var doc = Doc()
+        doc.name = name
+        //unit is byte
+        doc.size = Int32(args.content?.count ?? 0)
+        completion(.success(doc))
     }
 }

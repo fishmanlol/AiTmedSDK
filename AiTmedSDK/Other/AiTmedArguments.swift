@@ -45,12 +45,24 @@ public class RetrieveNotebooksArgs: RetrieveEdgeArgs {
     }
 }
 
-public struct CreateOrUpdateNotebookArgs {
+public struct CreateNotebookArgs {
     let title: String
     let isEncrypt: Bool
     let type: Int
     
     public init(title: String, isEncrypt: Bool, type: Int = 7) {
+        self.title = title
+        self.isEncrypt = isEncrypt
+        self.type = type
+    }
+}
+
+public struct UpdateNotebookArgs {
+    var title: String?
+    var isEncrypt: Bool?
+    var type: Int?
+    
+    public init(title: String?, isEncrypt: Bool?, type: Int?) {
         self.title = title
         self.isEncrypt = isEncrypt
         self.type = type
@@ -90,6 +102,11 @@ public struct CreateUserArgs {
 }
 
 //Doc
+public struct CreateFileArgs {
+    var title: String?
+    var content: Data?
+    var isEncrypt = true
+}
 
 struct Validator {
     static func phoneNumber(_ phoneNumber: String) -> Bool {
