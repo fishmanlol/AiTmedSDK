@@ -152,12 +152,11 @@ class StartViewController: UIViewController {
                         self.ty.displayAlert(title: "Error", msg: error.localizedDescription, hasCancel: false, action: {})
                     }
                 case .success(_):
+                    if let root = getRootViewController() as? RootViewController, let nav = root.rootSplit.viewControllers.first as? UINavigationController, let notebookViewController = nav.viewControllers.first as? NotebookViewController {
+                        notebookViewController.storage = Storage(phoneNumber: phoneNumber)
+                    }
                     DispatchQueue.main.async {
-                        self.dismiss(animated: true, completion: {
-                            if let root = getRootViewController() as? RootViewController, let nav = root.rootSplit.viewControllers.first as? UINavigationController, let notebookViewController = nav.viewControllers.first as? NotebookViewController {
-                                notebookViewController.storage = Storage(phoneNumber: phoneNumber)
-                            }
-                        })
+                        self.dismiss(animated: true, completion: {})
                     }
                 }
             }

@@ -10,8 +10,8 @@ import Foundation
 import AiTmedSDK
 
 class APIService {
-    static func loadNotebooks(completion: @escaping (Result<[Notebook], AiTmedError>) -> Void) {
-        let args = AiTmedSDK.RetrieveNotebooksArgs()
+    static func loadNotebooks(ids: [Data], completion: @escaping (Result<[Notebook], AiTmedError>) -> Void) {
+        let args = AiTmedSDK.RetrieveNotebooksArgs(ids: ids, maxCount: nil)
         AiTmed.Prynote.retrieveNotebooks(args: args) { result in
             switch result {
             case .failure(_):
@@ -63,7 +63,7 @@ class APIService {
         }
     }
     
-    static func addNote(title: String, content: String, completion: @escaping (Result<Note, AiTmedError>) -> Void) {
-        
+    static func addNote(title: String, content: String, in notebook: Notebook, completion: @escaping (Result<Note, AiTmedError>) -> Void) {
+//        AiTmed.create
     }
 }

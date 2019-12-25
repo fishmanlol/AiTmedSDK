@@ -19,4 +19,5 @@ extension NSNotification.Name {
     static var didSplitViewControllerExpand = NSNotification.Name("didSplitViewControllerExpand")
     static var didAddNotebook = NSNotification.Name(rawValue: "didAddNotebook")
     static var didRemoveNotebook = NSNotification.Name("didRemoveNotebook")
+    static var signinRequried = NSNotification.Name("signinRequried")
 }

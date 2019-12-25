@@ -17,10 +17,14 @@ public class AiTmed {
     var c: Credential!
     ///Encryption tool
     let e = Encryption()
-    let host = "testapi2.aitmed.com:443"
+    let host1 = "testapi2.aitmed.com: 80"
+    let host = "ecosapinlb.aitmed.com:443"
     var client: Aitmed_Ecos_V1beta1_EcosAPIServiceClient
     static let shared = AiTmed()
-    init() { client = Aitmed_Ecos_V1beta1_EcosAPIServiceClient(address: host, secure: true) }
+    init() {
+        client = Aitmed_Ecos_V1beta1_EcosAPIServiceClient(address: host1, secure: false)
+        
+    }
     var OPTCodeJwt: [String: String] = [:]
     
     public static func hasCredential(for phoneNumber: String) -> Bool {
@@ -49,6 +53,7 @@ public class AiTmed {
                         completion(.failure(error))
                     case .success(let (doc, jwt)):
                         shared.c.jwt = jwt
+                        print(doc)
 //                        let file = generateFile(doc)
 //                        completion(.success(file))
                     }
@@ -180,22 +185,22 @@ public class AiTmed {
     }
     
     private func generateFile(_ doc: Doc) -> File? {
-        guard let nameDict = doc.name.toJSONDict(),
-                let title = nameDict["title"] as? String,
-                let type = nameDict["type"] as? String, let mimeType = MimeType(rawValue: type),
-                let isEncrypt = nameDict["isEncrypt"] as? Bool,
-                let isOnS3 = nameDict["isOnS3"] as? Bool,
-                let isGzip = nameDict["isGzip"] as? Bool,
-                let deatDict = doc.deat.toJSONDict() else { return nil }
-        
-        if isOnS3, let down {
-            
-        }
-        
-        guard let deatDict = doc.deat.toJSONDict()
-                let uploadUrl = deatDict["url"],
-                let sig = deatDict["sig"],
-                let data =
+//        guard let nameDict = doc.name.toJSONDict(),
+//                let title = nameDict["title"] as? String,
+//                let type = nameDict["type"] as? String, let mimeType = MimeType(rawValue: type),
+//                let isEncrypt = nameDict["isEncrypt"] as? Bool,
+//                let isOnS3 = nameDict["isOnS3"] as? Bool,
+//                let isGzip = nameDict["isGzip"] as? Bool,
+//                let deatDict = doc.deat.toJSONDict() else { return nil }
+//
+//        if isOnS3, let down {
+//
+//        }
+//
+//        guard let deatDict = doc.deat.toJSONDict()
+//                let uploadUrl = deatDict["url"],
+//                let sig = deatDict["sig"],
+//                let data =
         fatalError()
     }
 }
@@ -274,6 +279,10 @@ extension AiTmed {
     func _delete(ids: [Data], jwt: String, completion: @escaping (Result<String, AiTmedError>) -> Void) {
         var request = Aitmed_Ecos_V1beta1_dxReq()
         request.id = ids
+        request.jwt = jwt
+        
+        print("delete edge request json: \n", (try? request.jsonString()) ?? "")
+        
         do {
             try client.dx(request) { (response, result) in
                 guard let response = response else {
