@@ -562,7 +562,7 @@ extension AiTmed {
         
         var doc = Doc()
         doc.name = name
-        doc.type = AiTmedType.
+//        doc.type = AiTmedType.
         //unit is byte
         doc.size = Int32(args.content?.count ?? 0)
         completion(.success(doc))
