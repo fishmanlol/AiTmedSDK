@@ -8,6 +8,7 @@ target 'AiTmedDemo' do
   pod 'PhoneNumberKit'
   pod 'DZNEmptyDataSet'
   pod 'R.swift'
+  pod 'Reveal-SDK', :configurations => ['Debug']
   # Pods for AiTmedDemo
 
 end

@@ -25,4 +25,19 @@ extension UIView {
             make.edges.equalTo(self)
         }
     }
+    
+    func addUnderLineIfNeeded(with color: UIColor = UIColor.lightGray, width: CGFloat = 0.5) {
+        var hasUnderLine = false
+        if let sublayers = layer.sublayers {
+            hasUnderLine = sublayers.contains { $0.name == "underline" }
+        }
+        
+        if !hasUnderLine {
+            let subLayer = CALayer()
+            subLayer.name = "underline"
+            subLayer.backgroundColor = color.cgColor
+            subLayer.frame = CGRect(x: 0, y: bounds.height - width, width: bounds.width, height: width)
+            self.layer.addSublayer(subLayer)
+        }
+    }
 }

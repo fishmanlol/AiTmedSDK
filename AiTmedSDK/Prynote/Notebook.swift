@@ -12,14 +12,4 @@ extension AiTmed.Prynote {
         public var title: String = ""
         public var isEncrypt = true
     }
-    
-    public struct Note: File {
-        public var type: MimeType
-        public var id: Data
-        public var title: String?
-        public var content: Data?
-        public var uploadUrl: String?
-        public var downloadUrl: String?
-        public var isEncrypt = true
-    }
 }

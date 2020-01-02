@@ -58,11 +58,13 @@ public struct CreateNotebookArgs {
 }
 
 public struct UpdateNotebookArgs {
+    var id: Data
     var title: String?
     var isEncrypt: Bool?
     var type: Int?
     
-    public init(title: String?, isEncrypt: Bool?, type: Int?) {
+    public init(id: Data, title: String?, isEncrypt: Bool?, type: Int?) {
+        self.id = id
         self.title = title
         self.isEncrypt = isEncrypt
         self.type = type
@@ -80,7 +82,7 @@ public struct RemoveArgs {
 public class RetrieveEdgeArgs {
     let ids: [Data]
     let maxCount: Int32?
-    var type: Int32!
+    internal var type: Int32!
     
     public init(ids: [Data] = [], maxCount: Int32? = nil) {
         self.ids = ids
@@ -102,10 +104,21 @@ public struct CreateUserArgs {
 }
 
 //Doc
-public struct CreateFileArgs {
+public class CreateFileArgs {
     var title: String?
     var content: Data?
     var isEncrypt = true
+    internal var type: AiTmedType!
+    
+    public init(title: String?, content: Data?, isEncrypt: Bool) {
+        self.title = title
+        self.content = content
+        self.isEncrypt = isEncrypt
+    }
+}
+
+public class CreateNoteArgs: CreateFileArgs {
+    
 }
 
 struct Validator {

@@ -36,4 +36,9 @@ class TYTextField: UITextField {
         bottomLineColor.setStroke()
         path.stroke()
     }
+    
+    override func editingRect(forBounds bounds: CGRect) -> CGRect {
+        print(super.editingRect(forBounds: bounds))
+        return super.editingRect(forBounds: bounds)
+    }
 }

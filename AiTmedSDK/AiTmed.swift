@@ -17,13 +17,14 @@ public class AiTmed {
     var c: Credential!
     ///Encryption tool
     let e = Encryption()
-    let host1 = "testapi2.aitmed.com: 80"
-    let host = "ecosapinlb.aitmed.com:443"
+    let grpcTimeout: TimeInterval = 5
+    let host1 = "testapi2.aitmed.com:80"
+    let host = "ecosapinlb.aitmed.com:80"
     var client: Aitmed_Ecos_V1beta1_EcosAPIServiceClient
     static let shared = AiTmed()
     init() {
-        client = Aitmed_Ecos_V1beta1_EcosAPIServiceClient(address: host1, secure: false)
-        
+        client = Aitmed_Ecos_V1beta1_EcosAPIServiceClient(address: host, secure: false)
+        client.timeout = grpcTimeout
     }
     var OPTCodeJwt: [String: String] = [:]
     
@@ -41,26 +42,27 @@ public class AiTmed {
         shared.c?.sk = nil
     }
     
-    public static func createFile(args: CreateFileArgs, completion: @escaping (Result<File, AiTmedError>) -> Void) {
-        shared.transform(args: args) { (result) in
-            switch result {
-            case .failure(let error):
-                completion(.failure(error))
-            case .success(let doc):
-                shared._createDoc(doc: doc, jwt: shared.c.jwt, completion: { (result) in
-                    switch result {
-                    case .failure(let error):
-                        completion(.failure(error))
-                    case .success(let (doc, jwt)):
-                        shared.c.jwt = jwt
-                        print(doc)
-//                        let file = generateFile(doc)
-//                        completion(.success(file))
-                    }
-                })
+        public static func createFile(args: CreateFileArgs, completion: @escaping (Result<File, AiTmedError>) -> Void) {
+            shared.transform(args: args) { (result) in
+                switch result {
+                case .failure(let error):
+                    completion(.failure(error))
+                case .success(let doc):
+                    shared._createDoc(doc: doc, jwt: shared.c.jwt, completion: { (result) in
+                        switch result {
+                        case .failure(let error):
+                            completion(.failure(error))
+                        case .success(let (doc, jwt)):
+                            shared.c.jwt = jwt
+                            print(doc)
+//                            File(type: .plain)
+    //                        let file = generateFile(doc)
+    //                        completion(.success(file))
+                        }
+                    })
+                }
             }
         }
-    }
     
     public static func delete(ids: [Data], completion: @escaping (Result<Void, AiTmedError>) -> Void) {
         guard let c = shared.c, c.status == .login else {
@@ -560,6 +562,7 @@ extension AiTmed {
         
         var doc = Doc()
         doc.name = name
+        doc.type = AiTmedType.
         //unit is byte
         doc.size = Int32(args.content?.count ?? 0)
         completion(.success(doc))

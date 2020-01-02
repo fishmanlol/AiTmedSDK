@@ -27,7 +27,7 @@ class TYButton: UIButton {
         fatalError()
     }
 
-    func startAnimating() {
+    override func startAnimating() {
         DispatchQueue.main.async {
             guard !self.isAnimating else { return }
             self.isAnimating = true
@@ -37,7 +37,7 @@ class TYButton: UIButton {
         }
     }
     
-    func endAnimating() {
+    override func endAnimating() {
         DispatchQueue.main.async {
             guard self.isAnimating else { return }
             self.isAnimating = false

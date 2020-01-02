@@ -11,7 +11,6 @@ import Foundation
 
 extension AiTmed {
     public class Prynote {
-//        public static func createNote(args: Create)
         
         public static func retrieveNotebooks(args: RetrieveNotebooksArgs, completion: @escaping (Result<[Notebook], AiTmedError>) -> Void) {
             shared.transform(args: args) { (result) in
@@ -70,7 +69,7 @@ extension AiTmed {
                 case .failure(let error):
                     completion(.failure(error))
                 case .success(var edge):
-                    edge.id = shared.c!.userId
+                    edge.id = args.id
                     shared._createEdge(edge: edge, jwt: shared.c!.jwt, completion: { (result: Result<(Edge, String), AiTmedError>) in
                         switch result {
                         case .failure(let error):

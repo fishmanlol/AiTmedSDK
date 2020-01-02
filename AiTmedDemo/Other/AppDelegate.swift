@@ -25,7 +25,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
     }
     
     private func configureRootVC() {
-        let rootVC = RootViewController()
+        let rootVC = R.storyboard.main().instantiateInitialViewController()
         window = UIWindow(frame: UIScreen.main.bounds)
         window?.rootViewController = rootVC
         window?.makeKeyAndVisible()

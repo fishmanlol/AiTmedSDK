@@ -70,7 +70,7 @@ class StartViewController: UIViewController {
             mode = .second
         } else if mode == .second {
             guard let number = phoneNumberInput.phoneNumber else {
-                ty.displayAlert(title: nil, msg: "Invalid phoneNumber", hasCancel: false, action: {})
+                displayAlert(title: nil, msg: "Invalid phoneNumber", hasCancel: false, action: {})
                 return
             }
             let areaCode = String(phoneNumberInput.country.code)
@@ -87,7 +87,7 @@ class StartViewController: UIViewController {
                         
                         switch result {
                         case .failure(let error):
-                            self.ty.displayAlert(title: "Error", msg: error.localizedDescription, hasCancel: false, action: {})
+                            self.displayAlert(title: "Error", msg: error.localizedDescription, hasCancel: false, action: {})
                         case .success(_):
                             let OPTCodeController = OPTCodeViewController(phoneNumber: phoneNumber, action: { (code) in
                                 AiTmed.retrieveCredential(args: AiTmedSDK.RetrieveCredentialArgs(phoneNumber: phoneNumber, code: code), completion: { (result) in
@@ -95,7 +95,7 @@ class StartViewController: UIViewController {
                                     case .failure(.apiResultFailed(.userNotExist)):
                                         self.mode = .signin(Int32(code) ?? 0)
                                     case .failure(let error):
-                                        self.ty.displayAlert(title: "Error", msg: error.localizedDescription, hasCancel: false, action: {})
+                                        self.displayAlert(title: "Error", msg: error.localizedDescription, hasCancel: false, action: {})
                                     case .success(_):
                                         self.mode = .login
                                     }
@@ -108,7 +108,7 @@ class StartViewController: UIViewController {
             }
         } else if mode == .login {
             guard let number = phoneNumberInput.phoneNumber else {
-                ty.displayAlert(title: nil, msg: "Invalid phoneNumber", hasCancel: false, action: {})
+                displayAlert(title: nil, msg: "Invalid phoneNumber", hasCancel: false, action: {})
                 return
             }
             
@@ -122,21 +122,18 @@ class StartViewController: UIViewController {
                 switch result {
                 case .failure(let error):
                     DispatchQueue.main.async {
-                        self.ty.displayAlert(title: "Error", msg: error.localizedDescription, hasCancel: false, action: {})
+                        self.displayAlert(title: "Error", msg: error.localizedDescription, hasCancel: false, action: {})
                     }
                 case .success(_):
                     DispatchQueue.main.async {
-                        self.dismiss(animated: true, completion: {
-                            if let root = getRootViewController() as? RootViewController, let nav = root.rootSplit.viewControllers.first as? UINavigationController, let notebookViewController = nav.viewControllers.first as? NotebookViewController {
-                                notebookViewController.storage = Storage(phoneNumber: phoneNumber)
-                            }
-                        })
+                        let root = RootViewController(storage: Storage(phoneNumber: phoneNumber))
+                        UIApplication.shared.keyWindow?.rootViewController = root
                     }
                 }
             }
         } else if case let Mode.signin(code) = mode {
             guard let number = phoneNumberInput.phoneNumber else {
-                ty.displayAlert(title: nil, msg: "Invalid phoneNumber", hasCancel: false, action: {})
+                displayAlert(title: nil, msg: "Invalid phoneNumber", hasCancel: false, action: {})
                 return
             }
             
@@ -149,14 +146,12 @@ class StartViewController: UIViewController {
                 switch result {
                 case .failure(let error):
                     DispatchQueue.main.async {
-                        self.ty.displayAlert(title: "Error", msg: error.localizedDescription, hasCancel: false, action: {})
+                        self.displayAlert(title: "Error", msg: error.localizedDescription, hasCancel: false, action: {})
                     }
                 case .success(_):
-                    if let root = getRootViewController() as? RootViewController, let nav = root.rootSplit.viewControllers.first as? UINavigationController, let notebookViewController = nav.viewControllers.first as? NotebookViewController {
-                        notebookViewController.storage = Storage(phoneNumber: phoneNumber)
-                    }
                     DispatchQueue.main.async {
-                        self.dismiss(animated: true, completion: {})
+                        let root = RootViewController(storage: Storage(phoneNumber: phoneNumber))
+                        UIApplication.shared.keyWindow?.rootViewController = root
                     }
                 }
             }

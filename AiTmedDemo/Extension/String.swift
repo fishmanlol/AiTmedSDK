@@ -27,6 +27,10 @@ extension String {
         return size(with: font).height
     }
     
+    func toData() -> Data? {
+        return self.data(using: .utf8)
+    }
+    
 //    func toJSONDict() -> [String: Any]? {
 //        if let data = self.data(using: .utf8) {
 //            do {

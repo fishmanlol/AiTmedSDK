@@ -153,11 +153,11 @@ class TYInput: UIView {
     override func becomeFirstResponder() -> Bool {
         return textField.becomeFirstResponder()
     }
-    
+
     override func resignFirstResponder() -> Bool {
         return textField.resignFirstResponder()
     }
-    
+
     override var isFirstResponder: Bool {
         return textField.isFirstResponder
     }

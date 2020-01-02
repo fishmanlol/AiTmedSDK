@@ -128,7 +128,7 @@ struct R: Rswift.Validatable {
     fileprivate init() {}
   }
 
-  /// This `R.image` struct is generated, and contains static references to 14 images.
+  /// This `R.image` struct is generated, and contains static references to 15 images.
   struct image {
     /// Image `add`.
     static let add = Rswift.ImageResource(bundle: R.hostingBundle, name: "add")
@@ -138,6 +138,8 @@ struct R: Rswift.Validatable {
     static let arrow_right_bold = Rswift.ImageResource(bundle: R.hostingBundle, name: "arrow_right_bold")
     /// Image `arrow_right`.
     static let arrow_right = Rswift.ImageResource(bundle: R.hostingBundle, name: "arrow_right")
+    /// Image `close`.
+    static let close = Rswift.ImageResource(bundle: R.hostingBundle, name: "close")
     /// Image `folder`.
     static let folder = Rswift.ImageResource(bundle: R.hostingBundle, name: "folder")
     /// Image `logo`.
@@ -184,6 +186,13 @@ struct R: Rswift.Validatable {
     /// `UIImage(named: "arrow_right_bold", bundle: ..., traitCollection: ...)`
     static func arrow_right_bold(compatibleWith traitCollection: UIKit.UITraitCollection? = nil) -> UIKit.UIImage? {
       return UIKit.UIImage(resource: R.image.arrow_right_bold, compatibleWith: traitCollection)
+    }
+    #endif
+
+    #if os(iOS) || os(tvOS)
+    /// `UIImage(named: "close", bundle: ..., traitCollection: ...)`
+    static func close(compatibleWith traitCollection: UIKit.UITraitCollection? = nil) -> UIKit.UIImage? {
+      return UIKit.UIImage(resource: R.image.close, compatibleWith: traitCollection)
     }
     #endif
 
@@ -458,11 +467,16 @@ struct _R: Rswift.Validatable {
 
     #if os(iOS) || os(tvOS)
     struct main: Rswift.StoryboardResourceWithInitialControllerType, Rswift.Validatable {
-      typealias InitialController = UIKit.UINavigationController
+      typealias InitialController = StartViewController
 
       let bundle = R.hostingBundle
       let name = "Main"
+      let notebookeditingnavigatioN = StoryboardViewControllerResource<UIKit.UINavigationController>(identifier: "NOTEBOOKEDITINGNAVIGATION")
       let startViewController = StoryboardViewControllerResource<StartViewController>(identifier: "StartViewController")
+
+      func notebookeditingnavigatioN(_: Void = ()) -> UIKit.UINavigationController? {
+        return UIKit.UIStoryboard(resource: self).instantiateViewController(withResource: notebookeditingnavigatioN)
+      }
 
       func startViewController(_: Void = ()) -> StartViewController? {
         return UIKit.UIStoryboard(resource: self).instantiateViewController(withResource: startViewController)
@@ -473,6 +487,7 @@ struct _R: Rswift.Validatable {
         if UIKit.UIImage(named: "logo", in: R.hostingBundle, compatibleWith: nil) == nil { throw Rswift.ValidationError(description: "[R.swift] Image named 'logo' is used in storyboard 'Main', but couldn't be loaded.") }
         if #available(iOS 11.0, tvOS 11.0, *) {
         }
+        if _R.storyboard.main().notebookeditingnavigatioN() == nil { throw Rswift.ValidationError(description:"[R.swift] ViewController with identifier 'notebookeditingnavigatioN' could not be loaded from storyboard 'Main' as 'UIKit.UINavigationController'.") }
         if _R.storyboard.main().startViewController() == nil { throw Rswift.ValidationError(description:"[R.swift] ViewController with identifier 'startViewController' could not be loaded from storyboard 'Main' as 'StartViewController'.") }
       }
 

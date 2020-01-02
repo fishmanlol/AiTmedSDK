@@ -20,4 +20,7 @@ extension NSNotification.Name {
     static var didAddNotebook = NSNotification.Name(rawValue: "didAddNotebook")
     static var didRemoveNotebook = NSNotification.Name("didRemoveNotebook")
     static var signinRequried = NSNotification.Name("signinRequried")
+    
+    static let createUserFinishedNotification = NSNotification.Name.init(rawValue: "createUserFinished")
+    static let loginUserFinishedNotification = NSNotification.Name.init("loginUserFinishe")
 }

@@ -26,34 +26,21 @@ class APIService {
         }
     }
     
-    static func addNotebook(title: String, isEncrypt: Bool, completion: @escaping (Result<Notebook, AiTmedError>) -> Void) {
+    static func addNotebook(title: String, isEncrypt: Bool, completion: @escaping (Result<Data, AiTmedError>) -> Void) {
         let args = AiTmedSDK.CreateNotebookArgs(title: title, isEncrypt: isEncrypt)
         AiTmed.Prynote.createNoteBook(args: args) { (result) in
             switch result {
             case .failure(_):
                 completion(.failure(.unkown))
             case .success(let nb):
-                let notebook = Notebook(title: nb.title, id: nb.id, isEncrypt: nb.isEncrypt)
-                completion(.success(notebook))
+                completion(.success(nb.id))
             }
         }
     }
     
-    static func updateNotebook(title: String? = nil, isEncrypt: Bool? = nil, completion: @escaping (Result<Notebook, AiTmedError>) -> Void) {
-        let args = AiTmedSDK.UpdateNotebookArgs(title: title, isEncrypt: isEncrypt, type: nil)
+    static func updateNotebook(id: Data, title: String? = nil, isEncrypt: Bool? = nil, completion: @escaping (Result<Void, AiTmedError>) -> Void) {
+        let args = AiTmedSDK.UpdateNotebookArgs(id: id, title: title, isEncrypt: isEncrypt, type: nil)
         AiTmed.Prynote.updateNotebook(args: args) { (result) in
-            switch result {
-            case .failure(_):
-                completion(.failure(.unkown))
-            case .success(let nb):
-                let notebook = Notebook(title: nb.title, id: nb.id, isEncrypt: nb.isEncrypt)
-                completion(.success(notebook))
-            }
-        }
-    }
-    
-    static func removeNotebook(_ notebooks: [Notebook], completion: @escaping (Result<Void, AiTmedError>) -> Void) {
-        AiTmed.delete(ids: notebooks.map({ $0.id })) { (result) in
             switch result {
             case .failure(_):
                 completion(.failure(.unkown))
@@ -63,7 +50,14 @@ class APIService {
         }
     }
     
-    static func addNote(title: String, content: String, in notebook: Notebook, completion: @escaping (Result<Note, AiTmedError>) -> Void) {
-//        AiTmed.create
+    static func remove(_ ids: [Data], completion: @escaping (Result<Void, AiTmedSDK.AiTmedError>) -> Void) {
+        AiTmed.delete(ids: ids, completion: completion)
+    }
+    
+    static func addNote(note: Note, in notebook: Notebook, completion: @escaping (Result<Void, AiTmedError>) -> Void) {
+        let args = AiTmedSDK.CreateFileArgs(title: note.title, content: note.content.toData(), isEncrypt: false)
+        AiTmed.createFile(args: args) { (_) in
+            print("creat file finish")
+        }
     }
 }
