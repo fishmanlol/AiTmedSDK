@@ -18,8 +18,8 @@ public class AiTmed {
     ///Encryption tool
     let e = Encryption()
     let grpcTimeout: TimeInterval = 5
-    let host1 = "testapi2.aitmed.com:80"
-    let host = "ecosapinlb.aitmed.com:80"
+//    let host1 = "testapi2.aitmed.com:443"
+    let host = "ecosapi.aitmed.com:80"
     var client: Aitmed_Ecos_V1beta1_EcosAPIServiceClient
     static let shared = AiTmed()
     init() {
@@ -42,27 +42,57 @@ public class AiTmed {
         shared.c?.sk = nil
     }
     
-        public static func createFile(args: CreateFileArgs, completion: @escaping (Result<File, AiTmedError>) -> Void) {
-            shared.transform(args: args) { (result) in
-                switch result {
-                case .failure(let error):
-                    completion(.failure(error))
-                case .success(let doc):
-                    shared._createDoc(doc: doc, jwt: shared.c.jwt, completion: { (result) in
-                        switch result {
-                        case .failure(let error):
-                            completion(.failure(error))
-                        case .success(let (doc, jwt)):
-                            shared.c.jwt = jwt
-                            print(doc)
-//                            File(type: .plain)
-    //                        let file = generateFile(doc)
-    //                        completion(.success(file))
-                        }
-                    })
-                }
-            }
-        }
+//    public static func retreiveFiles(args: RetrieveFileArgs, completion: @escaping (Result<[File], AiTmedError>) -> Void) {
+//        shared._retrieveDoc(args: args, jwt: shared.c.jwt) { (result) in
+//            switch result {
+//            case .failure(let error):
+//                completion(.failure(error))
+//            case .success(let (docs, jwt)):
+//                shared.c.jwt = jwt
+//                var files: [File] = []
+//                let group = DispatchGroup()
+//
+//                for doc in docs {
+//                    group.enter()
+//                    File.load(from: doc, completion: { (result) in
+//                        switch result {
+//                        case .failure(let error):
+//                            print(error.detail)
+//                        case .success(let file):
+//                            files.append(file)
+//                        }
+//                        group.leave()
+//                    })
+//                }
+//
+//                group.notify(queue: DispatchQueue.main, execute: {
+//                    completion(.success(files))
+//                })
+//            }
+//        }
+//    }
+    
+//    static func createFile(args: CreateFileArgs, completion: @escaping (Result<Void, AiTmedError>) -> Void) {
+//        shared.transform(args: args) { (result) in
+//            switch result {
+//            case .failure(let error):
+//                completion(.failure(error))
+//            case .success(let doc):
+//                shared._createDoc(doc: doc, jwt: shared.c.jwt, completion: { (result) in
+//                    switch result {
+//                    case .failure(let error):
+//                        completion(.failure(error))
+//                    case .success(let (_, jwt)):
+//                        shared.c.jwt = jwt
+//                        completion(.success(()))
+////                            File(type: .plain)
+////                        let file = generateFile(doc)
+////                        completion(.success(file))
+//                    }
+//                })
+//            }
+//        }
+//    }
     
     public static func delete(ids: [Data], completion: @escaping (Result<Void, AiTmedError>) -> Void) {
         guard let c = shared.c, c.status == .login else {
@@ -184,26 +214,6 @@ public class AiTmed {
                 })
             }
         }
-    }
-    
-    private func generateFile(_ doc: Doc) -> File? {
-//        guard let nameDict = doc.name.toJSONDict(),
-//                let title = nameDict["title"] as? String,
-//                let type = nameDict["type"] as? String, let mimeType = MimeType(rawValue: type),
-//                let isEncrypt = nameDict["isEncrypt"] as? Bool,
-//                let isOnS3 = nameDict["isOnS3"] as? Bool,
-//                let isGzip = nameDict["isGzip"] as? Bool,
-//                let deatDict = doc.deat.toJSONDict() else { return nil }
-//
-//        if isOnS3, let down {
-//
-//        }
-//
-//        guard let deatDict = doc.deat.toJSONDict()
-//                let uploadUrl = deatDict["url"],
-//                let sig = deatDict["sig"],
-//                let data =
-        fatalError()
     }
 }
 
@@ -394,6 +404,37 @@ extension AiTmed {
             completion(.failure(.grpcFailed(.unkown)))
         }
     }
+    
+    func _retrieveDoc(args: RetrieveDocArgs, jwt: String, completion: @escaping (Result<([Doc], String), AiTmedError>) -> Void) {
+        var request = Aitmed_Ecos_V1beta1_rxReq()
+        request.jwt = jwt
+        request.objType = ObjectType.doc.code
+        request.id = [args.folderID]
+        request.xfname = "eid"
+        
+        print("retreive doc request json: \n", (try? request.jsonString()) ?? "")
+        
+        do {
+            try client.rd(request) { (response, result) in
+                guard let response = response else {
+                    print("retrieve doc has no response(\(result.statusCode)): \(result.description)")
+                    completion(.failure(.grpcFailed(.unkown)))
+                    return
+                }
+                
+                print("retrieve doc response: \n", (try? response.jsonString()) ?? "")
+                
+                if response.code == 0 {
+                    completion(.success((response.doc, response.jwt)))
+                } else {
+                    completion(.failure(.apiResultFailed(.unkown)))
+                }
+            }
+        } catch {
+            print("grpc error: \(error.localizedDescription)")
+            completion(.failure(.grpcFailed(.unkown)))
+        }
+    }
 }
 
 //MARK: - Transform functions
@@ -544,27 +585,29 @@ extension AiTmed {
         completion(.success(edge))
     }
     
-    func transform(args: CreateFileArgs, completion: (Result<Doc, AiTmedError>) -> Void) {
+    func transform(args: CreateDocumentArgs, completion: (Result<Doc, AiTmedError>) -> Void) {
         guard let c = c, c.status == .login else {
             completion(.failure(.credentialFailed(.signinRequired)))
             return
         }
         
-        if args.title == nil && args.content == nil {
-            completion(.failure(.unkown))
-            return
+        var dict: [String: Any] = ["title": args.title, "isOnS3": args.isOnS3, "isGzip": args.content.isZipSatisfied, "type": args.mime.rawValue]
+        
+        if !args.isOnS3 {
+            dict["data"] = args.content.base64EncodedString()
         }
         
-        guard let name: String = ["title": args.title ?? ""].toJSON() else {
+        guard let name = dict.toJSON() else {
             completion(.failure(.unkown))
             return
         }
         
         var doc = Doc()
         doc.name = name
-//        doc.type = AiTmedType.
+        doc.eid = args.folderID
+        doc.type = args.type
         //unit is byte
-        doc.size = Int32(args.content?.count ?? 0)
+        doc.size = Int32(args.content.count)
         completion(.success(doc))
     }
 }

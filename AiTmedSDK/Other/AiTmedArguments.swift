@@ -103,23 +103,81 @@ public struct CreateUserArgs {
     }
 }
 
+
 //Doc
-public class CreateFileArgs {
-    var title: String?
-    var content: Data?
-    var isEncrypt = true
-    internal var type: AiTmedType!
+public class CreateDocumentArgs {
+    var title: String
+    var content: Data
+    var isEncrypt: Bool
+    var folderID: Data
+    var mime: MimeType
+    var type: Int32
     
-    public init(title: String?, content: Data?, isEncrypt: Bool) {
+    var isOnS3: Bool {
+        return type == AiTmedType.s3Data
+    }
+    
+    public init(title: String = "", content: Data = Data(), isEncrypt: Bool = false, mime: MimeType = .data, folderID: Data) {
         self.title = title
         self.content = content
         self.isEncrypt = isEncrypt
+        self.folderID = folderID
+        self.mime = mime
+        
+        if content.isZipSatisfied {
+            self.content = content.zip() ?? Data()
+        }
+        type = AiTmedType.s3Data
+//        if content.isEmbedSatisfied {
+//            type = AiTmedType.embedData
+//        } else {
+//            type = AiTmedType.s3Data
+//        }
     }
 }
 
-public class CreateNoteArgs: CreateFileArgs {
+public class RetrieveDocArgs {
+    let folderID: Data
     
+    public init(folderID: Data) {
+        self.folderID = folderID
+    }
 }
+
+
+
+//public class CreateFileArgs {
+//    var title: String?
+//    var content: Data?
+//    var isEncrypt: Bool
+//    var folderID: Data
+//    var mime: MimeType = .data
+//    internal var type: Int32!
+//
+//    public init(title: String?, content: Data?, isEncrypt: Bool, folderID: Data) {
+//        self.title = title
+//        self.content = content
+//        self.isEncrypt = isEncrypt
+//        self.folderID = folderID
+//    }
+//}
+
+
+//public class CreateNoteArgs: CreateFileArgs {
+//    public override init(title: String?, content: Data?, isEncrypt: Bool, folderID: Data) {
+//        super.init(title: title, content: content, isEncrypt: isEncrypt, folderID: folderID)
+//        mime = .plain
+//
+//        if let content = content, let zipped = content.zip(), !zipped.isEmbedded {
+//            type = AiTmedType.s3Data
+//            if isEncrypt {//encrypt
+//
+//            }
+//        } else {
+//            type = AiTmedType.embedData
+//        }
+//    }
+//}
 
 struct Validator {
     static func phoneNumber(_ phoneNumber: String) -> Bool {

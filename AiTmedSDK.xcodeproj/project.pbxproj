@@ -70,6 +70,9 @@
 		104CCDCB23BDDB13005372C1 /* EditorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104CCDA323BDDB12005372C1 /* EditorViewController.swift */; };
 		107366CF23B9D882001C1DEF /* UIButton+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 107366CE23B9D882001C1DEF /* UIButton+.swift */; };
 		8DC41289F13409B5AAF363E4 /* Pods_AiTmedSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 60E359D06ADBC67F99A40EB4 /* Pods_AiTmedSDK.framework */; };
+		8E2EB8A723BE668D00C93526 /* Data+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E2EB8A623BE668D00C93526 /* Data+.swift */; };
+		8E2EB8AB23BE868000C93526 /* PrynoteError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E2EB8AA23BE868000C93526 /* PrynoteError.swift */; };
+		8E2EB8AD23BEAD8300C93526 /* AiTmed+S3.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E2EB8AC23BEAD8300C93526 /* AiTmed+S3.swift */; };
 		8EA6275223ABF6E800AC6F14 /* NSNotification.Name+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EA6275123ABF6E800AC6F14 /* NSNotification.Name+.swift */; };
 		8EA6275323ABF6E800AC6F14 /* UIView+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EA6274E23ABF6E700AC6F14 /* UIView+.swift */; };
 		8EA6275423ABF6E800AC6F14 /* UIViewController+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EA6274F23ABF6E700AC6F14 /* UIViewController+.swift */; };
@@ -79,14 +82,12 @@
 		8EA6276C23AC00DA00AC6F14 /* APIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EA6276B23AC004100AC6F14 /* APIService.swift */; };
 		8EA6276F23AC016500AC6F14 /* Prynote.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EA6276E23AC016500AC6F14 /* Prynote.swift */; };
 		8EA6277223AC032200AC6F14 /* Notebook.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EA6277123AC032200AC6F14 /* Notebook.swift */; };
-		8EA6277423AC3E9A00AC6F14 /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EA6277323AC3E9A00AC6F14 /* File.swift */; };
+		8EA6277423AC3E9A00AC6F14 /* Document.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EA6277323AC3E9A00AC6F14 /* Document.swift */; };
 		8EA90C2023A84E4E004164A6 /* AiTmedSDK.h in Headers */ = {isa = PBXBuildFile; fileRef = 8EA90C1E23A84E4E004164A6 /* AiTmedSDK.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8EA90C5323A8504C004164A6 /* Credential.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EA90C4223A8504B004164A6 /* Credential.swift */; };
 		8EA90C5523A8504C004164A6 /* ecos_api.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EA90C4523A8504B004164A6 /* ecos_api.pb.swift */; };
 		8EA90C5623A8504C004164A6 /* types.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EA90C4623A8504B004164A6 /* types.pb.swift */; };
 		8EA90C5723A8504C004164A6 /* ecos_api.grpc.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EA90C4723A8504B004164A6 /* ecos_api.grpc.swift */; };
-		8EA90C5823A8504C004164A6 /* AiTmedError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EA90C4923A8504B004164A6 /* AiTmedError.swift */; };
-		8EA90C5923A8504C004164A6 /* AiTmedArguments.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EA90C4A23A8504B004164A6 /* AiTmedArguments.swift */; };
 		8EA90C5A23A8504C004164A6 /* AiTmedDeatKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EA90C4B23A8504B004164A6 /* AiTmedDeatKey.swift */; };
 		8EA90C5B23A8504C004164A6 /* AiTmedNameKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EA90C4C23A8504B004164A6 /* AiTmedNameKey.swift */; };
 		8EA90C5C23A8504C004164A6 /* AiTmedType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EA90C4D23A8504B004164A6 /* AiTmedType.swift */; };
@@ -112,7 +113,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		8EA90C6523A850AE004164A6 /* PBXContainerItemProxy */ = {
+		8E2EB8A823BE769A00C93526 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 8EA90C1223A84E4E004164A6 /* Project object */;
 			proxyType = 1;
@@ -202,6 +203,9 @@
 		5BF156BB6E5E4385208F56A2 /* Pods-AiTmedDemo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AiTmedDemo.debug.xcconfig"; path = "Target Support Files/Pods-AiTmedDemo/Pods-AiTmedDemo.debug.xcconfig"; sourceTree = "<group>"; };
 		60E359D06ADBC67F99A40EB4 /* Pods_AiTmedSDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AiTmedSDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		885815D4A5221A668EB7F808 /* Pods-AiTmedSDK.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AiTmedSDK.debug.xcconfig"; path = "Target Support Files/Pods-AiTmedSDK/Pods-AiTmedSDK.debug.xcconfig"; sourceTree = "<group>"; };
+		8E2EB8A623BE668D00C93526 /* Data+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Data+.swift"; sourceTree = "<group>"; };
+		8E2EB8AA23BE868000C93526 /* PrynoteError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrynoteError.swift; sourceTree = "<group>"; };
+		8E2EB8AC23BEAD8300C93526 /* AiTmed+S3.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AiTmed+S3.swift"; sourceTree = "<group>"; };
 		8EA6274E23ABF6E700AC6F14 /* UIView+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+.swift"; sourceTree = "<group>"; };
 		8EA6274F23ABF6E700AC6F14 /* UIViewController+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+.swift"; sourceTree = "<group>"; };
 		8EA6275023ABF6E800AC6F14 /* Date+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+.swift"; sourceTree = "<group>"; };
@@ -211,7 +215,7 @@
 		8EA6276B23AC004100AC6F14 /* APIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIService.swift; sourceTree = "<group>"; };
 		8EA6276E23AC016500AC6F14 /* Prynote.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Prynote.swift; sourceTree = "<group>"; };
 		8EA6277123AC032200AC6F14 /* Notebook.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Notebook.swift; sourceTree = "<group>"; };
-		8EA6277323AC3E9A00AC6F14 /* File.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = File.swift; sourceTree = "<group>"; };
+		8EA6277323AC3E9A00AC6F14 /* Document.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Document.swift; sourceTree = "<group>"; };
 		8EA90C1B23A84E4E004164A6 /* AiTmedSDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AiTmedSDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8EA90C1E23A84E4E004164A6 /* AiTmedSDK.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AiTmedSDK.h; sourceTree = "<group>"; };
 		8EA90C1F23A84E4E004164A6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -335,6 +339,7 @@
 				104CCD7D23BDDB12005372C1 /* Storage */,
 				104CCD8123BDDB12005372C1 /* Notebook.swift */,
 				104CCD8223BDDB12005372C1 /* Note.swift */,
+				8E2EB8AA23BE868000C93526 /* PrynoteError.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -498,8 +503,9 @@
 				8EA90C1F23A84E4E004164A6 /* Info.plist */,
 				8EA6277023AC02F400AC6F14 /* Prynote */,
 				8EA6276E23AC016500AC6F14 /* Prynote.swift */,
+				8E2EB8AC23BEAD8300C93526 /* AiTmed+S3.swift */,
 				8EA90C4323A8504B004164A6 /* AiTmed.swift */,
-				8EA6277323AC3E9A00AC6F14 /* File.swift */,
+				8EA6277323AC3E9A00AC6F14 /* Document.swift */,
 				8EA90C4423A8504B004164A6 /* base */,
 				8EA90C4123A8504B004164A6 /* Cache */,
 				8EA90C4E23A8504B004164A6 /* Encryption */,
@@ -565,6 +571,7 @@
 			children = (
 				8EA90C5123A8504B004164A6 /* UserDefaults+.swift */,
 				8EA90C5223A8504B004164A6 /* Keychain.swift */,
+				8E2EB8A623BE668D00C93526 /* Data+.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -637,7 +644,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				8EA90C6623A850AE004164A6 /* PBXTargetDependency */,
+				8E2EB8A923BE769A00C93526 /* PBXTargetDependency */,
 			);
 			name = AiTmedDemo;
 			productName = AiTmedDemo;
@@ -799,14 +806,16 @@
 				8EA90C6D23A853F6004164A6 /* UserDefaults+.swift in Sources */,
 				8EA90C6E23A853F6004164A6 /* Keychain.swift in Sources */,
 				8EA6277223AC032200AC6F14 /* Notebook.swift in Sources */,
-				8EA6277423AC3E9A00AC6F14 /* File.swift in Sources */,
+				8EA6277423AC3E9A00AC6F14 /* Document.swift in Sources */,
 				8EA90C6F23A853F6004164A6 /* AiTmedError.swift in Sources */,
 				8EA90C7023A853F6004164A6 /* AiTmedArguments.swift in Sources */,
 				8EA90C7123A853F6004164A6 /* AiTmedDeatKey.swift in Sources */,
 				8EA6276F23AC016500AC6F14 /* Prynote.swift in Sources */,
 				8EA90C7223A853F6004164A6 /* AiTmedNameKey.swift in Sources */,
+				8E2EB8AD23BEAD8300C93526 /* AiTmed+S3.swift in Sources */,
 				8EA90C7323A853F6004164A6 /* AiTmedType.swift in Sources */,
 				8EA90C6823A853E8004164A6 /* ecos_api.pb.swift in Sources */,
+				8E2EB8A723BE668D00C93526 /* Data+.swift in Sources */,
 				8EA90C6923A853E8004164A6 /* types.pb.swift in Sources */,
 				8EA90C6A23A853E8004164A6 /* ecos_api.grpc.swift in Sources */,
 				8EA90C6023A85057004164A6 /* AiTmed.swift in Sources */,
@@ -826,14 +835,12 @@
 				104CCDAF23BDDB13005372C1 /* Notebook.swift in Sources */,
 				104CCDCB23BDDB13005372C1 /* EditorViewController.swift in Sources */,
 				102FA1B023A96F9F00ECB04E /* OTPCodeViewController.swift in Sources */,
-				8EA90C5823A8504C004164A6 /* AiTmedError.swift in Sources */,
 				102FA1A523A96F9F00ECB04E /* TYCodeTextField.swift in Sources */,
 				8EA90C5D23A8504C004164A6 /* Encryption.swift in Sources */,
 				104CCDB523BDDB13005372C1 /* DetailViewController.swift in Sources */,
 				102FA1A323A96F9F00ECB04E /* TYInput.swift in Sources */,
 				102FA19223A96F9F00ECB04E /* UIColor.swift in Sources */,
 				102FA19D23A96F9F00ECB04E /* UIImage.swift in Sources */,
-				8EA90C5923A8504C004164A6 /* AiTmedArguments.swift in Sources */,
 				102FA18F23A96F9F00ECB04E /* Functions.swift in Sources */,
 				104CCDBB23BDDB13005372C1 /* SharedViewController.swift in Sources */,
 				102FA19623A96F9F00ECB04E /* UIFont.swift in Sources */,
@@ -843,6 +850,7 @@
 				104CCDA923BDDB13005372C1 /* NotesGroup.swift in Sources */,
 				104CCDC823BDDB13005372C1 /* NotebookEditingController.swift in Sources */,
 				8EA6275823ABF71900AC6F14 /* AppDelegate.swift in Sources */,
+				8E2EB8AB23BE868000C93526 /* PrynoteError.swift in Sources */,
 				102FA1A623A96F9F00ECB04E /* TYLabel.swift in Sources */,
 				104CCDC323BDDB13005372C1 /* NotebookViewController+UITableViewDataSource.swift in Sources */,
 				102FA1A223A96F9F00ECB04E /* TYButton.swift in Sources */,
@@ -896,10 +904,10 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		8EA90C6623A850AE004164A6 /* PBXTargetDependency */ = {
+		8E2EB8A923BE769A00C93526 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 8EA90C1A23A84E4E004164A6 /* AiTmedSDK */;
-			targetProxy = 8EA90C6523A850AE004164A6 /* PBXContainerItemProxy */;
+			targetProxy = 8E2EB8A823BE769A00C93526 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 

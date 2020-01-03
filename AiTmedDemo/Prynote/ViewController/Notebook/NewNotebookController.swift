@@ -9,7 +9,7 @@
 import UIKit
 
 protocol NewNotebookControllerDelegate: class {
-    func didTapSaveItem(_ vc: UIViewController, title: String, completion: @escaping (Result<Void, AiTmedError>) -> Void)
+    func didTapSaveItem(_ vc: UIViewController, title: String, completion: @escaping (Result<Void, PrynoteError>) -> Void)
 }
 
 class NewNotebookController: UIViewController {

@@ -19,6 +19,7 @@ target 'AiTmedSDK' do
   pod 'KeychainAccess'
   pod 'Sodium'
   pod 'SwiftGRPC'
+  pod 'Alamofire'
   # Pods for AiTmedSDK
 
 end

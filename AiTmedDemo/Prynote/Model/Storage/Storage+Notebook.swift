@@ -22,7 +22,7 @@ extension Storage {
                 self.isLoadingAllNotebooks = false
                 self.isLoadingAllNotes = false
                 
-                self.boardcastStorageDidLoadNotebooks(success: false, error: error)
+                self.boardcastStorageDidLoadNotebooks(success: false, error: .unkown)
             case .success(let notebooks):
                 self.isLoadingAllNotebooks = false
                 self.notebooks = notebooks
@@ -32,15 +32,17 @@ extension Storage {
                 notebooks.forEach({ (notebook) in
                     notebook.isLoading = true
                     group.enter()
+                    
                     self.loadNotes(in: notebook, completion: { (result) in
                         notebook.isLoading = false
-                        switch result {
-                        case .failure(let error):
-                            print(error)
-                        case .success(let notes):
-                            notebook.notes = notes
-                        }
                         group.leave()
+                        switch result {
+                            case .failure(let error):
+                            print(error)
+                            case .success(let notes):
+                                notebook.notes = notes
+                        }
+                        
                     })
                 })
                 
@@ -58,11 +60,11 @@ extension Storage {
         completion(index)
     }
     
-    func addNotebookAtRemote(notebook: Notebook, completion: @escaping (Result<Void, AiTmedError>) -> Void) {
+    func addNotebookAtRemote(notebook: Notebook, completion: @escaping (Result<Void, PrynoteError>) -> Void) {
         APIService.addNotebook(title: notebook.title, isEncrypt: false) { (result) in
             switch result {
             case .failure(let error):
-                completion(.failure(error))
+                completion(.failure(.unkown))
             case .success(let id):
                 notebook.id = id
                 completion(.success(()))
@@ -78,7 +80,7 @@ extension Storage {
         }
     }
     
-    func removeNotebookAtRemote(notebook: Notebook, completion: @escaping (Result<Void, AiTmedError>) -> Void) {
+    func removeNotebookAtRemote(notebook: Notebook, completion: @escaping (Result<Void, PrynoteError>) -> Void) {
         if let id = notebook.id {
             isDeleting = true
             APIService.remove([id]) { (result) in
@@ -103,12 +105,12 @@ extension Storage {
         }
     }
     
-    func updateNotebookAtRemote(notebook: Notebook, title: String? = nil, isEncrypt: Bool? = nil, completion: @escaping (Result<Void, AiTmedError>) -> Void) {
+    func updateNotebookAtRemote(notebook: Notebook, title: String? = nil, isEncrypt: Bool? = nil, completion: @escaping (Result<Void, PrynoteError>) -> Void) {
         if let id = notebook.id {
             APIService.updateNotebook(id: id, title: title, isEncrypt: isEncrypt) { (result) in
                 switch result {
                 case .failure(let error):
-                    completion(.failure(error))
+                    completion(.failure(.unkown))
                 case .success(_):
                     completion(.success(()))
                 }

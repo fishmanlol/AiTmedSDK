@@ -17,32 +17,32 @@ enum State {
 }
 
 protocol StorageDelegate: AnyObject {
-    func storageDidLoadNotebooks(storage: Storage, success: Bool, error: AiTmedError?)
-    func storageDidLoadAllNotes(storage: Storage, success: Bool, error: AiTmedError?)
-    func storageDidAddNotebook(storage: Storage, succcess: Bool, error: AiTmedError?, notebook: Notebook)
+    func storageDidLoadNotebooks(storage: Storage, success: Bool, error: PrynoteError?)
+    func storageDidLoadAllNotes(storage: Storage, success: Bool, error: PrynoteError?)
+    func storageDidAddNotebook(storage: Storage, succcess: Bool, error: PrynoteError?, notebook: Notebook)
 }
 
 extension StorageDelegate {
-    func storageDidLoadNotebooks(storage: Storage, success: Bool, error: AiTmedError?) {}
-    func storageDidLoadAllNotes(storage: Storage, success: Bool, error: AiTmedError?) {}
-    func storageDidAddNotebook(storage: Storage, succcess: Bool, error: AiTmedError?, notebook: Notebook) {}
+    func storageDidLoadNotebooks(storage: Storage, success: Bool, error: PrynoteError?) {}
+    func storageDidLoadAllNotes(storage: Storage, success: Bool, error: PrynoteError?) {}
+    func storageDidAddNotebook(storage: Storage, succcess: Bool, error: PrynoteError?, notebook: Notebook) {}
 }
 
 ///Multicast
 extension Storage  {
-    func boardcastStorageDidLoadNotebooks(success: Bool, error: AiTmedError?) {
+    func boardcastStorageDidLoadNotebooks(success: Bool, error: PrynoteError?) {
         for delegate in delegates {
             delegate?.storageDidLoadNotebooks(storage: self, success: success, error: error)
         }
     }
     
-    func boardcastStorageDidLoadAllNotes(success: Bool, error: AiTmedError?) {
+    func boardcastStorageDidLoadAllNotes(success: Bool, error: PrynoteError?) {
         for delegate in delegates {
             delegate?.storageDidLoadAllNotes(storage: self, success: success, error: error)
         }
     }
     
-    func boardcastStorageDidAddNotebook(success: Bool, notebook: Notebook, error: AiTmedError?) {
+    func boardcastStorageDidAddNotebook(success: Bool, notebook: Notebook, error: PrynoteError?) {
         for delegate in delegates {
             delegate?.storageDidAddNotebook(storage: self, succcess: success, error: error, notebook: notebook)
         }
@@ -76,12 +76,6 @@ class Storage {
 //        }
 //        
 //    }
-    
-    func loadNotes(in notebook: Notebook, completion: @escaping (Result<[Note], AiTmedError>) -> Void) {
-        completion(.success([]))
-//        APIService.l
-    }
-    
 
     
     func numberOfAllNotes() -> Int {

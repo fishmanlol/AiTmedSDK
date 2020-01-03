@@ -21,6 +21,8 @@ public struct AiTmedType {
     static let createUser: Int32 = 1
     
     //CreateDoc
+    static let embedData: Int32 = 10001
+    static let s3Data: Int32 = 10002
 }
 
 enum ObjectType: Int32 {

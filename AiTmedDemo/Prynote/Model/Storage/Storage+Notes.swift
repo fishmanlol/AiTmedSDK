@@ -15,14 +15,31 @@ extension Storage {
         completion(note)
     }
     
-    func addNoteAtRemote(_ note: Note, completion: @escaping (Result<Void, AiTmedError>) -> Void) {
+    func addNoteAtRemote(_ note: Note, completion: @escaping (Result<Void, PrynoteError>) -> Void) {
         let notebook = note.notebook
         APIService.addNote(note: note, in: notebook) { (result) in
             switch result {
             case .failure(let error):
-                print(error.detail)
+                print(error.localizedDescription)
             case .success(let n):
                 print(n)
+            }
+        }
+    }
+    
+    func loadNotes(in notebook: Notebook, completion: @escaping (Result<[Note], PrynoteError>) -> Void) {
+        guard let notebookID = notebook.id else {
+            completion(.failure(.unkown))
+            return
+        }
+        
+        APIService.loadNotes(in: notebookID) { (result) in
+            switch result {
+            case .failure(let error):
+                completion(.failure(.unkown))
+            case .success(let files):
+                let notes = files.map { Note(file: $0, notebook: notebook) }
+                completion(.success(notes))
             }
         }
     }

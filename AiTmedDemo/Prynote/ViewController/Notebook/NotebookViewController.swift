@@ -72,14 +72,14 @@ class NotebookViewController: UITableViewController {
 }
 
 extension NotebookViewController: StorageDelegate {
-    func storageDidLoadAllNotes(storage: Storage, success: Bool, error: AiTmedError?) {
+    func storageDidLoadAllNotes(storage: Storage, success: Bool, error: PrynoteError?) {
         self.reloadRows([IndexPath(row: 0, section: 0)], with: .automatic)
         if !success {
             self.displayAlert(title: "Error", msg: error.debugDescription)
         }
     }
     
-    func storageDidLoadNotebooks(storage: Storage, success: Bool, error: AiTmedError?) {
+    func storageDidLoadNotebooks(storage: Storage, success: Bool, error: PrynoteError?) {
         DispatchQueue.main.async {
             if !success {
                 self.displayAlert(title: "Error", msg: error.debugDescription)
@@ -93,7 +93,7 @@ extension NotebookViewController: StorageDelegate {
         }
     }
     
-    func storageDidAddNotebook(storage: Storage, succcess: Bool, error: AiTmedError?, notebook: Notebook?) {
+    func storageDidAddNotebook(storage: Storage, succcess: Bool, error: PrynoteError?, notebook: Notebook?) {
         if !succcess {
             
         }

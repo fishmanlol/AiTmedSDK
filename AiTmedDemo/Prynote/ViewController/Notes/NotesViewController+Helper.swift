@@ -35,7 +35,7 @@ extension NotesViewController {
     }
     
     //MARK: - Add
-    func addNotebook(at indexPath: IndexPath, with title: String, completion: @escaping (Result<Notebook, AiTmedError>) -> Void) {
+    func addNotebook(at indexPath: IndexPath, with title: String, completion: @escaping (Result<Notebook, PrynoteError>) -> Void) {
           let notebook = Notebook(title: title)
           self.storage.addNotebookAtLocal(notebook: notebook, at: indexPath.row) { (index) in
               self.storage.addNotebookAtRemote(notebook: notebook) { (result) in

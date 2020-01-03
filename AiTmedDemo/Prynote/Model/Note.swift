@@ -7,11 +7,13 @@
 //
 
 import Foundation
+import AiTmedSDK
 
 class Note {
     var id: Data?
     var title: String = ""
     var content: String = ""
+    var isEncrypt: Bool = false
     var isLoading = false
     var date = Date()
     unowned var notebook: Notebook
@@ -22,20 +24,13 @@ class Note {
         self.content = content
     }
     
-//    
-//    static func mock(in notebook: Notebook) -> Note {
-//        return Note(title: "", content: "", notebook: notebook)
-//    }
-//    
-//    func load(completion: @escaping () -> Void) {
-//        isLoading = true
-//        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-//            self.title = "Aaaaa"
-//            self.content = "Bbbbbbbb"
-//            self.isLoading = false
-//            completion()
-//        }
-//    }
+    init(file: Document, notebook: Notebook) {
+        self.id = file.id
+        self.content = String(bytes: file.content ?? Data(), encoding: .utf8) ?? ""
+        self.isEncrypt = file.isEncrypt
+        self.title = file.title ?? ""
+        self.notebook = notebook
+    }
 }
 
 extension Note: Equatable {
