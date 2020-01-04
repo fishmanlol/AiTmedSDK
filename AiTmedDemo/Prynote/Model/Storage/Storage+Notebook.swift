@@ -38,11 +38,12 @@ extension Storage {
                         group.leave()
                         switch result {
                             case .failure(let error):
-                            print(error)
+                                print(error)
+                                self.boardcastStorageDidLoadNotebook(succeess: false, notebook: notebook, error: .unkown)
                             case .success(let notes):
                                 notebook.notes = notes
+                            self.boardcastStorageDidLoadNotebook(succeess: true, notebook: notebook, error: .unkown)
                         }
-                        
                     })
                 })
                 
@@ -83,7 +84,7 @@ extension Storage {
     func removeNotebookAtRemote(notebook: Notebook, completion: @escaping (Result<Void, PrynoteError>) -> Void) {
         if let id = notebook.id {
             isDeleting = true
-            APIService.remove([id]) { (result) in
+            APIService.removeNotebook(id) { (result) in
                 self.isDeleting = false
                 switch result {
                 case .failure(let error):

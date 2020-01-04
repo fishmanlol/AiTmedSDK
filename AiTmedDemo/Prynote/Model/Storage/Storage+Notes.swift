@@ -20,9 +20,9 @@ extension Storage {
         APIService.addNote(note: note, in: notebook) { (result) in
             switch result {
             case .failure(let error):
-                print(error.localizedDescription)
-            case .success(let n):
-                print(n)
+                completion(.failure(.unkown))
+            case .success(_):
+                completion(.success(()))
             }
         }
     }

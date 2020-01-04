@@ -50,16 +50,22 @@ class APIService {
         }
     }
     
-    static func remove(_ ids: [Data], completion: @escaping (Result<Void, AiTmedSDK.AiTmedError>) -> Void) {
-        AiTmed.delete(ids: ids, completion: completion)
+    static func removeNotebook(_ id: Data, completion: @escaping (Result<Void, AiTmedSDK.AiTmedError>) -> Void) {
+        AiTmed.Prynote.removeNotebook(id: id, completion: completion)
     }
     
     static func addNote(note: Note, in notebook: Notebook, completion: @escaping (Result<Void, AiTmedError>) -> Void) {
         if let folderID = notebook.id {
             let args = CreateDocumentArgs(title: note.title, content: note.content.toData() ?? Data(), isEncrypt: notebook.isEncrypt, folderID: folderID)
             AiTmed.Prynote.createDocument(args: args) { (result) in
-                completion(.success(()))
-                print("create")
+                switch result {
+                case .failure(let error):
+                    completion(.failure(error))
+                case .success(let document):
+                    note.id = document.id
+                    note.isBroken = document.isBroken
+                    completion(.success(()))
+                }
             }
         } else {
             completion(.failure(.unkown))
@@ -67,7 +73,15 @@ class APIService {
     }
     
     static func loadNotes(in notebookID: Data, completion: @escaping (Result<[Document], AiTmedError>) -> Void) {
-//        AiTmed.load
+        let args = RetrieveDocArgs(folderID: notebookID)
+        AiTmed.Prynote.retrieveDocument(args: args) { (result) in
+            switch result {
+            case .failure(let error):
+                completion(.failure(error))
+            case .success(let docs):
+                completion(.success(docs))
+            }
+        }
     }
     
     

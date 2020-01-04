@@ -12,7 +12,7 @@ import Alamofire
 extension AiTmed {
     public class Prynote {
         
-        public static func createDocument(args: CreateDocumentArgs, completion: @escaping (Swift.Result<Void, AiTmedError>) -> Void) {
+        public static func createDocument(args: CreateDocumentArgs, completion: @escaping (Swift.Result<Document, AiTmedError>) -> Void) {
             shared.transform(args: args) { (result) in
                 switch result {
                 case .failure(let error):
@@ -23,16 +23,34 @@ extension AiTmed {
                         switch result {
                         case .failure(let error):
                             completion(.failure(error))
-                        case .success(let (_, jwt)):
+                        case .success(let (doc, jwt)):
                             shared.c.jwt = jwt
-                            
+                            let document = Document(doc)
                             if !args.isOnS3 {
-                                completion(.success(()))
+                                completion(.success(document))
                             } else {
-                                AiTmed.upload(data: args.content, to: URL(string: "http://1223.com")!, completion: { (result) in
-                                    print("123")
-                                    completion(.success(()))
-                                })
+                                if let uploadURL = document.uploadURL {
+                                    Alamofire.upload(args.content, to: uploadURL, method: .put, headers: nil).responseString(completionHandler: { (r) in
+                                        print("upload: \n \(uploadURL)")
+                                        print(r.description)
+                                        if let error = r.error {
+                                            print("createDocument failed: \(error.localizedDescription)")
+                                            completion(.failure(.unkown))
+                                            return
+                                        }
+                                        
+                                        switch r.result {
+                                        case .failure(let error):
+                                            print("error: ", error)
+                                            completion(.failure(.unkown))
+                                        case .success(let str):
+                                            print("success: ", str)
+                                            completion(.success(document))
+                                        }
+                                    })
+                                } else {
+                                    completion(.failure(.unkown))
+                                }
                             }
                         }
                     })
@@ -55,12 +73,16 @@ extension AiTmed {
 
                         if document.isOnS3, let downloadURL = document.downloadURL {
                             Alamofire.download(downloadURL).responseData(completionHandler: { (response) in
+                                print("download url: \(downloadURL)")
                                 switch response.result {
                                 case .failure(let error):
-                                    document.content = Data()
                                     document.isBroken = true
                                 case .success(let data):
-                                    document.content = data
+                                    if document.isZipped {
+                                        document.content = data.unzip()
+                                    } else {
+                                        document.content = data
+                                    }
                                 }
                                 
                                 documents.append(document)
@@ -72,7 +94,7 @@ extension AiTmed {
                     }
 
                     group.notify(queue: DispatchQueue.main, execute: {
-                        completion(.success(files))
+                        completion(.success(documents))
                     })
                 }
             }
@@ -149,6 +171,42 @@ extension AiTmed {
                             completion(.success(Notebook(id: edge.id, title: title, isEncrypt: !edge.besak.isEmpty)))
                         }
                     })
+                }
+            }
+        }
+        
+        public static func removeNotebook(id: Data, completion: @escaping (Swift.Result<Void, AiTmedError>) -> Void) {
+            //first find out all notes
+            shared._retrieveDoc(args: RetrieveDocArgs(folderID: id), jwt: shared.c.jwt) { (result) in
+                switch result {
+                case .failure(let error):
+                    completion(.failure(error))
+                case .success(let (docs, jwt)):
+                    shared.c.jwt = jwt
+                    var success = true
+                    for doc in docs {
+                        let (jwt, error) = shared._delete(ids: [doc.id], jwt: shared.c.jwt)
+                        if let j = jwt, error == nil {
+                            print("222")
+                            shared.c.jwt = j
+                        } else {
+                            print("111")
+                            success = false
+                            break
+                        }
+                    }
+                    
+                    if success {
+                        let (jwt, error) = shared._delete(ids: [id], jwt: shared.c.jwt)
+                        if let j = jwt, error == nil {
+                            shared.c.jwt = j
+                            completion(.success(()))
+                        } else {
+                            completion(.failure(.unkown))
+                        }
+                    } else {
+                        completion(.failure(.unkown))
+                    }
                 }
             }
         }

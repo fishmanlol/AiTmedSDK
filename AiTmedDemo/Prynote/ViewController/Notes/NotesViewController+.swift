@@ -10,7 +10,7 @@ import UIKit
 
 extension NotesViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-//        stateCoordinator?.select(notes[indexPath.row], in: notebook)
+        stateCoordinator?.select(notes[indexPath.row])
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

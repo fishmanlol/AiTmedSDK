@@ -72,7 +72,6 @@
 		8DC41289F13409B5AAF363E4 /* Pods_AiTmedSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 60E359D06ADBC67F99A40EB4 /* Pods_AiTmedSDK.framework */; };
 		8E2EB8A723BE668D00C93526 /* Data+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E2EB8A623BE668D00C93526 /* Data+.swift */; };
 		8E2EB8AB23BE868000C93526 /* PrynoteError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E2EB8AA23BE868000C93526 /* PrynoteError.swift */; };
-		8E2EB8AD23BEAD8300C93526 /* AiTmed+S3.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E2EB8AC23BEAD8300C93526 /* AiTmed+S3.swift */; };
 		8EA6275223ABF6E800AC6F14 /* NSNotification.Name+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EA6275123ABF6E800AC6F14 /* NSNotification.Name+.swift */; };
 		8EA6275323ABF6E800AC6F14 /* UIView+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EA6274E23ABF6E700AC6F14 /* UIView+.swift */; };
 		8EA6275423ABF6E800AC6F14 /* UIViewController+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EA6274F23ABF6E700AC6F14 /* UIViewController+.swift */; };
@@ -205,7 +204,6 @@
 		885815D4A5221A668EB7F808 /* Pods-AiTmedSDK.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AiTmedSDK.debug.xcconfig"; path = "Target Support Files/Pods-AiTmedSDK/Pods-AiTmedSDK.debug.xcconfig"; sourceTree = "<group>"; };
 		8E2EB8A623BE668D00C93526 /* Data+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Data+.swift"; sourceTree = "<group>"; };
 		8E2EB8AA23BE868000C93526 /* PrynoteError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrynoteError.swift; sourceTree = "<group>"; };
-		8E2EB8AC23BEAD8300C93526 /* AiTmed+S3.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AiTmed+S3.swift"; sourceTree = "<group>"; };
 		8EA6274E23ABF6E700AC6F14 /* UIView+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+.swift"; sourceTree = "<group>"; };
 		8EA6274F23ABF6E700AC6F14 /* UIViewController+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+.swift"; sourceTree = "<group>"; };
 		8EA6275023ABF6E800AC6F14 /* Date+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+.swift"; sourceTree = "<group>"; };
@@ -503,7 +501,6 @@
 				8EA90C1F23A84E4E004164A6 /* Info.plist */,
 				8EA6277023AC02F400AC6F14 /* Prynote */,
 				8EA6276E23AC016500AC6F14 /* Prynote.swift */,
-				8E2EB8AC23BEAD8300C93526 /* AiTmed+S3.swift */,
 				8EA90C4323A8504B004164A6 /* AiTmed.swift */,
 				8EA6277323AC3E9A00AC6F14 /* Document.swift */,
 				8EA90C4423A8504B004164A6 /* base */,
@@ -812,7 +809,6 @@
 				8EA90C7123A853F6004164A6 /* AiTmedDeatKey.swift in Sources */,
 				8EA6276F23AC016500AC6F14 /* Prynote.swift in Sources */,
 				8EA90C7223A853F6004164A6 /* AiTmedNameKey.swift in Sources */,
-				8E2EB8AD23BEAD8300C93526 /* AiTmed+S3.swift in Sources */,
 				8EA90C7323A853F6004164A6 /* AiTmedType.swift in Sources */,
 				8EA90C6823A853E8004164A6 /* ecos_api.pb.swift in Sources */,
 				8E2EB8A723BE668D00C93526 /* Data+.swift in Sources */,

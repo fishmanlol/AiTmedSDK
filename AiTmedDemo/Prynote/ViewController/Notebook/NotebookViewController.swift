@@ -93,9 +93,11 @@ extension NotebookViewController: StorageDelegate {
         }
     }
     
-    func storageDidAddNotebook(storage: Storage, succcess: Bool, error: PrynoteError?, notebook: Notebook?) {
-        if !succcess {
-            
+    func storageDidLoadNotebook(storage: Storage, succcess: Bool, error: PrynoteError?, notebook: Notebook) {
+        if let index = storage.index(of: notebook) {
+            tableView.beginUpdates()
+            tableView.reloadRows(at: [IndexPath(row: index, section: 1)], with: .automatic)
+            tableView.endUpdates()
         }
     }
 }

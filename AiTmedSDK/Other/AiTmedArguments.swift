@@ -117,6 +117,10 @@ public class CreateDocumentArgs {
         return type == AiTmedType.s3Data
     }
     
+    var isZipSatisfied: Bool {
+        return content.isZipSatisfied
+    }
+    
     public init(title: String = "", content: Data = Data(), isEncrypt: Bool = false, mime: MimeType = .data, folderID: Data) {
         self.title = title
         self.content = content
@@ -124,15 +128,11 @@ public class CreateDocumentArgs {
         self.folderID = folderID
         self.mime = mime
         
-        if content.isZipSatisfied {
-            self.content = content.zip() ?? Data()
+        if content.isEmbedSatisfied {
+            type = AiTmedType.embedData
+        } else {
+            type = AiTmedType.s3Data
         }
-        type = AiTmedType.s3Data
-//        if content.isEmbedSatisfied {
-//            type = AiTmedType.embedData
-//        } else {
-//            type = AiTmedType.s3Data
-//        }
     }
 }
 

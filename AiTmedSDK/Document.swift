@@ -20,16 +20,12 @@ public struct Document {
     public var isBroken = false
     var isOnS3 = false
     var isZipped = false
-    var downloadURL: URL?
-    var uploadURL: URL?
+    var downloadURL: String?
+    var uploadURL: String?
     
     init(_ doc: Doc) {
         self.id = doc.id
         if let json = doc.name.toJSONDict() {
-            if json["isGzip"] as? Bool == true {
-                isZipped = true
-            }
-            
             if json["isOnS3"] as? Bool == true {
                 isOnS3 = true
             }
@@ -37,14 +33,30 @@ public struct Document {
             if json["isOnS3"] as? Bool == false, let contentBase64 = json["data"] as? String {
                 content = Data(base64Encoded: contentBase64)
             }
+            
+            if json["isGzip"] as? Bool == true {
+                isZipped = true
+            }
+            
+            if let title = json["title"] as? String {
+                self.title = title
+            }
+            
+            if let type = json["type"] as? String, let mime = MimeType(rawValue: type) {
+                self.type = mime
+            }
+            
+            if !isOnS3 && isZipped {
+                content = content?.unzip()
+            }
         }
         
         if let json = doc.deat.toJSONDict() {
             if let url = json["url"] as? String {
-                downloadURL = URL(string: url)
+                downloadURL = url
                 
                 if let sig = json["sig"] as? String {
-                    uploadURL = URL(string: url + sig)
+                    uploadURL = url + "?" + sig
                 }
             }
         }

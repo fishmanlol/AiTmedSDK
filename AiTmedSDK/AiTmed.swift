@@ -18,12 +18,12 @@ public class AiTmed {
     ///Encryption tool
     let e = Encryption()
     let grpcTimeout: TimeInterval = 5
-//    let host1 = "testapi2.aitmed.com:443"
-    let host = "ecosapi.aitmed.com:80"
+//    let host1 = "configd.aitmed.com: 9090"
+    let host = "testapi2.aitmed.com:443"
     var client: Aitmed_Ecos_V1beta1_EcosAPIServiceClient
     static let shared = AiTmed()
     init() {
-        client = Aitmed_Ecos_V1beta1_EcosAPIServiceClient(address: host, secure: false)
+        client = Aitmed_Ecos_V1beta1_EcosAPIServiceClient(address: host, secure: true)
         client.timeout = grpcTimeout
     }
     var OPTCodeJwt: [String: String] = [:]
@@ -31,7 +31,8 @@ public class AiTmed {
     public static func hasCredential(for phoneNumber: String) -> Bool {
         if let _ = shared.c {
             return true
-        } else if let _ = Credential(phoneNumber: phoneNumber) {
+        } else if let cre = Credential(phoneNumber: phoneNumber) {
+            print(cre.esk)
             return true
         } else {
             return false
@@ -293,17 +294,17 @@ extension AiTmed {
         request.id = ids
         request.jwt = jwt
         
-        print("delete edge request json: \n", (try? request.jsonString()) ?? "")
+        print("delete request json: \n", (try? request.jsonString()) ?? "")
         
         do {
             try client.dx(request) { (response, result) in
                 guard let response = response else {
-                    print("delete edge has no response(\(result.statusCode)): \(result.description)")
+                    print("delete has no response(\(result.statusCode)): \(result.description)")
                     completion(.failure(.grpcFailed(.unkown)))
                     return
                 }
                 
-                print("delete edge response: \n", (try? response.jsonString()) ?? "")
+                print("delete response: \n", (try? response.jsonString()) ?? "")
                 
                 if response.code == 0 {
                     completion(.success(response.jwt))
@@ -315,6 +316,28 @@ extension AiTmed {
             print("grpc error: \(error.localizedDescription)")
             completion(.failure(.grpcFailed(.unkown)))
         }
+    }
+    
+    ///sync
+    func _delete(ids: [Data], jwt: String) -> (String?, AiTmedError?) {
+        var request = Aitmed_Ecos_V1beta1_dxReq()
+        request.id = ids
+        request.jwt = jwt
+        
+        print("delete request json: \n", (try? request.jsonString()) ?? "")
+        
+        guard let response = try? client.dx(request) else {
+            print("delete request failed")
+            return (nil, .unkown)
+        }
+        
+        print("delete response: \n", (try? response.jsonString()) ?? "")
+        
+        guard response.code == 0 else {
+            return (nil, .unkown)
+        }
+        
+        return (response.jwt, nil)
     }
     
     ///Update edge
@@ -542,11 +565,14 @@ extension AiTmed {
         edge.name = name
         
         if args.isEncrypt {
-            guard let besak = e.generateXESAK(sendSecretKey: c.sk!, recvPublicKey: c.pk).0 else {
+            let (besak, eesak) = e.generateXESAK(sendSecretKey: c.sk!, recvPublicKey: c.pk)
+            guard let b = besak, let e = eesak else {
                 completion(.failure(.credentialFailed(.signinRequired)))
                 return
             }
-            edge.besak = besak.toData()
+            
+            edge.besak = b.toData()
+            edge.eesak = e.toData()
         }
         
         completion(.success(edge))
@@ -591,10 +617,19 @@ extension AiTmed {
             return
         }
         
+        var content = args.content
+        if args.isZipSatisfied {
+            content = args.content.zip() ?? Data()
+        }
+        
+        if args.isEncrypt {
+            
+        }
+        
         var dict: [String: Any] = ["title": args.title, "isOnS3": args.isOnS3, "isGzip": args.content.isZipSatisfied, "type": args.mime.rawValue]
         
         if !args.isOnS3 {
-            dict["data"] = args.content.base64EncodedString()
+             dict["data"] = content.base64EncodedString()
         }
         
         guard let name = dict.toJSON() else {
@@ -609,5 +644,22 @@ extension AiTmed {
         //unit is byte
         doc.size = Int32(args.content.count)
         completion(.success(doc))
+    }
+    
+    //MARK: - Helper
+    static func xeskPairInEdge(_ id: Data, completion: @escaping ((Key?, Key?)) -> Void) {
+        shared._retreiveEdge(args: RetrieveEdgeArgs(ids: [id], maxCount: nil), jwt: shared.c.jwt) { (result) in
+            switch result {
+            case .failure(let error):
+                completion((nil, nil))
+            case .success(let (edges, jwt)):
+                shared.c.jwt = jwt
+                if let edge = edges.first, edge.besak.count > 0, edge.eesak.count > 0  {
+                    completion((Key(edge.besak), Key(edge.eesak)))
+                } else {
+                    completion((nil, nil))
+                }
+            }
+        }
     }
 }

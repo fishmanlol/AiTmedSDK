@@ -16,6 +16,7 @@ class Note {
     var isEncrypt: Bool = false
     var isLoading = false
     var date = Date()
+    var isBroken = false
     unowned var notebook: Notebook
     
     init(title: String, content: String, notebook: Notebook) {

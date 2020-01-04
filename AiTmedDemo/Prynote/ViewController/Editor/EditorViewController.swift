@@ -35,7 +35,9 @@ class EditorViewController: UIViewController {
     var timer: Timer?
     var isLoading = false {
         didSet {
-            didChangeLoadingState()
+            DispatchQueue.main.async {
+                self.didChangeLoadingState()
+            }
         }
     }
     var isKeyboardOnScreen: Bool {
