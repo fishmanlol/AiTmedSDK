@@ -28,11 +28,15 @@ extension AiTmed {
     }
     
     public struct _Note {
-        var id: Data
-        var title: String
-        var content: Data
-        var ctime: Date = Date()
-        var mtime: Date = Date()
-        var isBroken = false
+        public var id: Data
+        public var title: String
+        public var content: Data
+        public var ctime: Date = Date()
+        public var mtime: Date = Date()
+        public var isBroken = false
+    }
+    
+    public struct _Notebook {
+        
     }
 }

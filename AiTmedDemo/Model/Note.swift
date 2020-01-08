@@ -19,12 +19,14 @@ struct Note {
     var mtime: Date = Date()
     var isBroken = false
     
-    init(id: Data, notebook: Notebook, title: String = "", content: Data = Data(), isBroken: Bool = false) {
+    init(id: Data, notebook: Notebook, title: String = "", content: Data = Data(), isBroken: Bool = false, mtime: Date = Date(), ctime: Date = Date()) {
         self.id = id
         self.notebook = notebook
         self.title = title
         self.content = content
         self.isBroken = isBroken
+        self.mtime = mtime
+        self.ctime = ctime
     }
     
     func update(title: String? = nil, content: Data? = nil, completion: @escaping (Result<Void, PrynoteError>) -> Void) {

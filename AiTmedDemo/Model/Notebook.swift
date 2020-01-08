@@ -33,7 +33,19 @@ struct Notebook {
         }
     }
     
-    func retrieveNotes(completion: @escaping (Result<Void, PrynoteError>) -> Void) {
-        
+    func retrieveNotes(completion: @escaping (Result<[Note], PrynoteError>) -> Void) {
+        AiTmed.retrieveNotes(notebookID: id) { (result) in
+            switch result {
+            case .failure(let error):
+                completion(.failure(.unkown))
+            case .success(let _notes):
+                let notes = _notes.map {
+                    Note(id: $0.id, notebook: self, title: $0.title, content: $0.content, isBroken: $0.isBroken, mtime: $0.mtime, ctime: $0.ctime)
+                }
+                completion(.success(notes))
+            }
+        }
     }
+    
+    
 }
