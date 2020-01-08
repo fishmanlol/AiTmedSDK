@@ -1,0 +1,6 @@
+framework module Pods_AiTmedDemo {
+  umbrella header "Pods-AiTmedDemo-umbrella.h"
+
+  export *
+  module * { export * }
+}

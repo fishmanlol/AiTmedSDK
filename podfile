@@ -1,0 +1,25 @@
+# Uncomment the next line to define a global platform for your project
+# platform :ios, '9.0'
+
+target 'AiTmedDemo' do
+  # Comment the next line if you don't want to use dynamic frameworks
+  use_frameworks!
+  pod 'SnapKit'
+  pod 'PhoneNumberKit', '~> 3.1'
+  pod 'DZNEmptyDataSet'
+  pod 'R.swift'
+  pod 'Reveal-SDK', :configurations => ['Debug']
+  # Pods for AiTmedDemo
+
+end
+
+target 'AiTmedSDK1' do
+  # Comment the next line if you don't want to use dynamic frameworks
+  use_frameworks!
+  pod 'KeychainAccess'
+  pod 'Sodium'
+  pod 'SwiftGRPC'
+  pod 'Alamofire'
+  # Pods for AiTmedSDK
+
+end
