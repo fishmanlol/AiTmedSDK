@@ -19,7 +19,6 @@ class NotebookEditingController: UIViewController {
     
     private var mode: Mode
     private var notebook: Notebook!
-    
     //MARK: - Action
     @objc func didTapActionButton(button: UIButton) {
         button.startAnimating()
@@ -40,7 +39,7 @@ class NotebookEditingController: UIViewController {
         if case Mode.update(let notebook) = mode {
             self.notebook = notebook
         }
-        
+        fatalError()
         super.init(nibName: nil, bundle: nil)
     }
     

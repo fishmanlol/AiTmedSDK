@@ -18,37 +18,3 @@ public enum AiTmedNameKey: String {
     //Prynote
     case title
 }
-
-extension Dictionary where Key == AiTmedNameKey {
-    func toJSON() -> String? {
-        var newDict: [String: Value] = [:]
-        
-        for (key, value) in self {
-            newDict[key.rawValue] = value
-        }
-        
-        guard let data = try? JSONSerialization.data(withJSONObject: newDict, options: []) else { return nil }
-        return String(bytes: data, encoding: .utf8)
-    }
-}
-
-extension Dictionary where Key == String {
-    func toJSON() -> String? {
-        guard let data = try? JSONSerialization.data(withJSONObject: self, options: []) else { return nil }
-        return String(bytes: data, encoding: .utf8)
-    }
-}
-
-extension String {
-    func toJSONDict() -> [String: Any]? {
-        if let data = self.data(using: .utf8) {
-            do {
-                return try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]
-            } catch {
-                print(error.localizedDescription)
-            }
-        }
-        
-        return nil
-    }
-}

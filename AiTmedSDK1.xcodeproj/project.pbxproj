@@ -35,6 +35,8 @@
 		8E79745723C6A47200819670 /* AiTmedSDK1.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 8E9FE3AC23C54BDC0046AD9D /* AiTmedSDK1.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		8E79745C23C6B0BC00819670 /* NotebookViewController+UITableViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E79745B23C6B0BC00819670 /* NotebookViewController+UITableViewDelegate.swift */; };
 		8E79746023C6B23100819670 /* NotebookEditingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E79745E23C6B23100819670 /* NotebookEditingController.swift */; };
+		8E79746323C7D43000819670 /* Dictionary+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E79746223C7D43000819670 /* Dictionary+.swift */; };
+		8E79746523C7D43E00819670 /* String+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E79746423C7D43E00819670 /* String+.swift */; };
 		8E9FE3B123C54BDC0046AD9D /* AiTmedSDK1.h in Headers */ = {isa = PBXBuildFile; fileRef = 8E9FE3AF23C54BDC0046AD9D /* AiTmedSDK1.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8E9FE3BE23C54BFA0046AD9D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E9FE3BD23C54BFA0046AD9D /* AppDelegate.swift */; };
 		8E9FE3C323C54BFA0046AD9D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8E9FE3C123C54BFA0046AD9D /* Main.storyboard */; };
@@ -156,6 +158,8 @@
 		8E79745423C6A43200819670 /* Pods_AiTmedSDK1.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Pods_AiTmedSDK1.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8E79745B23C6B0BC00819670 /* NotebookViewController+UITableViewDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NotebookViewController+UITableViewDelegate.swift"; sourceTree = "<group>"; };
 		8E79745E23C6B23100819670 /* NotebookEditingController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotebookEditingController.swift; sourceTree = "<group>"; };
+		8E79746223C7D43000819670 /* Dictionary+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Dictionary+.swift"; sourceTree = "<group>"; };
+		8E79746423C7D43E00819670 /* String+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+.swift"; sourceTree = "<group>"; };
 		8E9FE3AC23C54BDC0046AD9D /* AiTmedSDK1.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AiTmedSDK1.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8E9FE3AF23C54BDC0046AD9D /* AiTmedSDK1.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AiTmedSDK1.h; sourceTree = "<group>"; };
 		8E9FE3B023C54BDC0046AD9D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -572,6 +576,8 @@
 				8E9FE43523C553000046AD9D /* UserDefaults+.swift */,
 				8E9FE43623C553000046AD9D /* Keychain.swift */,
 				8E9FE43723C553000046AD9D /* Data+.swift */,
+				8E79746223C7D43000819670 /* Dictionary+.swift */,
+				8E79746423C7D43E00819670 /* String+.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -850,10 +856,12 @@
 				8E9FE42D23C552F00046AD9D /* ecos_api.grpc.swift in Sources */,
 				8E9FE43023C552F50046AD9D /* Credential.swift in Sources */,
 				8E9FE43A23C553000046AD9D /* Data+.swift in Sources */,
+				8E79746523C7D43E00819670 /* String+.swift in Sources */,
 				8E9FE43323C552FA0046AD9D /* Encryption.swift in Sources */,
 				8E79742F23C65F5800819670 /* AiTmed+grpc.swift in Sources */,
 				8E79743A23C6626000819670 /* CreateEdgeArgs.swift in Sources */,
 				8E9FE44D23C553300046AD9D /* Prynote.swift in Sources */,
+				8E79746323C7D43000819670 /* Dictionary+.swift in Sources */,
 				8E79743523C65FB500819670 /* AiTmed+update.swift in Sources */,
 				8E9FE43823C553000046AD9D /* UserDefaults+.swift in Sources */,
 				1090FA7323C5AA4F002B05E6 /* AiTmedDeatKey.swift in Sources */,

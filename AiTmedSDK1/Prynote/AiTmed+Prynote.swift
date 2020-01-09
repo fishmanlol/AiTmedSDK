@@ -86,4 +86,8 @@ extension AiTmed {
         public var ctime: Date = Date()
         public var mtime: Date = Date()
     }
+    
+    public struct _Appointment {
+    
+    }
 }
