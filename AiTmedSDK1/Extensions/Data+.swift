@@ -18,7 +18,7 @@ extension Data {
     }
     
     var isZipSatisfied: Bool {
-        if let zipped = zip(), zipped.count < count {
+        if zip().count < count {
             return true
         } else {
             return false
@@ -29,7 +29,7 @@ extension Data {
         return self.starts(with: [0x1f,0x8b])
     }
     
-    func zip() -> Data? {
+    func zip() -> Data {
         guard self.count > 0 else {
             return self
         }
@@ -45,7 +45,7 @@ extension Data {
         var status = deflateInit2_(&stream,Z_DEFAULT_COMPRESSION, Z_DEFLATED, MAX_WBITS + 16, MAX_MEM_LEVEL, Z_DEFAULT_STRATEGY, ZLIB_VERSION, GZIP_STREAM_SIZE)
         
         if  status != Z_OK {
-            return  nil
+            return Data()
         }
         
         var compressedData = Data()
@@ -65,12 +65,12 @@ extension Data {
             status = deflate(&stream, Z_FINISH)
             
             if status != Z_OK && status != Z_STREAM_END {
-                return nil
+                return Data()
             }
         }
         
         guard deflateEnd(&stream) == Z_OK else {
-            return nil
+            return Data()
         }
         
         compressedData.count = Int(stream.total_out)

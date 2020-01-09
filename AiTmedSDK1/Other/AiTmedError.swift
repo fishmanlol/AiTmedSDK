@@ -38,9 +38,10 @@ public enum AiTmedError: Error {
     }
     
     public enum CredentialError {
-        case passwordFailed
-        case credentialRequired
-        case signinRequired
+        case passwordWrong
+        case passwordNeeded
+        case credentialNeeded
+        case signInNeeded
         
         var title: String {
             return "credential error"

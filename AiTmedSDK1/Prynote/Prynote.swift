@@ -13,51 +13,7 @@ import Dispatch
 extension AiTmed {
     public class Prynote {
         
-        public static func createDocument(args: CreateDocumentArgs, completion: @escaping (Swift.Result<Document, AiTmedError>) -> Void) {
-            shared.transform(args: args) { (result) in
-                switch result {
-                case .failure(let error):
-                    completion(.failure(error))
-                case .success(let doc):
-                    //when success in creating doc, then decide whether need to upload to S3
-                    shared._createDoc(doc: doc, jwt: shared.c!.jwt, completion: { (result) in
-                        switch result {
-                        case .failure(let error):
-                            completion(.failure(error))
-                        case .success(let (doc, jwt)):
-                            shared.c.jwt = jwt
-                            let document = Document(doc)
-                            if !args.isOnS3 {
-                                completion(.success(document))
-                            } else {
-                                if let uploadURL = document.uploadURL {
-                                    Alamofire.upload(args.content, to: uploadURL, method: .put, headers: nil).responseString(completionHandler: { (r) in
-                                        print("upload: \n \(uploadURL)")
-                                        print(r.description)
-                                        if let error = r.error {
-                                            print("createDocument failed: \(error.localizedDescription)")
-                                            completion(.failure(.unkown))
-                                            return
-                                        }
-                                        
-                                        switch r.result {
-                                        case .failure(let error):
-                                            print("error: ", error)
-                                            completion(.failure(.unkown))
-                                        case .success(let str):
-                                            print("success: ", str)
-                                            completion(.success(document))
-                                        }
-                                    })
-                                } else {
-                                    completion(.failure(.unkown))
-                                }
-                            }
-                        }
-                    })
-                }
-            }
-        }
+        
         
         public static func updateDocument(args: UpdateDocumentArgs, completion: @escaping (Swift.Result<Document, AiTmedError>) -> Void) {
             createDocument(args: args, completion: completion)

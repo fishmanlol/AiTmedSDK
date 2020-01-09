@@ -24,9 +24,11 @@ class NotebookCell: UITableViewCell {
             if newValue {
                 indicator.startAnimating()
                 notesCountLabel.isHidden = true
+                isUserInteractionEnabled = false
             } else {
                 indicator.stopAnimating()
                 notesCountLabel.isHidden = false
+                isUserInteractionEnabled = true
             }
         }
     }

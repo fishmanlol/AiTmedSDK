@@ -124,7 +124,7 @@ class StartViewController: UIViewController {
                     }
                 case .success(_):
                     DispatchQueue.main.async {
-                        
+                        self.navigationController?.pushViewController(MasterController(), animated: false)
                     }
                 }
             }
@@ -147,8 +147,7 @@ class StartViewController: UIViewController {
                     }
                 case .success(_):
                     DispatchQueue.main.async {
-//                        let root = RootViewController(storage: Storage(phoneNumber: phoneNumber))
-//                        UIApplication.shared.keyWindow?.rootViewController = root
+                        self.navigationController?.pushViewController(MasterController(), animated: false)
                     }
                 }
             }

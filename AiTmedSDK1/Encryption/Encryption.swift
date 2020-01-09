@@ -48,12 +48,12 @@ struct Encryption {
      
      - returns: (BESAK, EESAK)
     */
-    func generateXESAK(sendSecretKey: Key, recvPublicKey: Key) -> (Key?, Key?) {
+    func generateXESAK(sendSecretKey: Key, recvPublicKey: Key) -> (Key, Key)? {
         let tmpKey = generateSKey().toBytes()
         let halfKey = Array(tmpKey[0...15])
         let sendPublicKey = generatePk(from: sendSecretKey)
         guard let besak = aKeyEncrypt(recvPublicKey: sendPublicKey, sendSecretKey: sendSecretKey, data: halfKey),
-                let eesak = aKeyEncrypt(recvPublicKey: recvPublicKey, sendSecretKey: sendSecretKey, data: halfKey) else { return (nil, nil) }
+                let eesak = aKeyEncrypt(recvPublicKey: recvPublicKey, sendSecretKey: sendSecretKey, data: halfKey) else { return nil }
         
         return (Key(besak), Key(eesak))
     }

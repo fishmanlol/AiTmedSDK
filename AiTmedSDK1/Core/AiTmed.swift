@@ -6,7 +6,17 @@
 //  Copyright © 2019 Yi Tong. All rights reserved.
 //
 
+//The SDK has three layers
+//1. grpc layer - call low level grpc
+//2. conversion layer - convert paraments from application layer to edge, vertex, doc
+//3. application layer - call conversion layer, expose to outside
+
+//core folder include grpc layer and conversion layer
+//grpc layer is included in AiTmed+grpc file
+//conversion layers are included in AiTmed+create, AiTmed+retrieve, AiTmed+update, AiTmed+delete
+
 import Foundation
+import Alamofire
 
 typealias Edge = Aitmed_Ecos_V1beta1_Edge
 typealias Vertex = Aitmed_Ecos_V1beta1_Vertex
@@ -28,6 +38,18 @@ public class AiTmed {
     }
     var OPTCodeJwt: [String: String] = [:]
     
+    func checkStatus() -> AiTmedError? {
+        if let c = c {
+            if c.status == .login {
+                return nil
+            } else if c.status == .locked {
+                return .credentialFailed(.passwordNeeded)
+            }
+        }
+        
+        return .credentialFailed(.signInNeeded)
+    }
+    
     public static func hasCredential(for phoneNumber: String) -> Bool {
         if let _ = shared.c {
             return true
@@ -43,148 +65,16 @@ public class AiTmed {
         shared.c?.sk = nil
     }
     
-    public static func deleteUser(completion: @escaping (Result<Void, AiTmedError>) -> Void) {
+    public static func deleteUser(completion: @escaping (Swift.Result<Void, AiTmedError>) -> Void) {
         guard let c = shared.c, c.status == .login else {
-            completion(.failure(.credentialFailed(.signinRequired)))
+            completion(.failure(.credentialFailed(.credentialNeeded)))
             return
         }
         
         deleteVertex(id: shared.c.userId, completion: completion)
     }
     
-    public static func deleteDoc(id: Data, completion: @escaping (Result<Void, AiTmedError>) -> Void) {
-        guard let c = shared.c, c.status == .login else {
-            completion(.failure(.credentialFailed(.signinRequired)))
-            return
-        }
-        shared._delete(ids: [id], jwt: shared.c!.jwt) { (result: Result<String, AiTmedError>) in
-            switch result {
-            case .failure(let error):
-                completion(.failure(error))
-            case .success(let jwt):
-                shared.c.jwt = jwt
-                completion(.success(()))
-            }
-        }
-    }
-    
-    public static func deleteEdge(id: Data, completion: @escaping (Result<Void, AiTmedError>) -> Void) {
-        guard let c = shared.c, c.status == .login else {
-            completion(.failure(.credentialFailed(.signinRequired)))
-            return
-        }
-        
-        shared._retrieveDoc(args: RetrieveDocArgs(folderID: id), jwt: shared.c.jwt) { (result) in
-            switch result {
-            case .failure(let error):
-                completion(.failure(error))
-            case .success(let (docs, jwt)):
-                shared.c.jwt = jwt
-                var success = true
-                
-                DispatchQueue.global().async {
-                    let sem = DispatchSemaphore(value: 0)
-                    for doc in docs {
-                        deleteDoc(id: doc.id, completion: { (result) in
-                            switch result {
-                            case .failure(let error):
-                                success = false
-                                break
-                            case .success(_):
-                                break
-                            }
-                            sem.signal()
-                        })
-                        sem.wait()
-                    }
-                    
-                    if success {
-                        shared._delete(ids: [id], jwt: shared.c.jwt, completion: { (result) in
-                            switch result {
-                            case .failure(_):
-                                completion(.failure(.unkown))
-                            case .success(let j):
-                                shared.c.jwt = j
-                                completion(.success(()))
-                            }
-                        })
-                    } else {
-                        completion(.failure(.unkown))
-                    }
-                }
-            }
-        }
-    }
-    
-    public static func deleteVertex(id: Data, completion: @escaping (Result<Void, AiTmedError>) -> Void) {
-        guard let c = shared.c, c.status == .login else {
-            completion(.failure(.credentialFailed(.signinRequired)))
-            return
-        }
-        
-        //Notebooks
-        shared._retreiveEdge(args: RetrieveNotebooksArgs(ids: [], maxCount: nil), jwt: shared.c.jwt) { (result) in
-            switch result {
-            case .failure(let error):
-                completion(.failure(error))
-            case .success(let (edges, jwt)):
-                shared.c.jwt = jwt
-                var success = true
-                
-                DispatchQueue.global().async {
-                    let sem = DispatchSemaphore(value: 0)
-                    for edge in edges {
-                        deleteEdge(id: edge.id, completion: { (result) in
-                            switch result {
-                            case .failure(_):
-                                success = false
-                            case .success(_):
-                                break
-                            }
-                            sem.signal()
-                        })
-                        
-                        sem.wait()
-                    }
-                    
-                    if success {
-                        shared._delete(ids: [id], jwt: shared.c.jwt, completion: { (result) in
-                            switch result {
-                            case .failure(_):
-                                completion(.failure(.unkown))
-                            case .success(let j):
-                                shared.c.jwt = j
-                                completion(.success(()))
-                            }
-                        })
-                    } else {
-                        completion(.failure(.unkown))
-                    }
-                }
-            }
-        }
-    }
-    
-    public static func sendOPTCode(args: SendOPTCodeArgs, completion: @escaping (Result<Void, AiTmedError>) -> Void) {
-        shared.transform(args: args) { (result) in
-            switch result {
-            case .failure(let error):
-                completion(.failure(error))
-            case .success(let edge):
-                shared._createEdge(edge: edge, jwt: "", completion: { (result: Result<(Edge, String), AiTmedError>) in
-                    switch result {
-                    case .failure(let error):
-                        completion(.failure(error))
-                    case .success(let (_, jwt)):
-                        shared.OPTCodeJwt[args.phoneNumber] = jwt
-                        completion(.success(()))
-                    }
-                })
-            }
-        }
-    }
-    
-    public static func createUser(args: CreateUserArgs, completion: @escaping (Result<Void, AiTmedError>) -> Void) {
+    public static func createUser(args: CreateUserArgs, completion: @escaping (Swift.Result<Void, AiTmedError>) -> Void) {
         guard let jwt = shared.OPTCodeJwt[args.phoneNumber] else {
             completion(.failure(.unkown))
             return
@@ -195,7 +85,7 @@ public class AiTmed {
             case .failure(let error):
                 completion(.failure(error))
             case .success(let (_vertex, sk)):
-                shared._createVertex(vertex: _vertex, jwt: jwt, completion: { (result: Result<(Vertex, String), AiTmedError>) in
+                shared._createVertex(vertex: _vertex, jwt: jwt, completion: { (result: Swift.Result<(Vertex, String), AiTmedError>) in
                     switch result {
                     case .failure(let error):
                         completion(.failure(error))
@@ -214,13 +104,38 @@ public class AiTmed {
         }
     }
     
-    public static func login(args: LoginArgs, completion: @escaping (Result<Void, AiTmedError>) -> Void) {
+    
+    
+    
+    
+    public static func sendOPTCode(args: SendOPTCodeArgs, completion: @escaping (Swift.Result<Void, AiTmedError>) -> Void) {
+        shared.transform(args: args) { (result) in
+            switch result {
+            case .failure(let error):
+                completion(.failure(error))
+            case .success(let edge):
+                shared._createEdge(edge: edge, jwt: "", completion: { (result: Swift.Result<(Edge, String), AiTmedError>) in
+                    switch result {
+                    case .failure(let error):
+                        completion(.failure(error))
+                    case .success(let (_, jwt)):
+                        shared.OPTCodeJwt[args.phoneNumber] = jwt
+                        completion(.success(()))
+                    }
+                })
+            }
+        }
+    }
+    
+
+    
+    public static func login(args: LoginArgs, completion: @escaping (Swift.Result<Void, AiTmedError>) -> Void) {
         shared.transform(args: args) { (result) in
             switch result {
             case .failure(let error):
                 completion(.failure(error))
             case .success(let (_edge, credential)):
-                shared._createEdge(edge: _edge, jwt: credential.jwt, completion: { (result: Result<(Edge, String), AiTmedError>) in
+                shared._createEdge(edge: _edge, jwt: credential.jwt, completion: { (result: Swift.Result<(Edge, String), AiTmedError>) in
                     switch result {
                     case .failure(let error):
                         completion(.failure(error))
@@ -234,7 +149,7 @@ public class AiTmed {
         }
     }
     
-    public static func retrieveCredential(args: RetrieveCredentialArgs, completion: @escaping (Result<Void, AiTmedError>) -> Void) {
+    public static func retrieveCredential(args: RetrieveCredentialArgs, completion: @escaping (Swift.Result<Void, AiTmedError>) -> Void) {
         guard let _jwt = shared.OPTCodeJwt[args.phoneNumber] else {
             completion(.failure(.unkown))
             return
@@ -245,7 +160,7 @@ public class AiTmed {
             case .failure(let error):
                 completion(.failure(error))
             case .success(let _edge):
-                shared._createEdge(edge: _edge, jwt: _jwt, completion: { (result: Result<(Edge, String), AiTmedError>) in
+                shared._createEdge(edge: _edge, jwt: _jwt, completion: { (result: Swift.Result<(Edge, String), AiTmedError>) in
                     switch result {
                     case .failure(let error):
                         completion(.failure(error))
@@ -270,456 +185,6 @@ public class AiTmed {
             }
         }
     }
-}
-
-//MARK: - grpc layer
-extension AiTmed {
     
-    ///Create edge: pass out jwt
-    func _createEdge(edge: Edge, jwt: String, completion: @escaping (Result<(Edge, String), AiTmedError>) -> Void) {
-        var request = Aitmed_Ecos_V1beta1_ceReq()
-        request.edge = edge
-        request.jwt = jwt
-        
-        print("create edge request json: \n", (try? request.jsonString()) ?? "")
-        
-        do {
-            try client.ce(request) { (response, result) in
-                guard let response = response else {
-                    print("create edge has no response(\(result.statusCode)): \(result.description)")
-                    completion(.failure(.grpcFailed(.unkown)))
-                    return
-                }
-                
-                print("Create edge response: \n", (try? response.jsonString()) ?? "")
-                
-                if response.code == 0 {
-                    completion(.success((response.edge, response.jwt)))
-                } else if response.code == 1020 {
-                    completion(.failure(.apiResultFailed(.userNotExist)))
-                } else {
-                    completion(.failure(.apiResultFailed(.unkown)))
-                }
-            }
-        } catch {
-            print("grpc error: \(error.localizedDescription)")
-            completion(.failure(.grpcFailed(.unkown)))
-        }
-    }
     
-    ///Retreive edge
-    func _retreiveEdge(args: RetrieveEdgeArgs, jwt: String, completion: @escaping (Result<([Edge], String), AiTmedError>) -> Void) {
-        var request = Aitmed_Ecos_V1beta1_rxReq()
-        request.id = args.ids
-        request.objType = ObjectType.edge.code
-        request.jwt = jwt
-        request.type = args.type
-        request.xfname = "bvid"
-        if let maxCount = args.maxCount {
-            request.maxcount = maxCount
-        }
-        
-        print("retreive edge request json: \n", (try? request.jsonString()) ?? "")
-        
-        do {
-            try client.re(request) { (response, result) in
-                guard let response = response else {
-                    print("retrieve edge has no response(\(result.statusCode)): \(result.description)")
-                    completion(.failure(.grpcFailed(.unkown)))
-                    return
-                }
-                
-                print("retrieve edge response: \n", (try? response.jsonString()) ?? "")
-                
-                if response.code == 0 {
-                    completion(.success((response.edge, response.jwt)))
-                } else {
-                    completion(.failure(.apiResultFailed(.unkown)))
-                }
-            }
-        } catch {
-            print("grpc error: \(error.localizedDescription)")
-            completion(.failure(.grpcFailed(.unkown)))
-        }
-    }
-    
-    func _delete(ids: [Data], jwt: String, completion: @escaping (Result<String, AiTmedError>) -> Void) {
-        var request = Aitmed_Ecos_V1beta1_dxReq()
-        request.id = ids
-        request.jwt = jwt
-        
-        print("delete request json: \n", (try? request.jsonString()) ?? "")
-        
-        do {
-            try client.dx(request) { (response, result) in
-                guard let response = response else {
-                    print("delete has no response(\(result.statusCode)): \(result.description)")
-                    completion(.failure(.grpcFailed(.unkown)))
-                    return
-                }
-                
-                print("delete response: \n", (try? response.jsonString()) ?? "")
-                
-                if response.code == 0 {
-                    completion(.success(response.jwt))
-                } else {
-                    completion(.failure(.apiResultFailed(.unkown)))
-                }
-            }
-        } catch {
-            print("grpc error: \(error.localizedDescription)")
-            completion(.failure(.grpcFailed(.unkown)))
-        }
-        print("11111")
-    }
-    
-    ///sync
-    func _delete(ids: [Data], jwt: String) -> (String?, AiTmedError?) {
-        var request = Aitmed_Ecos_V1beta1_dxReq()
-        request.id = ids
-        request.jwt = jwt
-        
-        print("delete request json1: \n", (try? request.jsonString()) ?? "")
-        
-        guard let response = try? client.dx(request) else {
-            print("delete request failed")
-            return (nil, .unkown)
-        }
-        
-        print("delete response: \n", (try? response.jsonString()) ?? "")
-        
-        guard response.code == 0 else {
-            return (nil, .unkown)
-        }
-        
-        return (response.jwt, nil)
-    }
-    
-    ///Update edge
-    func _updateEdge(edge: Edge, jwt: String, completion: @escaping (Result<(Edge, String), AiTmedError>) -> Void) {
-        var request = Aitmed_Ecos_V1beta1_ceReq()
-        request.edge = edge
-        request.jwt = jwt
-        
-        print("update edge request json: \n", (try? request.jsonString()) ?? "")
-        
-        do {
-            try client.ce(request) { (response, result) in
-                guard let response = response else {
-                    print("update edge has no response(\(result.statusCode)): \(result.description)")
-                    completion(.failure(.grpcFailed(.unkown)))
-                    return
-                }
-                
-                print("update edge response: \n", (try? response.jsonString()) ?? "")
-                
-                if response.code == 0 {
-                    completion(.success((response.edge, response.jwt)))
-                } else {
-                    completion(.failure(.apiResultFailed(.unkown)))
-                }
-            }
-        } catch {
-            print("grpc error: \(error.localizedDescription)")
-            completion(.failure(.grpcFailed(.unkown)))
-        }
-    }
-    
-    ///Create vertex: pass out jwt
-    func _createVertex(vertex: Vertex, jwt: String, completion: @escaping (Result<(Vertex, String), AiTmedError>) -> Void) {
-        var request = Aitmed_Ecos_V1beta1_cvReq()
-        request.vertex = vertex
-        request.jwt = jwt
-    
-        print("create vertex request json: \n", (try? request.jsonString()) ?? "")
-
-        do {
-            try client.cv(request, completion: { (response, result) in
-                guard let response = response else {
-                    print("create vertex has no response(\(result.statusCode)): \(result.description)")
-                    completion(.failure(.grpcFailed(.unkown)))
-                    return
-                }
-
-                print("create vertex response: \n", (try? response.jsonString()) ?? "")
-
-                if response.code == 0 {
-                    completion(.success((response.vertex, response.jwt)))
-                } else {
-                    completion(.failure(.apiResultFailed(.unkown)))
-                }
-            })
-        } catch {
-            completion(.failure(.grpcFailed(.unkown)))
-        }
-    }
-    
-    ///Create doc
-    func _createDoc(doc: Doc, jwt: String, completion: @escaping (Result<(Doc, String), AiTmedError>) -> Void) {
-        var request = Aitmed_Ecos_V1beta1_cdReq()
-        request.doc = doc
-        request.jwt = jwt
-        
-        print("create doc request json: \n", (try? request.jsonString()) ?? "")
-        
-        do {
-            try client.cd(request, completion: { (response, result) in
-                guard let response = response else {
-                    print("create doc has no response(\(result.statusCode)): \(result.description)")
-                    completion(.failure(.grpcFailed(.unkown)))
-                    return
-                }
-                
-                print("create doc response: \n", (try? response.jsonString()) ?? "")
-                
-                if response.code == 0 {
-                    completion(.success((response.doc, response.jwt)))
-                } else {
-                    completion(.failure(.apiResultFailed(.unkown)))
-                }
-            })
-        } catch {
-            completion(.failure(.grpcFailed(.unkown)))
-        }
-    }
-    
-    func _retrieveDoc(args: RetrieveDocArgs, jwt: String, completion: @escaping (Result<([Doc], String), AiTmedError>) -> Void) {
-        var request = Aitmed_Ecos_V1beta1_rxReq()
-        request.jwt = jwt
-        request.objType = ObjectType.doc.code
-        request.id = [args.folderID]
-        request.xfname = "eid"
-        
-        print("retreive doc request json: \n", (try? request.jsonString()) ?? "")
-        
-        do {
-            try client.rd(request) { (response, result) in
-                guard let response = response else {
-                    print("retrieve doc has no response(\(result.statusCode)): \(result.description)")
-                    completion(.failure(.grpcFailed(.unkown)))
-                    return
-                }
-                
-                print("retrieve doc response: \n", (try? response.jsonString()) ?? "")
-                
-                if response.code == 0 {
-                    completion(.success((response.doc, response.jwt)))
-                } else {
-                    completion(.failure(.apiResultFailed(.unkown)))
-                }
-            }
-        } catch {
-            print("grpc error: \(error.localizedDescription)")
-            completion(.failure(.grpcFailed(.unkown)))
-        }
-    }
-}
-
-//MARK: - Transform functions
-extension AiTmed {
-    func transform(args: SendOPTCodeArgs, completion: (Result<Edge, AiTmedError>) -> Void) {
-        guard Validator.phoneNumber(args.phoneNumber),
-            let name = [AiTmedNameKey.phoneNumber: args.phoneNumber].toJSON() else {
-                completion(.failure(.unkown))
-                return
-        }
-        
-        var edge = Edge()
-        edge.type = AiTmedType.sendOPTCode
-        edge.name = name
-        completion(.success(edge))
-    }
-    
-    func transform(args: CreateUserArgs, completion: (Result<(Vertex, Key), AiTmedError>) -> Void) {
-        guard Validator.password(args.password),
-            Validator.phoneNumber(args.phoneNumber) else {
-                completion(.failure(.unkown))
-                return
-        }
-        
-        guard let keyPair = e.generateAKey(),
-            let esk = e.generateESKey(from: keyPair.secretKey, using: args.password) else {
-                completion(.failure(.unkown))
-                return
-        }
-        
-        var vertex = Vertex()
-        vertex.type = AiTmedType.createUser
-        vertex.tage = args.code
-        vertex.uid = args.phoneNumber
-        vertex.pk = keyPair.publicKey.toData()
-        vertex.esk = esk.toData()
-        completion(.success((vertex, keyPair.secretKey)))
-    }
-    
-    func transform(args: LoginArgs, completion: (Result<(Edge, Credential), AiTmedError>) -> Void) {
-        //Valid parameter
-        guard Validator.password(args.password),
-                Validator.phoneNumber(args.phoneNumber) else {
-            completion(.failure(.unkown))
-            return
-        }
-        
-        //Is new device?
-        guard var credential = c != nil ? c : Credential(phoneNumber: args.phoneNumber) else {
-            completion(.failure(.credentialFailed(.credentialRequired)))
-            return
-        }
-        
-        var edge = Edge()
-        edge.type = AiTmedType.login
-        edge.stime = Int64(Date().timeIntervalSince1970)
-        edge.bvid = credential.userId
-        
-        //Is logged in?
-        if let _ = credential.sk {
-            completion(.success((edge, credential)))
-        } else if let sk = e.generateSk(from: credential.esk, using: args.password) { //Is password correct?
-            credential.sk = sk
-            completion(.success((edge, credential)))
-        } else {
-            completion(.failure(.credentialFailed(.passwordFailed)))
-        }
-    }
-    
-    func transform(args: RetrieveCredentialArgs, completion: (Result<Edge, AiTmedError>) -> Void) {
-        guard Validator.phoneNumber(args.phoneNumber),
-            let name = [AiTmedNameKey.phoneNumber: args.phoneNumber, AiTmedNameKey.OPTCode: args.code].toJSON() else {
-            completion(.failure(.unkown))
-            return
-        }
-        
-        var edge = Edge()
-        edge.type = AiTmedType.retrieveCredential
-        edge.name = name
-        completion(.success(edge))
-    }
-    
-    func transform(args: RetrieveNotebooksArgs, completion: (Result<RetrieveEdgeArgs, AiTmedError>) -> Void) {
-        guard let c = c, c.status == .login else {
-            completion(.failure(.credentialFailed(.signinRequired)))
-            return
-        }
-        
-        completion(.success(args))
-    }
-    
-    func transform(args: CreateNotebookArgs, completion: (Result<Edge, AiTmedError>) -> Void) {
-        guard let name = [AiTmedNameKey.title: args.title].toJSON() else {
-            completion(.failure(.unkown))
-            return
-        }
-        
-        guard let c = c, c.status == .login else {
-            completion(.failure(.credentialFailed(.signinRequired)))
-            return
-        }
-        
-        var edge = Edge()
-        edge.type = AiTmedType.notebook
-        edge.name = name
-        
-        if args.isEncrypt {
-            let (besak, eesak) = e.generateXESAK(sendSecretKey: c.sk!, recvPublicKey: c.pk)
-            guard let b = besak, let e = eesak else {
-                completion(.failure(.credentialFailed(.signinRequired)))
-                return
-            }
-            
-            edge.besak = b.toData()
-            edge.eesak = e.toData()
-        }
-        
-        completion(.success(edge))
-    }
-    
-    func transform(args: UpdateNotebookArgs, completion: (Result<Edge, AiTmedError>) -> Void) {
-        guard let c = c, c.status == .login else {
-            completion(.failure(.credentialFailed(.signinRequired)))
-            return
-        }
-        
-        var edge = Edge()
-        edge.type = AiTmedType.notebook
-        
-        if let title = args.title {
-            guard let name = [AiTmedNameKey.title: title].toJSON() else {
-                completion(.failure(.unkown))
-                return
-            }
-            
-            edge.name = name
-        }
-        
-        if let isEncrypt = args.isEncrypt {
-            if isEncrypt {
-                guard let besak = e.generateXESAK(sendSecretKey: c.sk!, recvPublicKey: c.pk).0 else {
-                    completion(.failure(.credentialFailed(.signinRequired)))
-                    return
-                }
-                edge.besak = besak.toData()
-            } else {
-                edge.besak = Data()
-            }
-        }
-        
-        completion(.success(edge))
-    }
-    
-    func transform(args: CreateDocumentArgs, completion: (Result<Doc, AiTmedError>) -> Void) {
-        guard let c = c, c.status == .login else {
-            completion(.failure(.credentialFailed(.signinRequired)))
-            return
-        }
-        
-        var content = args.content
-        if args.isZipSatisfied {
-            content = args.content.zip() ?? Data()
-        }
-        
-        if args.isEncrypt {
-            
-        }
-        
-        var dict: [String: Any] = ["title": args.title, "isOnS3": args.isOnS3, "isGzip": args.content.isZipSatisfied, "type": args.mime.rawValue]
-        
-        if !args.isOnS3 {
-             dict["data"] = content.base64EncodedString()
-        }
-        
-        guard let name = dict.toJSON() else {
-            completion(.failure(.unkown))
-            return
-        }
-        
-        var doc = Doc()
-        doc.name = name
-        doc.eid = args.folderID
-        doc.type = args.type
-        //unit is byte
-        doc.size = Int32(args.content.count)
-        
-        if let updateArgs = args as? UpdateDocumentArgs {
-            doc.id = updateArgs.docID
-        }
-        
-        completion(.success(doc))
-    }
-    
-    //MARK: - Helper
-    static func xeskPairInEdge(_ id: Data, completion: @escaping ((Key?, Key?)) -> Void) {
-        shared._retreiveEdge(args: RetrieveEdgeArgs(ids: [id], maxCount: nil), jwt: shared.c.jwt) { (result) in
-            switch result {
-            case .failure(let error):
-                completion((nil, nil))
-            case .success(let (edges, jwt)):
-                shared.c.jwt = jwt
-                if let edge = edges.first, edge.besak.count > 0, edge.eesak.count > 0  {
-                    completion((Key(edge.besak), Key(edge.eesak)))
-                } else {
-                    completion((nil, nil))
-                }
-            }
-        }
-    }
 }
