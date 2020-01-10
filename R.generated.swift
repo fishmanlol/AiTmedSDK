@@ -128,7 +128,7 @@ struct R: Rswift.Validatable {
     fileprivate init() {}
   }
 
-  /// This `R.image` struct is generated, and contains static references to 15 images.
+  /// This `R.image` struct is generated, and contains static references to 17 images.
   struct image {
     /// Image `add`.
     static let add = Rswift.ImageResource(bundle: R.hostingBundle, name: "add")
@@ -142,6 +142,8 @@ struct R: Rswift.Validatable {
     static let close = Rswift.ImageResource(bundle: R.hostingBundle, name: "close")
     /// Image `folder`.
     static let folder = Rswift.ImageResource(bundle: R.hostingBundle, name: "folder")
+    /// Image `lock`.
+    static let lock = Rswift.ImageResource(bundle: R.hostingBundle, name: "lock")
     /// Image `logo`.
     static let logo = Rswift.ImageResource(bundle: R.hostingBundle, name: "logo")
     /// Image `notebook`.
@@ -156,6 +158,8 @@ struct R: Rswift.Validatable {
     static let search = Rswift.ImageResource(bundle: R.hostingBundle, name: "search")
     /// Image `share_to`.
     static let share_to = Rswift.ImageResource(bundle: R.hostingBundle, name: "share_to")
+    /// Image `unlock`.
+    static let unlock = Rswift.ImageResource(bundle: R.hostingBundle, name: "unlock")
     /// Image `user`.
     static let user = Rswift.ImageResource(bundle: R.hostingBundle, name: "user")
     /// Image `write`.
@@ -200,6 +204,13 @@ struct R: Rswift.Validatable {
     /// `UIImage(named: "folder", bundle: ..., traitCollection: ...)`
     static func folder(compatibleWith traitCollection: UIKit.UITraitCollection? = nil) -> UIKit.UIImage? {
       return UIKit.UIImage(resource: R.image.folder, compatibleWith: traitCollection)
+    }
+    #endif
+
+    #if os(iOS) || os(tvOS)
+    /// `UIImage(named: "lock", bundle: ..., traitCollection: ...)`
+    static func lock(compatibleWith traitCollection: UIKit.UITraitCollection? = nil) -> UIKit.UIImage? {
+      return UIKit.UIImage(resource: R.image.lock, compatibleWith: traitCollection)
     }
     #endif
 
@@ -249,6 +260,13 @@ struct R: Rswift.Validatable {
     /// `UIImage(named: "share_to", bundle: ..., traitCollection: ...)`
     static func share_to(compatibleWith traitCollection: UIKit.UITraitCollection? = nil) -> UIKit.UIImage? {
       return UIKit.UIImage(resource: R.image.share_to, compatibleWith: traitCollection)
+    }
+    #endif
+
+    #if os(iOS) || os(tvOS)
+    /// `UIImage(named: "unlock", bundle: ..., traitCollection: ...)`
+    static func unlock(compatibleWith traitCollection: UIKit.UITraitCollection? = nil) -> UIKit.UIImage? {
+      return UIKit.UIImage(resource: R.image.unlock, compatibleWith: traitCollection)
     }
     #endif
 
