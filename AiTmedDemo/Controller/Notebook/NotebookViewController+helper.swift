@@ -86,6 +86,14 @@ extension NotebookViewController {
         }
     }
     
+    func asyncInsert(_ indexPath: IndexPath) {
+        DispatchQueue.main.async {
+            self.tableView.beginUpdates()
+            self.tableView.insertRows(at: [indexPath], with: .automatic)
+            self.tableView.endUpdates()
+        }
+    }
+    
     func displayEditingController(with mode: NotebookEditingController.Mode) {
         let editingController = NotebookEditingController(mode: mode)
         let navigation = UINavigationController(rootViewController: editingController)

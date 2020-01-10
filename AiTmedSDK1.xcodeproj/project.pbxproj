@@ -12,6 +12,8 @@
 		1090FA7523C5AA4F002B05E6 /* AiTmedArguments.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1090FA7023C5AA4F002B05E6 /* AiTmedArguments.swift */; };
 		1090FA7623C5AA4F002B05E6 /* AiTmedNameKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1090FA7123C5AA4F002B05E6 /* AiTmedNameKey.swift */; };
 		1090FA7723C5AA4F002B05E6 /* AiTmedType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1090FA7223C5AA4F002B05E6 /* AiTmedType.swift */; };
+		109D16AC23C84FB1007064B2 /* UpdateEdgeArgs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 109D16AB23C84FB1007064B2 /* UpdateEdgeArgs.swift */; };
+		109D16AF23C8544E007064B2 /* NotebookViewController+EditingControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 109D16AE23C8544E007064B2 /* NotebookViewController+EditingControllerDelegate.swift */; };
 		8E511D9523C80F9E008C5321 /* UIViewController+froze.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E511D9423C80F9E008C5321 /* UIViewController+froze.swift */; };
 		8E79742923C6573300819670 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E79742823C6573300819670 /* User.swift */; };
 		8E79742B23C65B9E00819670 /* Storage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E79742A23C65B9E00819670 /* Storage.swift */; };
@@ -135,6 +137,8 @@
 		1090FA7023C5AA4F002B05E6 /* AiTmedArguments.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AiTmedArguments.swift; sourceTree = "<group>"; };
 		1090FA7123C5AA4F002B05E6 /* AiTmedNameKey.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AiTmedNameKey.swift; sourceTree = "<group>"; };
 		1090FA7223C5AA4F002B05E6 /* AiTmedType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AiTmedType.swift; sourceTree = "<group>"; };
+		109D16AB23C84FB1007064B2 /* UpdateEdgeArgs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateEdgeArgs.swift; sourceTree = "<group>"; };
+		109D16AE23C8544E007064B2 /* NotebookViewController+EditingControllerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NotebookViewController+EditingControllerDelegate.swift"; sourceTree = "<group>"; };
 		57FDED9EF3127EFCBF4C1B00 /* Pods_AiTmedSDK1.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AiTmedSDK1.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8E511D9423C80F9E008C5321 /* UIViewController+froze.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+froze.swift"; sourceTree = "<group>"; };
 		8E79742823C6573300819670 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
@@ -266,6 +270,15 @@
 				1090FA7223C5AA4F002B05E6 /* AiTmedType.swift */,
 			);
 			path = Other;
+			sourceTree = "<group>";
+		};
+		109D16AA23C84F90007064B2 /* Update */ = {
+			isa = PBXGroup;
+			children = (
+				8E79743423C65FB500819670 /* AiTmed+update.swift */,
+				109D16AB23C84FB1007064B2 /* UpdateEdgeArgs.swift */,
+			);
+			path = Update;
 			sourceTree = "<group>";
 		};
 		8E79743823C6624800819670 /* Create */ = {
@@ -468,6 +481,7 @@
 				8E79744523C697E200819670 /* NotebookViewController+datasource.swift */,
 				8E79744723C6989900819670 /* NotebookViewController+helper.swift */,
 				8E79744D23C69F3800819670 /* NotebookViewController+header.swift */,
+				109D16AE23C8544E007064B2 /* NotebookViewController+EditingControllerDelegate.swift */,
 			);
 			path = Notebook;
 			sourceTree = "<group>";
@@ -606,12 +620,12 @@
 			children = (
 				8E9FE44623C553120046AD9D /* AiTmed.swift */,
 				8E79743D23C6703200819670 /* Helper.swift */,
+				109D16AA23C84F90007064B2 /* Update */,
 				8E79743823C6624800819670 /* Create */,
 				8E79743023C65F9F00819670 /* AiTmed+delete.swift */,
 				8E79742E23C65F5800819670 /* AiTmed+grpc.swift */,
 				8E79743623C65FC200819670 /* AiTmed+retrieve.swift */,
 				8E79742C23C65EE600819670 /* AiTmed+transform.swift */,
-				8E79743423C65FB500819670 /* AiTmed+update.swift */,
 			);
 			path = Core;
 			sourceTree = "<group>";
@@ -854,6 +868,7 @@
 			files = (
 				8E9FE42C23C552F00046AD9D /* types.pb.swift in Sources */,
 				1090FA7623C5AA4F002B05E6 /* AiTmedNameKey.swift in Sources */,
+				109D16AC23C84FB1007064B2 /* UpdateEdgeArgs.swift in Sources */,
 				8E9FE44F23C553360046AD9D /* Notebook.swift in Sources */,
 				8E79743323C65FAD00819670 /* AiTmed+create.swift in Sources */,
 				8E79742D23C65EE600819670 /* AiTmed+transform.swift in Sources */,
@@ -930,6 +945,7 @@
 				8E79745C23C6B0BC00819670 /* NotebookViewController+UITableViewDelegate.swift in Sources */,
 				8E9FE3E523C54E6A0046AD9D /* Country.swift in Sources */,
 				8E79746023C6B23100819670 /* NotebookEditingController.swift in Sources */,
+				109D16AF23C8544E007064B2 /* NotebookViewController+EditingControllerDelegate.swift in Sources */,
 				8E9FE3E223C54E6A0046AD9D /* TYInput.swift in Sources */,
 				8E9FE3FC23C54E8C0046AD9D /* UIViewController+.swift in Sources */,
 				8E79744E23C69F3800819670 /* NotebookViewController+header.swift in Sources */,

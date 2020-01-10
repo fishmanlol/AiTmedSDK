@@ -9,6 +9,14 @@
 import UIKit
 import SnapKit
 
+protocol NotebookEditingControllerDelegate: class {}
+extension NotebookEditingControllerDelegate {
+    func notebookEditingControllerDidEditSuccess(_ vc: NotebookEditingController, notebook: Notebook) {}
+    func notebookEditingControllerDidEditFail(_ vc: NotebookEditingController) {}
+    func notebookEditingControllerDidCreateSuccess(_ vc: NotebookEditingController, notebook: Notebook) {}
+    func notebookEditingControllerDidCreateFail(_ vc: NotebookEditingController) {}
+}
+
 class NotebookEditingController: UIViewController {
     //MARK: - Property
     weak var separator: UIView!
@@ -16,6 +24,8 @@ class NotebookEditingController: UIViewController {
     weak var actionButton: UIButton!
     weak var contentView: UIView!
     weak var scrollView: UIScrollView!
+    
+    weak var delegate: NotebookEditingControllerDelegate?
     
     lazy var cancelItem: UIBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(didTapCancelItem))
     lazy var doneItem: UIBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(didTapDoneItem))
@@ -46,14 +56,6 @@ class NotebookEditingController: UIViewController {
         }
     }
     //MARK: - Action
-    @objc func didTapActionButton(button: UIButton) {
-        button.startAnimating()
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-            button.endAnimating()
-            self.dismiss(animated: true, completion: nil)
-        }
-    }
-    
     @objc func didTapCancelItem() {
         view.endEditing(true)
         dismiss(animated: true, completion: nil)
@@ -62,9 +64,12 @@ class NotebookEditingController: UIViewController {
     @objc func didTapDoneItem() {
         view.endEditing(true)
         
-        isLoading = true
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-            self.isLoading = false
+        guard let text = textField.text, !text.isEmpty else { return }
+        switch mode {
+        case .create:
+            createNotebook(title: text, isEncrypt: isEncrypt)
+        case .update(_):
+            updateNotebook(title: text)
         }
     }
     
@@ -100,13 +105,53 @@ class NotebookEditingController: UIViewController {
     }
     
     //MARK: - Helper
+    private func updateNotebook(title: String) {
+        isLoading = true
+        notebook.update(title: title) { [weak self] (result) in
+            guard let weakSelf = self else { return }
+            weakSelf.isLoading = false
+            
+            switch result {
+            case .failure(let error):
+                weakSelf.displayAutoDismissAlert(msg: error.message)
+                weakSelf.delegate?.notebookEditingControllerDidEditFail(weakSelf)
+            case .success(_):
+                weakSelf.delegate?.notebookEditingControllerDidEditSuccess(weakSelf, notebook: weakSelf.notebook)
+                DispatchQueue.main.async {
+                    weakSelf.dismiss(animated: true, completion: nil)
+                }
+            }
+        }
+    }
+    
+    private func createNotebook(title: String, isEncrypt: Bool) {
+        isLoading = true
+        Storage.default.addNotebook(title: title, isEncrypt: isEncrypt) { [weak self] (result) in
+            guard let weakSelf = self else { return }
+            weakSelf.isLoading = false
+            
+            switch result {
+            case .failure(let error):
+                weakSelf.delegate?.notebookEditingControllerDidCreateFail(weakSelf)
+                weakSelf.displayAutoDismissAlert(msg: error.message)
+            case .success(let n):
+                weakSelf.delegate?.notebookEditingControllerDidCreateSuccess(weakSelf, notebook: n)
+                DispatchQueue.main.async {
+                    weakSelf.dismiss(animated: true, completion: nil)
+                }
+            }
+        }
+    }
+    
     private func didLoadingChange() {
-        if isLoading {
-            navigationController?.froze()
-            navigationItem.setRightBarButton(indicatorItem, animated: true)
-        } else {
-            navigationController?.defroze()
-            navigationItem.setRightBarButton(doneItem, animated: true)
+        DispatchQueue.main.async {
+            if self.isLoading {
+                self.navigationController?.froze()
+                self.navigationItem.setRightBarButton(self.indicatorItem, animated: true)
+            } else {
+                self.navigationController?.defroze()
+                self.navigationItem.setRightBarButton(self.doneItem, animated: true)
+            }
         }
     }
     
@@ -181,11 +226,13 @@ class NotebookEditingController: UIViewController {
         contentView.addSubview(separator)
         
         let textField = UITextField()
+        textField.autocorrectionType = .no
+        textField.autocapitalizationType = .none
         textField.delegate = self
         textField.addTarget(self, action: #selector(didTextFieldChange), for: .editingChanged)
         textField.placeholder = "Notebook Name"
         textField.textAlignment = .center
-        textField.font = UIFont.systemFont(ofSize: 36, weight: .medium)
+        textField.font = UIFont.systemFont(ofSize: 32, weight: .medium)
         self.textField = textField
         contentView.addSubview(textField)
         
@@ -219,7 +266,7 @@ class NotebookEditingController: UIViewController {
         }
         
         textField.snp.makeConstraints { (make) in
-            make.left.right.equalTo(separator)
+            make.left.right.equalToSuperview().inset(40)
             make.bottom.equalTo(separator.snp.top).offset(-16)
         }
     }

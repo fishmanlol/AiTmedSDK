@@ -8,6 +8,12 @@
 
 import Foundation
 
-struct _Notebook {
-    
+public extension AiTmed {
+    struct _Notebook {
+        public var id: Data
+        public var title: String
+        public var isEncrypt: Bool
+        public var ctime: Date = Date()
+        public var mtime: Date = Date()
+    }
 }

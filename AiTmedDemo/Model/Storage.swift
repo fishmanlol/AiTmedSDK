@@ -9,13 +9,13 @@
 import Foundation
 import AiTmedSDK1
 
-struct Storage {
+class Storage {
     static var `default` = Storage()
     var notebooks: [Notebook] = []
     
     private init() {}
     
-    func retrieveNotebooks(completion: @escaping (Result<Void, AiTmedError>) -> Void) {
+    func retrieveNotebooks(completion: @escaping (Result<Void, PrynoteError>) -> Void) {
         AiTmed.retrieveNotebooks { (result) in
             switch result {
             case .failure(let error):
@@ -26,13 +26,16 @@ struct Storage {
         }
     }
     
-    func addNotebook(title: String, isEncrypt: Bool, completion: @escaping (Result<Notebook, AiTmedError>) -> Void) {
-        AiTmed.addNotebook(title: title, isEncrypt: isEncrypt) { (result) in
+    func addNotebook(title: String, isEncrypt: Bool, completion: @escaping (Result<Notebook, PrynoteError>) -> Void) {
+        AiTmed.addNotebook(title: title, isEncrypt: isEncrypt) { [weak self] (result) in
+            guard let weakSelf = self else { return }
             switch result {
             case .failure(let error):
                 completion(.failure(.unkown))
-            case .success(_):
-                fatalError()
+            case .success(let _notebook):
+                let notebook = Notebook(_notebook)
+                weakSelf.notebooks.append(notebook)
+                completion(.success(notebook))
             }
         }
     }

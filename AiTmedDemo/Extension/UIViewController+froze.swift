@@ -22,19 +22,23 @@ extension UIViewController {
     }
     
     func froze() {
-        if ghostView == nil {
-            let v = UIView()
-            v.backgroundColor = .clear
-            self.ghostView = v
-        }
-        
-        view.addSubview(ghostView!)
-        ghostView!.snp.makeConstraints { (make) in
-            make.edges.equalToSuperview()
+        DispatchQueue.main.async {
+            if self.ghostView == nil {
+                let v = UIView()
+                v.backgroundColor = .clear
+                self.ghostView = v
+            }
+            
+            self.view.addSubview(self.ghostView!)
+            self.ghostView!.snp.makeConstraints { (make) in
+                make.edges.equalToSuperview()
+            }
         }
     }
     
     func defroze() {
-        ghostView?.removeFromSuperview()
+        DispatchQueue.main.async {
+            self.ghostView?.removeFromSuperview()
+        }
     }
 }

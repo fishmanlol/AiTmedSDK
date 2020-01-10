@@ -10,4 +10,8 @@ import Foundation
 
 enum PrynoteError: Error {
     case unkown
+    
+    var message: String {
+        return "unkown"
+    }
 }

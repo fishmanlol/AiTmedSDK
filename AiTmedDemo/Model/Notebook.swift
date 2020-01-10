@@ -18,9 +18,12 @@ class Notebook {
     var mtime: Date = Date()
     var isReady = false
     
-    init(id: Data, title: String, isEncrypt: Bool) {
-        self.id = id
-        self.title = title
+    init(_ _notebook: AiTmed._Notebook) {
+        self.id = _notebook.id
+        self.title = _notebook.title
+        self.isEncrypt = _notebook.isEncrypt
+        self.ctime = _notebook.ctime
+        self.mtime = _notebook.mtime
     }
     
     func addNote(title: String, content: Data, completion: @escaping (Result<Note, PrynoteError>) -> Void) {
@@ -52,13 +55,14 @@ class Notebook {
         }
     }
     
-    func update(title: String, completion: @escaping (Result<Void, PrynoteError>) -> Void) {
-        AiTmed.updateNotebook(id: id) { (result) in
+    func update(title: String, completion: @escaping (Result<Notebook, PrynoteError>) -> Void) {
+        AiTmed.updateNotebook(id: id, title: title) { (result) in
             switch result {
             case .failure(let error):
                 completion(.failure(.unkown))
-            case .success(_):
-                completion(.success(()))
+            case .success(let _notebook):
+                let notebook = Notebook(_notebook)
+                completion(.success(notebook))
             }
         }
     }

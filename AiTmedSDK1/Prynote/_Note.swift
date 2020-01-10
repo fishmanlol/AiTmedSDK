@@ -8,4 +8,13 @@
 
 import Foundation
 
-
+extension AiTmed {
+    public struct _Note {
+        public var id: Data
+        public var title: String
+        public var content: Data
+        public var ctime: Date = Date()
+        public var mtime: Date = Date()
+        public var isBroken = false
+    }
+}
