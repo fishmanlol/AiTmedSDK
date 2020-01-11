@@ -37,13 +37,13 @@ public struct RetrieveCredentialArgs {
     }
 }
 
-public class RetrieveNotebooksArgs: RetrieveEdgeArgs {
-    public override init(ids: [Data] = [], maxCount: Int32? = nil) {
-        super.init(ids: ids, maxCount: maxCount)
-        
-        type = AiTmedType.notebook
-    }
-}
+//public class RetrieveNotebooksArgs: RetrieveEdgeArgs {
+//    public override init(ids: [Data] = [], maxCount: Int32? = nil) {
+//        super.init(ids: ids, maxCount: maxCount)
+//        
+//        type = AiTmedType.notebook
+//    }
+//}
 
 public struct CreateNotebookArgs {
     let title: String
@@ -79,16 +79,7 @@ public struct RemoveArgs {
 }
 
 ///Application can not use this directly
-public class RetrieveEdgeArgs {
-    let ids: [Data]
-    let maxCount: Int32?
-    internal var type: Int32!
-    
-    public init(ids: [Data] = [], maxCount: Int32? = nil) {
-        self.ids = ids
-        self.maxCount = maxCount
-    }
-}
+
 
 //Vertex
 public struct CreateUserArgs {

@@ -87,14 +87,14 @@ extension AiTmed {
         completion(.success(edge))
     }
     
-    func transform(args: RetrieveNotebooksArgs, completion: (Swift.Result<RetrieveEdgeArgs, AiTmedError>) -> Void) {
-        guard let c = c, c.status == .login else {
-            completion(.failure(.credentialFailed(.credentialNeeded)))
-            return
-        }
-        
-        completion(.success(args))
-    }
+//    func transform(args: RetrieveNotebooksArgs, completion: (Swift.Result<RetrieveEdgeArgs, AiTmedError>) -> Void) {
+//        guard let c = c, c.status == .login else {
+//            completion(.failure(.credentialFailed(.credentialNeeded)))
+//            return
+//        }
+//        
+//        completion(.success(args))
+//    }
     
     func transform(args: CreateNotebookArgs, completion: (Swift.Result<Edge, AiTmedError>) -> Void) {
         guard let name = [AiTmedNameKey.title: args.title].toJSON() else {

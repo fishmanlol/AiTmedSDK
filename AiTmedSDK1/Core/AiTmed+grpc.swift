@@ -42,7 +42,7 @@ extension AiTmed {
     }
     
     ///Retreive edge
-    func _retreiveEdge(args: RetrieveEdgeArgs, jwt: String, completion: @escaping (Swift.Result<([Edge], String), AiTmedError>) -> Void) {
+    func _retreiveEdges(args: RetrieveEdgesArgs, jwt: String, completion: @escaping (Swift.Result<([Edge], String), AiTmedError>) -> Void) {
         var request = Aitmed_Ecos_V1beta1_rxReq()
         request.id = args.ids
         request.objType = ObjectType.edge.code

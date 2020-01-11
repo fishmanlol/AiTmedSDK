@@ -13,7 +13,15 @@ public extension AiTmed {
         public var id: Data
         public var title: String
         public var isEncrypt: Bool
-        public var ctime: Date = Date()
-        public var mtime: Date = Date()
+        public var ctime: Date
+        public var mtime: Date
+        
+        init(id: Data, title: String, isEncrypt: Bool, ctime: Int64, mtime: Int64) {
+            self.id = id
+            self.title = title
+            self.isEncrypt = isEncrypt
+            self.ctime = Date(timeIntervalSince1970: TimeInterval(ctime))
+            self.mtime = Date(timeIntervalSince1970: TimeInterval(mtime))
+        }
     }
 }

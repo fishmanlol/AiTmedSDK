@@ -14,6 +14,7 @@
 		1090FA7723C5AA4F002B05E6 /* AiTmedType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1090FA7223C5AA4F002B05E6 /* AiTmedType.swift */; };
 		109D16AC23C84FB1007064B2 /* UpdateEdgeArgs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 109D16AB23C84FB1007064B2 /* UpdateEdgeArgs.swift */; };
 		109D16AF23C8544E007064B2 /* NotebookViewController+EditingControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 109D16AE23C8544E007064B2 /* NotebookViewController+EditingControllerDelegate.swift */; };
+		8E38621623C9023200994D04 /* RetrieveEdgeArgs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E38621523C9023200994D04 /* RetrieveEdgeArgs.swift */; };
 		8E511D9523C80F9E008C5321 /* UIViewController+froze.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E511D9423C80F9E008C5321 /* UIViewController+froze.swift */; };
 		8E79742923C6573300819670 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E79742823C6573300819670 /* User.swift */; };
 		8E79742B23C65B9E00819670 /* Storage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E79742A23C65B9E00819670 /* Storage.swift */; };
@@ -140,6 +141,7 @@
 		109D16AB23C84FB1007064B2 /* UpdateEdgeArgs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateEdgeArgs.swift; sourceTree = "<group>"; };
 		109D16AE23C8544E007064B2 /* NotebookViewController+EditingControllerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NotebookViewController+EditingControllerDelegate.swift"; sourceTree = "<group>"; };
 		57FDED9EF3127EFCBF4C1B00 /* Pods_AiTmedSDK1.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AiTmedSDK1.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		8E38621523C9023200994D04 /* RetrieveEdgeArgs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetrieveEdgeArgs.swift; sourceTree = "<group>"; };
 		8E511D9423C80F9E008C5321 /* UIViewController+froze.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+froze.swift"; sourceTree = "<group>"; };
 		8E79742823C6573300819670 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		8E79742A23C65B9E00819670 /* Storage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Storage.swift; sourceTree = "<group>"; };
@@ -279,6 +281,15 @@
 				109D16AB23C84FB1007064B2 /* UpdateEdgeArgs.swift */,
 			);
 			path = Update;
+			sourceTree = "<group>";
+		};
+		8E38621323C9007300994D04 /* Retrieve */ = {
+			isa = PBXGroup;
+			children = (
+				8E79743623C65FC200819670 /* AiTmed+retrieve.swift */,
+				8E38621523C9023200994D04 /* RetrieveEdgeArgs.swift */,
+			);
+			path = Retrieve;
 			sourceTree = "<group>";
 		};
 		8E79743823C6624800819670 /* Create */ = {
@@ -620,11 +631,11 @@
 			children = (
 				8E9FE44623C553120046AD9D /* AiTmed.swift */,
 				8E79743D23C6703200819670 /* Helper.swift */,
+				8E38621323C9007300994D04 /* Retrieve */,
 				109D16AA23C84F90007064B2 /* Update */,
 				8E79743823C6624800819670 /* Create */,
 				8E79743023C65F9F00819670 /* AiTmed+delete.swift */,
 				8E79742E23C65F5800819670 /* AiTmed+grpc.swift */,
-				8E79743623C65FC200819670 /* AiTmed+retrieve.swift */,
 				8E79742C23C65EE600819670 /* AiTmed+transform.swift */,
 			);
 			path = Core;
@@ -871,6 +882,7 @@
 				109D16AC23C84FB1007064B2 /* UpdateEdgeArgs.swift in Sources */,
 				8E9FE44F23C553360046AD9D /* Notebook.swift in Sources */,
 				8E79743323C65FAD00819670 /* AiTmed+create.swift in Sources */,
+				8E38621623C9023200994D04 /* RetrieveEdgeArgs.swift in Sources */,
 				8E79742D23C65EE600819670 /* AiTmed+transform.swift in Sources */,
 				8E79743723C65FC200819670 /* AiTmed+retrieve.swift in Sources */,
 				8E9FE44723C553120046AD9D /* AiTmed.swift in Sources */,

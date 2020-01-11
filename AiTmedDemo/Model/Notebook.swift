@@ -16,7 +16,7 @@ class Notebook {
     var notes: [Note] = []
     var ctime: Date = Date()
     var mtime: Date = Date()
-    var isReady = false
+    var isReady = true
     
     init(_ _notebook: AiTmed._Notebook) {
         self.id = _notebook.id
@@ -31,14 +31,14 @@ class Notebook {
             switch result {
             case .failure(let error):
                 completion(.failure(.unkown))
-            case .success(_):
+            case .success(let _note):
                 fatalError()
 //                completion(.success(Note()))
             }
         }
     }
     
-    func retrieveNotes(completion: @escaping (Result<[Note], PrynoteError>) -> Void) {
+    func retrieveNotes(completion: @escaping (Result<Void, PrynoteError>) -> Void) {
         self.isReady = false
         AiTmed.retrieveNotes(notebookID: id) { (result) in
             self.isReady = true
@@ -50,19 +50,24 @@ class Notebook {
                 let notes = _notes.map {
                     Note(id: $0.id, notebook: self, title: $0.title, content: $0.content, isBroken: $0.isBroken, mtime: $0.mtime, ctime: $0.ctime)
                 }
-                completion(.success(notes))
+                self.notes = notes
+                completion(.success(()))
             }
         }
     }
     
-    func update(title: String, completion: @escaping (Result<Notebook, PrynoteError>) -> Void) {
+    func update(title: String, completion: @escaping (Result<Void, PrynoteError>) -> Void) {
         AiTmed.updateNotebook(id: id, title: title) { (result) in
             switch result {
             case .failure(let error):
                 completion(.failure(.unkown))
             case .success(let _notebook):
-                let notebook = Notebook(_notebook)
-                completion(.success(notebook))
+                self.title = _notebook.title
+                self.mtime = _notebook.mtime
+                self.title = _notebook.title
+                
+                Storage.default.sortByTitle()
+                completion(.success(()))
             }
         }
     }

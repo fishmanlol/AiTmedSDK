@@ -10,15 +10,14 @@ import Foundation
 
 extension NotebookViewController: NotebookEditingControllerDelegate {
     func notebookEditingControllerDidCreateSuccess(_ vc: NotebookEditingController, notebook: Notebook) {
-        guard let index = Storage.default.notebooks.firstIndex(where: { $0 === notebook }) else { return }
-        
-        asyncInsert(IndexPath(row: index, section: 1))
-        asyncReload(IndexPath(row: 0, section: 0))
+        DispatchQueue.main.async {
+            self.tableView.reloadData()
+        }
     }
     
     func notebookEditingControllerDidEditSuccess(_ vc: NotebookEditingController, notebook: Notebook) {
-        guard let index = Storage.default.notebooks.firstIndex(where: { $0 === notebook }) else { return }
-        
-        asyncReload(IndexPath(row: index, section: 1))
+        DispatchQueue.main.async {
+            self.tableView.reloadData()
+        }
     }
 }

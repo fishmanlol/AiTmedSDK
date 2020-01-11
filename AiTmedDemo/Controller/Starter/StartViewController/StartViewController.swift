@@ -123,9 +123,27 @@ class StartViewController: UIViewController {
                         self.displayAlert(title: "Error", msg: error.localizedDescription, hasCancel: false, action: {})
                     }
                 case .success(_):
-                    DispatchQueue.main.async {
-                        self.navigationController?.pushViewController(MasterController(), animated: false)
-                    }
+                    Storage.default.retrieveNotebooks(completion: { (result) in
+                        switch result {
+                        case .failure(let error):
+                            DispatchQueue.main.async {
+                                self.displayAlert(title: error.message, msg: nil)
+                            }
+                        case .success(_):
+                            Storage.default.retrieveNotebooks(completion: { (result) in
+                                switch result {
+                                case .failure(let error):
+                                    DispatchQueue.main.async {
+                                        self.displayAlert(title: error.message, msg: nil)
+                                    }
+                                case .success(_):
+                                    DispatchQueue.main.async {
+                                        self.navigationController?.pushViewController(MasterController(), animated: false)
+                                    }
+                                }
+                            })
+                        }
+                    })
                 }
             }
         } else if case let Mode.signin(code) = mode {

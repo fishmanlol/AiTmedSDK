@@ -9,7 +9,12 @@
 import UIKit
 import SnapKit
 
-protocol NotebookEditingControllerDelegate: class {}
+protocol NotebookEditingControllerDelegate: class {
+    func notebookEditingControllerDidEditSuccess(_ vc: NotebookEditingController, notebook: Notebook)
+    func notebookEditingControllerDidEditFail(_ vc: NotebookEditingController)
+    func notebookEditingControllerDidCreateSuccess(_ vc: NotebookEditingController, notebook: Notebook)
+    func notebookEditingControllerDidCreateFail(_ vc: NotebookEditingController)
+}
 extension NotebookEditingControllerDelegate {
     func notebookEditingControllerDidEditSuccess(_ vc: NotebookEditingController, notebook: Notebook) {}
     func notebookEditingControllerDidEditFail(_ vc: NotebookEditingController) {}
@@ -102,9 +107,33 @@ class NotebookEditingController: UIViewController {
         setUp()
         layoutSubviews()
         addObservers()
+        populateUI()
     }
     
     //MARK: - Helper
+    private func populateUI() {
+        view.backgroundColor = .white
+        navigationController?.navigationBar.isTranslucent = true
+        navigationController?.navigationBar.backgroundColor = .clear
+        navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
+        navigationController?.navigationBar.shadowImage = UIImage()
+        
+        navigationItem.leftBarButtonItem = cancelItem
+        navigationItem.rightBarButtonItem = doneItem
+        navigationItem.titleView = lockButton
+        
+        if case Mode.update(let notebook) = mode {
+            lockButton.isEnabled = false
+            doneItem.isEnabled = !notebook.title.isEmpty
+            isEncrypt = notebook.isEncrypt
+            textField.text = notebook.title
+        } else {
+            doneItem.isEnabled = false
+            lockButton.isEnabled = true
+            isEncrypt = false
+        }
+    }
+    
     private func updateNotebook(title: String) {
         isLoading = true
         notebook.update(title: title) { [weak self] (result) in
@@ -187,26 +216,6 @@ class NotebookEditingController: UIViewController {
     }
     
     private func setUp() {
-        view.backgroundColor = .white
-        isEncrypt = false
-        
-        navigationController?.navigationBar.isTranslucent = true
-        navigationController?.navigationBar.backgroundColor = .clear
-        navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
-        navigationController?.navigationBar.shadowImage = UIImage()
-        
-        navigationItem.leftBarButtonItem = cancelItem
-        navigationItem.rightBarButtonItem = doneItem
-        navigationItem.titleView = lockButton
-        
-        if case Mode.update(let notebook) = mode {
-            lockButton.isEnabled = false
-            doneItem.isEnabled = !notebook.title.isEmpty
-        } else {
-            doneItem.isEnabled = false
-            lockButton.isEnabled = true
-        }
-        
         let v = UIScrollView()
         v.showsVerticalScrollIndicator = false
         v.showsHorizontalScrollIndicator = false
@@ -235,18 +244,6 @@ class NotebookEditingController: UIViewController {
         textField.font = UIFont.systemFont(ofSize: 32, weight: .medium)
         self.textField = textField
         contentView.addSubview(textField)
-        
-        let actionButton = UIButton(type: .system)
-        actionButton.setTitleColor(.white, for: .normal)
-        if case .create = mode {
-            actionButton.backgroundColor = view.tintColor
-            actionButton.setTitle("Create", for: .normal)
-        } else {
-            actionButton.setTitle("Delete", for: .normal)
-            actionButton.backgroundColor = .red
-        }
-        self.actionButton = actionButton
-        contentView.addSubview(actionButton)
     }
     
     private func layoutSubviews() {

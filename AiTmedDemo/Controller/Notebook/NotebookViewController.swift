@@ -14,7 +14,7 @@ class NotebookViewController: UITableViewController {
     
     init(_ stateCoordinator: StateCoordinator) {
         self.stateCoordinator = stateCoordinator
-        super.init(nibName: nil, bundle: nil)
+        super.init(style: .grouped)
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -28,7 +28,21 @@ class NotebookViewController: UITableViewController {
     
     //MARK: - Action
     @objc func didPullToRefreshing(refreshControl: UIRefreshControl) {
-        print("Refreshing...")
+        Storage.default.retrieveNotebooks { [weak self] (result) in
+            guard let weakSelf = self else { return }
+            DispatchQueue.main.async {
+                refreshControl.endRefreshing()
+            }
+            
+            switch result {
+            case .failure(let error):
+                weakSelf.displayAutoDismissAlert(msg: error.message)
+            case .success(_):
+                DispatchQueue.main.async {
+                    weakSelf.tableView.reloadData()
+                }
+            }
+        }
     }
     
     @objc func didTapSetting() {
@@ -42,7 +56,7 @@ class NotebookViewController: UITableViewController {
     @objc func didLoadAllNotesInNotebook(no: Notification) {
         guard let notebook = no.object as? Notebook else { return }
         
-        asyncReload(indexPath(of: .all))
-        asyncReload(indexPath(of: .single(notebook)))
+        asyncReloadIfNeeded(indexPath(of: .all))
+        asyncReloadIfNeeded(indexPath(of: .single(notebook)))
     }
 }

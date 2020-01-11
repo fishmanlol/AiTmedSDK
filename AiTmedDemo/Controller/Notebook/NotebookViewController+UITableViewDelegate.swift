@@ -12,7 +12,6 @@ extension NotebookViewController {
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             //Delete only one notebook at once
-            
         }
     }
     
@@ -29,6 +28,15 @@ extension NotebookViewController {
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if isEditing {
+            guard indexPath.section == 1 else { return }
+            
+            displayEditingController(with: .update(notebook(at: indexPath)))
+        } else {
+            
+        }
+        
+        return
         if isEditing && indexPath.section == 1 {//display notebook edit page
 //            guard let editingNav = R.storyboard.main().instantiateViewController(withIdentifier: Constant.Identifier.NOTEBOOKEDITINGNAVIGATION) as? UINavigationController,
 //                let editingController = editingNav.viewControllers.first as? NotebookEditingController,

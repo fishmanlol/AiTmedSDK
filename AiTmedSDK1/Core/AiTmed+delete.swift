@@ -16,29 +16,28 @@ extension AiTmed {
         }
         
         //Notebooks
-        shared._retreiveEdge(args: RetrieveNotebooksArgs(ids: [], maxCount: nil), jwt: shared.c.jwt) { (result) in
+        AiTmed.retrieveEdges(args: RetrieveEdgesArgs(ids: [], type: AiTmedType.notebook, maxCount: nil)) { (result) in
             switch result {
             case .failure(let error):
                 completion(.failure(error))
-            case .success(let (edges, jwt)):
-                shared.c.jwt = jwt
+            case .success(let edges):
                 var success = true
+                
+                let group = DispatchGroup()
+                for edge in edges {
+                    deleteEdge(id: edge.id, completion: { (result) in
+                        switch result {
+                        case .failure(_):
+                            success = false
+                        case .success(_):
+                            break
+                        }
+                    })
+                }
                 
                 DispatchQueue.global().async {
                     let sem = DispatchSemaphore(value: 0)
-                    for edge in edges {
-                        deleteEdge(id: edge.id, completion: { (result) in
-                            switch result {
-                            case .failure(_):
-                                success = false
-                            case .success(_):
-                                break
-                            }
-                            sem.signal()
-                        })
-                        
-                        sem.wait()
-                    }
+                    
                     
                     if success {
                         shared._delete(ids: [id], jwt: shared.c.jwt, completion: { (result) in
@@ -56,6 +55,46 @@ extension AiTmed {
                 }
             }
         }
+//        shared._retreiveEdge(args: RetrieveNotebooksArgs(ids: [], maxCount: nil), jwt: shared.c.jwt) { (result) in
+//            switch result {
+//            case .failure(let error):
+//                completion(.failure(error))
+//            case .success(let (edges, jwt)):
+//                shared.c.jwt = jwt
+//                var success = true
+//
+//                DispatchQueue.global().async {
+//                    let sem = DispatchSemaphore(value: 0)
+//                    for edge in edges {
+//                        deleteEdge(id: edge.id, completion: { (result) in
+//                            switch result {
+//                            case .failure(_):
+//                                success = false
+//                            case .success(_):
+//                                break
+//                            }
+//                            sem.signal()
+//                        })
+//
+//                        sem.wait()
+//                    }
+//
+//                    if success {
+//                        shared._delete(ids: [id], jwt: shared.c.jwt, completion: { (result) in
+//                            switch result {
+//                            case .failure(_):
+//                                completion(.failure(.unkown))
+//                            case .success(let j):
+//                                shared.c.jwt = j
+//                                completion(.success(()))
+//                            }
+//                        })
+//                    } else {
+//                        completion(.failure(.unkown))
+//                    }
+//                }
+//            }
+//        }
     }
     
     public static func deleteEdge(id: Data, completion: @escaping (Swift.Result<Void, AiTmedError>) -> Void) {

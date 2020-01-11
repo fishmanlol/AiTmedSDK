@@ -44,7 +44,7 @@ extension NotebookViewController {
         if section == 0 {
             return 0
         } else {
-            return 56
+            return 32
         }
     }
     

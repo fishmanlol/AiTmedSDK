@@ -62,33 +62,33 @@ extension AiTmed {
             }
         }
         
-        public static func retrieveNotebooks(args: RetrieveNotebooksArgs, completion: @escaping (Swift.Result<[Notebook], AiTmedError>) -> Void) {
-            shared.transform(args: args) { (result) in
-                switch result {
-                case .failure(let error):
-                    completion(.failure(error))
-                case .success(let retrieveEdgeArgs):
-                    shared._retreiveEdge(args: retrieveEdgeArgs, jwt: shared.c!.jwt, completion: { (result: Swift.Result<([Edge], String), AiTmedError>) in
-                        switch result {
-                        case .failure(let error):
-                            completion(.failure(error))
-                        case .success(let (edges, jwt)):
-                            shared.c?.jwt = jwt
-                            var notebooks: [Notebook] = []
-                            for edge in edges {
-                                var title = ""
-                                if let dict = edge.name.toJSONDict(), let t = dict["title"] as? String {
-                                    title = t
-                                }
-                                let notebook = Notebook(id: edge.id, title: title, isEncrypt: !edge.besak.isEmpty)
-                                notebooks.append(notebook)
-                            }
-                            completion(.success(notebooks))
-                        }
-                    })
-                }
-            }
-        }
+//        public static func retrieveNotebooks(args: RetrieveNotebooksArgs, completion: @escaping (Swift.Result<[Notebook], AiTmedError>) -> Void) {
+//            shared.transform(args: args) { (result) in
+//                switch result {
+//                case .failure(let error):
+//                    completion(.failure(error))
+//                case .success(let retrieveEdgeArgs):
+//                    shared._retreiveEdge(args: retrieveEdgeArgs, jwt: shared.c!.jwt, completion: { (result: Swift.Result<([Edge], String), AiTmedError>) in
+//                        switch result {
+//                        case .failure(let error):
+//                            completion(.failure(error))
+//                        case .success(let (edges, jwt)):
+//                            shared.c?.jwt = jwt
+//                            var notebooks: [Notebook] = []
+//                            for edge in edges {
+//                                var title = ""
+//                                if let dict = edge.name.toJSONDict(), let t = dict["title"] as? String {
+//                                    title = t
+//                                }
+//                                let notebook = Notebook(id: edge.id, title: title, isEncrypt: !edge.besak.isEmpty)
+//                                notebooks.append(notebook)
+//                            }
+//                            completion(.success(notebooks))
+//                        }
+//                    })
+//                }
+//            }
+//        }
         
         public static func createNoteBook(args: CreateNotebookArgs, completion: @escaping (Swift.Result<Notebook, AiTmedError>) -> Void) {
             shared.transform(args: args) { (result) in

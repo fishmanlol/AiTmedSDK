@@ -12,7 +12,7 @@ struct UpdateEdgeArgs {
     let type: Int32
     let name: String
     let stime: Int64
-    var bvid: Data
+    let bvid: Data
     
     init(type: Int32, name: String, bvid: Data) {
         self.type = type

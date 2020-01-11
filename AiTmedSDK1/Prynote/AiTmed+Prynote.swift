@@ -23,7 +23,7 @@ extension AiTmed {
     }
     
     public static func retrieveNotes(notebookID: Data, completion: @escaping (Result<[_Note], AiTmedError>) -> Void) {
-        
+        completion(.success([]))
     }
     
     //MARK: - Notebook
@@ -58,7 +58,7 @@ extension AiTmed {
                     title = t
                 }
                 let _notebook = _Notebook(id: edge.id, title: title, isEncrypt: !edge.besak.isEmpty, ctime:
-                    Date(timeIntervalSince1970: TimeInterval(edge.ctime)), mtime: Date(timeIntervalSince1970: TimeInterval(edge.mtime)))
+                    edge.ctime, mtime: edge.mtime)
                 completion(.success(_notebook))
             }
         }
@@ -82,7 +82,7 @@ extension AiTmed {
                     title = t
                 }
                 let _notebook = _Notebook(id: edge.id, title: title, isEncrypt: !edge.besak.isEmpty, ctime:
-                    Date(timeIntervalSince1970: TimeInterval(edge.ctime)), mtime: Date(timeIntervalSince1970: TimeInterval(edge.mtime)))
+                    edge.ctime, mtime: edge.mtime)
                 completion(.success(_notebook))
             }
         }
@@ -92,11 +92,26 @@ extension AiTmed {
         
     }
     
-    public static func retrieveNotebooks(completion: @escaping (Result<[_Notebook], AiTmedError>) -> Void) {
+    public static func retrieveNotebooks(maxCount: Int32? = nil, completion: @escaping (Result<[_Notebook], AiTmedError>) -> Void) {
+        let type = AiTmedType.notebook
+        let args = RetrieveEdgesArgs(ids: [], type: type, maxCount: maxCount)
         
-    }
-    
-    public struct _Appointment {
-    
+        retrieveEdges(args: args) { (result) in
+            switch result {
+            case .failure(let error):
+                completion(.failure(error))
+            case .success(let edges):
+                var _notebooks: [_Notebook] = []
+                for edge in edges {
+                    var title = ""
+                    if let dict = edge.name.toJSONDict(), let t = dict["title"] as? String {
+                        title = t
+                    }
+                    let _notebook = _Notebook(id: edge.id, title: title, isEncrypt: !edge.besak.isEmpty, ctime: edge.ctime, mtime: edge.mtime)
+                    _notebooks.append(_notebook)
+                }
+                completion(.success(_notebooks))
+            }
+        }
     }
 }
