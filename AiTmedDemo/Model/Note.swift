@@ -18,6 +18,9 @@ struct Note {
     var ctime: Date = Date()
     var mtime: Date = Date()
     var isBroken = false
+    var displayContent: String {
+        return String(data: content, encoding: .utf8) ?? ""
+    }
     
     init(id: Data, notebook: Notebook, title: String = "", content: Data = Data(), isBroken: Bool = false, mtime: Date = Date(), ctime: Date = Date()) {
         self.id = id

@@ -25,34 +25,28 @@ enum NotesGroup {
     }
     
     var count: Int {
+        return notes.count
+    }
+    
+    var notes: [Note] {
         switch self {
         case .all:
-            return Storage.default.notebooks.reduce(0) { $0 + $1.notes.count }
+            return Storage.default.notebooks.flatMap { $0.notes }
+        case .sharedWithMe:
+            return []
         case .single(let notebook):
-            return notebook.notes.count
+            return notebook.notes
+        }
+    }
+    
+    var title: String {
+        switch self {
+        case .all:
+            return "All Notes"
+        case .single(let notebook):
+            return notebook.title
         default:
-            return 0
+            return "Shared With Me"
         }
     }
 }
-
-//class NotesGroup {
-//    var notes: [Note]
-//    var notebook: Notebook?
-//    let type: GroupType
-//
-//    init(type: GroupType, notebooks: [Notebook]) {
-//        self.type = type
-//        switch type {
-//        case .single:
-//            guard notebooks.count == 1 else { fatalError("Single group type must contains 1 notebook") }
-//            self.notes = notebooks[0].notes
-//        case .all:
-//            self.notes = notebooks.flatMap { $0.notes }
-//        case .sharedWithMe:
-//            self.notes = []
-//        }
-//    }
-//
-//
-//}

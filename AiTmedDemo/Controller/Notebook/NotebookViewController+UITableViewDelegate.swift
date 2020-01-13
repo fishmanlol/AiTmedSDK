@@ -11,7 +11,19 @@ import UIKit
 extension NotebookViewController {
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
-            //Delete only one notebook at once
+            let nb = notebook(at: indexPath)
+            displayAlert(title: "Delete", msg: "Do you want to delete '\(nb.title)'?", hasCancel: true, actionTitle: "Yes", style: .destructive) {
+                WaitingView.scheduleDisplayOnWindow(delay: 0.5, msg: "Waiting...")
+                Storage.default.deleteNotebook(notebook: nb) { (result) in
+                    WaitingView.dismissOnWindow()
+                    switch result {
+                    case .failure(let error):
+                        self.displayAutoDismissAlert(msg: "Delete notebook failed")
+                    case .success(_):
+                        self.asyncDeleteIfNeeded(indexPath)
+                    }
+                }
+            }
         }
     }
     
@@ -33,7 +45,7 @@ extension NotebookViewController {
             
             displayEditingController(with: .update(notebook(at: indexPath)))
         } else {
-            
+            stateCoordinator
         }
         
         return

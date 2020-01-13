@@ -54,6 +54,18 @@ class Storage {
         }
     }
     
+    func deleteNotebook(notebook: Notebook, completion: @escaping (Result<Void, PrynoteError>) -> Void) {
+        AiTmed.deleteNotebook(id: notebook.id) { (result) in
+            switch result {
+            case .failure(let error):
+                completion(.failure(.unkown))
+            case .success(_):
+                self.notebooks.removeAll(where: { $0 === notebook })
+                completion(.success(()))
+            }
+        }
+    }
+    
     func sortByTitle() {
         notebooks.sort { (n1, n2) -> Bool in
             n1.title.compare(n2.title) == .orderedAscending

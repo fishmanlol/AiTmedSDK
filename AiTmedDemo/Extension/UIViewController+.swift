@@ -64,10 +64,10 @@ extension UIViewController {
         }
     }
     
-    func displayAlert(title: String?, msg: String?, hasCancel: Bool = false, actionTitle: String? = nil, action: (() -> Void)? = nil) {
+    func displayAlert(title: String?, msg: String?, hasCancel: Bool = false, actionTitle: String? = nil, style: UIAlertAction.Style = .default, action: (() -> Void)? = nil) {
         DispatchQueue.main.async {
             let alert = UIAlertController(title: title, message: msg, preferredStyle: .alert)
-            let ok = UIAlertAction(title: actionTitle ?? "OK", style: .default) { (_) in
+            let ok = UIAlertAction(title: actionTitle ?? "OK", style: style) { (_) in
                 action?()
             }
             alert.addAction(ok)

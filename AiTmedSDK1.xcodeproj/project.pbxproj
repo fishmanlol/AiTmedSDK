@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		10810E8B23CC190B0066AA9C /* NotesViewController+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10810E8723CC190B0066AA9C /* NotesViewController+.swift */; };
+		10810E8C23CC190B0066AA9C /* NotesViewController+Editor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10810E8823CC190B0066AA9C /* NotesViewController+Editor.swift */; };
+		10810E8D23CC190B0066AA9C /* NotesViewController+Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10810E8923CC190B0066AA9C /* NotesViewController+Helper.swift */; };
+		10810E8E23CC190B0066AA9C /* NotesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10810E8A23CC190B0066AA9C /* NotesViewController.swift */; };
+		10810E9023CC1DE00066AA9C /* MasterController+StateCoordinatorDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10810E8F23CC1DE00066AA9C /* MasterController+StateCoordinatorDelegate.swift */; };
 		1090FA7323C5AA4F002B05E6 /* AiTmedDeatKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1090FA6E23C5AA4F002B05E6 /* AiTmedDeatKey.swift */; };
 		1090FA7423C5AA4F002B05E6 /* AiTmedError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1090FA6F23C5AA4F002B05E6 /* AiTmedError.swift */; };
 		1090FA7523C5AA4F002B05E6 /* AiTmedArguments.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1090FA7023C5AA4F002B05E6 /* AiTmedArguments.swift */; };
@@ -133,6 +138,11 @@
 
 /* Begin PBXFileReference section */
 		0A80ADB6876C137594ED3877 /* Pods_AiTmedDemo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AiTmedDemo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		10810E8723CC190B0066AA9C /* NotesViewController+.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NotesViewController+.swift"; sourceTree = "<group>"; };
+		10810E8823CC190B0066AA9C /* NotesViewController+Editor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NotesViewController+Editor.swift"; sourceTree = "<group>"; };
+		10810E8923CC190B0066AA9C /* NotesViewController+Helper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NotesViewController+Helper.swift"; sourceTree = "<group>"; };
+		10810E8A23CC190B0066AA9C /* NotesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotesViewController.swift; sourceTree = "<group>"; };
+		10810E8F23CC1DE00066AA9C /* MasterController+StateCoordinatorDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MasterController+StateCoordinatorDelegate.swift"; sourceTree = "<group>"; };
 		1090FA6E23C5AA4F002B05E6 /* AiTmedDeatKey.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AiTmedDeatKey.swift; sourceTree = "<group>"; };
 		1090FA6F23C5AA4F002B05E6 /* AiTmedError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AiTmedError.swift; sourceTree = "<group>"; };
 		1090FA7023C5AA4F002B05E6 /* AiTmedArguments.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AiTmedArguments.swift; sourceTree = "<group>"; };
@@ -262,6 +272,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		10810E8623CC09870066AA9C /* Delete */ = {
+			isa = PBXGroup;
+			children = (
+				8E79743023C65F9F00819670 /* AiTmed+delete.swift */,
+			);
+			path = Delete;
+			sourceTree = "<group>";
+		};
 		1090FA6D23C5AA47002B05E6 /* Other */ = {
 			isa = PBXGroup;
 			children = (
@@ -476,7 +494,7 @@
 				8E9FE45523C555F60046AD9D /* MasterController */,
 				8E9FE40723C54F420046AD9D /* Placeholder */,
 				8E9FE40523C54F170046AD9D /* Editor */,
-				8E9FE40423C54F140046AD9D /* Note */,
+				8E9FE40423C54F140046AD9D /* Notes */,
 				8E9FE40323C54F090046AD9D /* Notebook */,
 				8E9FE3CE23C54C210046AD9D /* Starter */,
 			);
@@ -497,11 +515,15 @@
 			path = Notebook;
 			sourceTree = "<group>";
 		};
-		8E9FE40423C54F140046AD9D /* Note */ = {
+		8E9FE40423C54F140046AD9D /* Notes */ = {
 			isa = PBXGroup;
 			children = (
+				10810E8A23CC190B0066AA9C /* NotesViewController.swift */,
+				10810E8723CC190B0066AA9C /* NotesViewController+.swift */,
+				10810E8823CC190B0066AA9C /* NotesViewController+Editor.swift */,
+				10810E8923CC190B0066AA9C /* NotesViewController+Helper.swift */,
 			);
-			path = Note;
+			path = Notes;
 			sourceTree = "<group>";
 		};
 		8E9FE40523C54F170046AD9D /* Editor */ = {
@@ -631,10 +653,10 @@
 			children = (
 				8E9FE44623C553120046AD9D /* AiTmed.swift */,
 				8E79743D23C6703200819670 /* Helper.swift */,
+				10810E8623CC09870066AA9C /* Delete */,
 				8E38621323C9007300994D04 /* Retrieve */,
 				109D16AA23C84F90007064B2 /* Update */,
 				8E79743823C6624800819670 /* Create */,
-				8E79743023C65F9F00819670 /* AiTmed+delete.swift */,
 				8E79742E23C65F5800819670 /* AiTmed+grpc.swift */,
 				8E79742C23C65EE600819670 /* AiTmed+transform.swift */,
 			);
@@ -645,6 +667,7 @@
 			isa = PBXGroup;
 			children = (
 				8E9FE45623C556640046AD9D /* MasterController.swift */,
+				10810E8F23CC1DE00066AA9C /* MasterController+StateCoordinatorDelegate.swift */,
 			);
 			path = MasterController;
 			sourceTree = "<group>";
@@ -930,6 +953,7 @@
 				8E511D9523C80F9E008C5321 /* UIViewController+froze.swift in Sources */,
 				8E9FE3F523C54E8C0046AD9D /* UIImage.swift in Sources */,
 				8E9FE3FE23C54E8C0046AD9D /* UIView+.swift in Sources */,
+				10810E8D23CC190B0066AA9C /* NotesViewController+Helper.swift in Sources */,
 				8E9FE42623C552C50046AD9D /* UIFont.swift in Sources */,
 				8E79744423C690ED00819670 /* NotebookViewController.swift in Sources */,
 				8E79744223C68AE900819670 /* StateCoordinator.swift in Sources */,
@@ -943,6 +967,7 @@
 				8E9FE46123C55E240046AD9D /* NSAttributedString+.swift in Sources */,
 				8E79746A23C7FB1300819670 /* Keyboard.swift in Sources */,
 				8E79744823C6989900819670 /* NotebookViewController+helper.swift in Sources */,
+				10810E8B23CC190B0066AA9C /* NotesViewController+.swift in Sources */,
 				8E9FE3E023C54E6A0046AD9D /* CountryListController.swift in Sources */,
 				8E9FE3F823C54E8C0046AD9D /* Date+.swift in Sources */,
 				8E9FE3F923C54E8C0046AD9D /* PhoneNumber.swift in Sources */,
@@ -951,6 +976,7 @@
 				8E9FE3FA23C54E8C0046AD9D /* UINavigationController.swift in Sources */,
 				8E9FE41423C54F760046AD9D /* NoteCell.swift in Sources */,
 				8E9FE3F723C54E8C0046AD9D /* UIButton+.swift in Sources */,
+				10810E9023CC1DE00066AA9C /* MasterController+StateCoordinatorDelegate.swift in Sources */,
 				8E79742923C6573300819670 /* User.swift in Sources */,
 				8E79742B23C65B9E00819670 /* Storage.swift in Sources */,
 				8E9FE45D23C55D930046AD9D /* PrynoteError.swift in Sources */,
@@ -965,8 +991,10 @@
 				8E9FE40123C54EAD0046AD9D /* Functions.swift in Sources */,
 				8E9FE42423C552C50046AD9D /* Notification.swift in Sources */,
 				8E9FE45B23C55B070046AD9D /* Note.swift in Sources */,
+				10810E8C23CC190B0066AA9C /* NotesViewController+Editor.swift in Sources */,
 				8E79744C23C6999100819670 /* NotesGroup.swift in Sources */,
 				8E9FE45423C555A40046AD9D /* PlaceholderViewController.swift in Sources */,
+				10810E8E23CC190B0066AA9C /* NotesViewController.swift in Sources */,
 				8E9FE3E123C54E6A0046AD9D /* TYLabel.swift in Sources */,
 				8E9FE3F623C54E8C0046AD9D /* Double.swift in Sources */,
 				8E9FE3D223C54D500046AD9D /* StartViewController.swift in Sources */,

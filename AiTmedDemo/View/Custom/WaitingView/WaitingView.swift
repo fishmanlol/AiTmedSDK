@@ -14,6 +14,10 @@ class WaitingView: UIView {
     weak var activityIndicator: UIActivityIndicatorView!
     weak var middle: UIView!
     
+    private static var timer: Timer?
+    private static var isOnWindow = false
+    private static var tag = 1000
+    
     convenience init(msg: String) {
         self.init(frame: CGRect.zero)
         
@@ -28,6 +32,34 @@ class WaitingView: UIView {
     
     required init?(coder aDecoder: NSCoder) {
         fatalError()
+    }
+    
+    static func scheduleDisplayOnWindow(delay: TimeInterval, msg: String) {
+        timer = Timer.scheduledTimer(withTimeInterval: delay, repeats: false, block: { (_) in
+            DispatchQueue.main.async {
+                let view = WaitingView(frame: UIScreen.main.bounds)
+                view.backgroundColor = UIColor(white: 0.5, alpha: 0.5)
+                view.setMsg(msg)
+                view.tag = tag
+                let keyWindow = UIApplication.shared.keyWindow!
+                keyWindow.addSubview(view)
+                self.isOnWindow = true
+            }
+        })
+    }
+    
+    static func dismissOnWindow() {
+        timer?.invalidate()
+        
+        if isOnWindow {
+            DispatchQueue.main.async {
+                let keyWindow = UIApplication.shared.keyWindow!
+                for subview in keyWindow.subviews where subview.tag == tag {
+                    subview.removeFromSuperview()
+                    self.isOnWindow = false
+                }
+            }
+        }
     }
     
     func setMsg(_ msg: String) {

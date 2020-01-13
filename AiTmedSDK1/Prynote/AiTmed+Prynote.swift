@@ -89,7 +89,7 @@ extension AiTmed {
     }
     
     public static func deleteNotebook(id: Data, completion: @escaping (Result<Void, AiTmedError>) -> Void) {
-        
+        deleteEdge(id: id, completion: completion)
     }
     
     public static func retrieveNotebooks(maxCount: Int32? = nil, completion: @escaping (Result<[_Notebook], AiTmedError>) -> Void) {

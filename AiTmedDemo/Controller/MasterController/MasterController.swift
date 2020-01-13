@@ -17,11 +17,11 @@ class MasterController: UIViewController {
     
     lazy var stateCoordinator: StateCoordinator = {
         let coordinator = StateCoordinator()
-//        coordinator.delegate = self
+        coordinator.delegate = self
         return coordinator
     }()
     
-    override func viewDidLoad() {
+    override func   {
         super.viewDidLoad()
         
         installRootSplit()

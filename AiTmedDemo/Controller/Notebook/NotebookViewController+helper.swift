@@ -18,24 +18,14 @@ extension NotebookViewController {
     }
     
     func configure(_ cell: NotebookCell, with group: NotesGroup) {
-        switch group {
-        case .all:
-            cell.titleLabel.text = "All Notes"
-            
-        case .single(let notebook):
-            cell.titleLabel.text = "\(notebook.title)"
-            if notebook.isEncrypt {
-                cell.iconImageView.image = R.image.lock()
-            } else {
-                cell.iconImageView.image = R.image.folder()
-            }
-        default:
-            cell.titleLabel.text = "Shared With Me"
-        }
-        
+        cell.iconImageView.image = R.image.folder()
         cell.notesCountLabel.text = "\(group.count)"
-        
         cell.isLoading = !group.isReady
+        cell.titleLabel.text = group.title
+        
+        if case NotesGroup.single(let notebook) = group, notebook.isEncrypt {
+            cell.iconImageView.image = R.image.lock()
+        }
     }
     
     func indexPath(of group: NotesGroup) -> IndexPath {
@@ -103,6 +93,17 @@ extension NotebookViewController {
         }
     }
     
+    func asyncDeleteIfNeeded(_ indexPath: IndexPath) {
+        DispatchQueue.main.async {
+            self.tableView.beginUpdates()
+            if indexPath.section == 1 && self.open {
+                self.tableView.deleteRows(at: [indexPath], with: .automatic)
+            }
+            self.tableView.endUpdates()
+        }
+    }
+
+    
     func displayEditingController(with mode: NotebookEditingController.Mode) {
         let editingController = NotebookEditingController(mode: mode)
         editingController.delegate = self
@@ -110,6 +111,12 @@ extension NotebookViewController {
         present(navigation, animated: true) {
             self.isEditing = false
         }
+    }
+    
+    func displayNotesController(with group: NotesGroup) {
+        guard group.isReady else { return }
+        
+        
     }
 }
 
