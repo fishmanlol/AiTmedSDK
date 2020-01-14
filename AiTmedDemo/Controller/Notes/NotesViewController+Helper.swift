@@ -71,3 +71,20 @@
 //        present(listControllerNav, animated: true, completion: nil)
 //    }
 //}
+
+import UIKit
+
+extension NotesViewController {
+    func displayNotebookList(completion: @escaping (Notebook) -> Void) {
+        let notebookList = NotebookListController()
+        notebookList.action = { notebook in
+            completion(notebook)
+        }
+        let navigation = UINavigationController(rootViewController: notebookList)
+        present(navigation, animated: true, completion: nil)
+    }
+    
+    func displayEditorController(for notebook: Notebook) {
+        print("display editor!")
+    }
+}

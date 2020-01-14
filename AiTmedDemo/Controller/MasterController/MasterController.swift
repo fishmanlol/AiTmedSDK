@@ -21,7 +21,7 @@ class MasterController: UIViewController {
         return coordinator
     }()
     
-    override func   {
+    override func viewDidLoad() {
         super.viewDidLoad()
         
         installRootSplit()
@@ -31,12 +31,17 @@ class MasterController: UIViewController {
     func freshSplitViewController() -> UISplitViewController {
         let split = UISplitViewController()
         let navigation = UINavigationController(rootViewController: NotebookViewController(stateCoordinator))
-        split.viewControllers = [navigation]
+        split.viewControllers = [navigation, freshPlaceholderViewController()]
         return split
     }
     
     func freshPlaceholderViewController() -> UIViewController {
         return PlaceholderViewController.initWithPlaceholder()
+    }
+    
+    func freshNotesController(with group: NotesGroup) -> NotesViewController {
+        let vc = NotesViewController(stateCoordinator, group: group)
+        return vc
     }
     
     private func installRootSplit() {
@@ -73,7 +78,7 @@ class MasterController: UIViewController {
         return primaryNav(rootSplit).viewControllers[0] as! NotebookViewController
     }
     
-    private func primaryNav(_ split: UISplitViewController) -> UINavigationController {
+    func primaryNav(_ split: UISplitViewController) -> UINavigationController {
         guard let navigation = split.viewControllers.first as? UINavigationController  else {
             fatalError("Configuration of split view controller error")
         }
@@ -100,10 +105,23 @@ extension MasterController: UISplitViewControllerDelegate {
         return false
     }
     
-//    func splitViewController(_ splitViewController: UISplitViewController, separateSecondaryFrom primaryViewController: UIViewController) -> UIViewController? {
-//        let navigation = primaryNav(rootSplit)
-//        let stack = navigation.viewControllers
-//
+    func splitViewController(_ splitViewController: UISplitViewController, separateSecondaryFrom primaryViewController: UIViewController) -> UIViewController? {
+        let navigation = primaryNav(rootSplit)
+        let stack = navigation.viewControllers
+        
+        //only notebook
+        if stack.count == 1 {
+            return freshPlaceholderViewController()
+        }
+        
+        //notebook and notes
+        if stack.count == 2 {
+            return freshPlaceholderViewController()
+        }
+        
+        //notebook and notes and editor
+        fatalError()
+
 //        if rootSplitNavStack(in: .all) {
 //            if let editor = stack[2] as? EditorViewController {
 //                navigation.viewControllers = [stack[0], stack[1]]
@@ -124,5 +142,5 @@ extension MasterController: UISplitViewControllerDelegate {
 //        }
 //
 //        return nil
-//    }
+    }
 }

@@ -45,56 +45,16 @@ extension NotebookViewController {
             
             displayEditingController(with: .update(notebook(at: indexPath)))
         } else {
-            stateCoordinator
-        }
-        
-        return
-        if isEditing && indexPath.section == 1 {//display notebook edit page
-//            guard let editingNav = R.storyboard.main().instantiateViewController(withIdentifier: Constant.Identifier.NOTEBOOKEDITINGNAVIGATION) as? UINavigationController,
-//                let editingController = editingNav.viewControllers.first as? NotebookEditingController,
-//                let notebook = storage.notebook(at: indexPath.row) else { return }
-//            editingController.notebook = notebook
-//            editingController.delegate = self
-//            present(editingNav, animated: true, completion: nil)
+            switch indexPath {
+            case IndexPath(row: 0, section: 0):
+                stateCoordinator.select(.all)
+            case IndexPath(row: 1, section: 0):
+                stateCoordinator.select(.sharedWithMe)
+            default:
+                let nb = notebook(at: indexPath)
+                stateCoordinator.select(.single(nb))
+            }
             
-            return
         }
-        
-        if indexPath == IndexPath(row: 0, section: 0) {//all notes
-//            stateCoordinator?.select(.all)
-            return
-        }
-        
-        if indexPath == IndexPath(row: 1, section: 0) {//shared notes
-//            stateCoordinator?.select(.sharedWithMe)
-            return
-        }
-        
-        //notebooks
-//        if let notebook = storage.notebook(at: indexPath.row) {
-//            stateCoordinator?.select(.single(notebook))
-//        }
-        
-//        switch indexPath {
-//        case IndexPath(row: 0, section: 0):
-//            let notesViewController = NotesViewController()
-//            notesViewController.storage = storage
-//            notesViewController.notes = storage.allNotes()
-//            notesViewController.stateCoordinator = stateCoordinator
-//            navigationController?.pushViewController(notesViewController, animated: true)
-//        case IndexPath(row: 1, section: 0):
-//            navigationController?.pushViewController(SharedViewController(), animated: true)
-//        default:
-//            let notesViewController = NotesViewController()
-//            let notebook = storage.notebooks[indexPath.row]
-//            notesViewController.storage = storage
-//            notesViewController.notes = storage.notes(in: notebook)
-//            notesViewController._notebook = notebook
-//            notesViewController.stateCoordinator = stateCoordinator
-//            navigationController?.pushViewController(notesViewController, animated: true)
-//        }
-        
     }
-    
-
 }

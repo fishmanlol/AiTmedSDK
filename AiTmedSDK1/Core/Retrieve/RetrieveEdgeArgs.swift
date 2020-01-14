@@ -13,7 +13,7 @@ public class RetrieveEdgesArgs {
     let maxCount: Int32?
     let type: Int32
     
-    public init(ids: [Data] = [], type: Int32, maxCount: Int32? = nil) {
+    public init(ids: [Data] = [], type: Int32 = 0, maxCount: Int32? = nil) {
         self.ids = ids
         self.maxCount = maxCount
         self.type = type

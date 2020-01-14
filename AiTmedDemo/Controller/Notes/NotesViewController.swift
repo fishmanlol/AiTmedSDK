@@ -45,21 +45,16 @@ class NotesViewController: UITableViewController {
     }
     
     @objc func didWriteItemTapped() {
-//        switch notesGroup {
-//        case .all:
-//            displayNotebookList()
-//        case .single(let notebook):
-//            storage.addNoteAtLocal(title: "New Note", content: "", in: notebook) { (note) in
-//                if let index = notes.firstIndex(of: note) {
-//                    tableView.beginUpdates()
-//                    tableView.insertRows(at: [IndexPath(row: index, section: 0)], with: .automatic)
-//                    tableView.endUpdates()
-//                    stateCoordinator?.select(note)
-//                }
-//            }
-//        case .sharedWithMe:
-//            break
-//        }
+        switch group {
+        case .all:
+            displayNotebookList { [unowned self] notebook in
+                self.displayEditorController(for: notebook)
+            }
+        case .single(let notebook):
+            displayEditorController(for: notebook)
+        default:
+            fatalError()
+        }
     }
     
     @objc func didLoadAllNotes(no: Notification) {
@@ -124,36 +119,40 @@ class NotesViewController: UITableViewController {
     }
     
     private func updateToolbar() {
-//        if let split = splitViewController {
-//            if !split.isCollapsed, split.viewControllers.count > 1,
-//               let nav = split.viewControllers[1] as? UINavigationController,
-//                nav.topViewController is EditorViewController {//hide add button
-//                toolbarItems = [spaceItem, noteCountItem, spaceItem]
-//            } else {
-//                toolbarItems = [spaceItem, noteCountItem, spaceItem, writeItem]
-//            }
-//
-//            if let label = noteCountItem.customView as? UILabel {
-//                label.text = "\(notes.count) notes"
-//            }
-//        }
+        if let split = splitViewController {
+            if !split.isCollapsed, split.viewControllers.count > 1,
+               let nav = split.viewControllers[1] as? UINavigationController,
+                nav.topViewController is EditorViewController {//hide add button
+                toolbarItems = [spaceItem, noteCountItem, spaceItem]
+            } else {
+                toolbarItems = [spaceItem, noteCountItem, spaceItem, writeItem]
+            }
+
+            if let label = noteCountItem.customView as? UILabel {
+                label.text = "\(group.count) notes"
+            }
+        }
     }
     
     override func willTransition(to newCollection: UITraitCollection, with coordinator: UIViewControllerTransitionCoordinator) {
         updateToolbar()
     }
+    
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        tableView.reloadEmptyDataSet()
+    }
 }
 
 extension NotesViewController: DZNEmptyDataSetSource, DZNEmptyDataSetDelegate {
-//    func customView(forEmptyDataSet scrollView: UIScrollView!) -> UIView! {
-//        let waitingView = WaitingView(frame: CGRect(x: 0, y: 0, width: 100, height: 44))
-//        if isLoading {
-//            waitingView.startAnimating()
-//            waitingView.setMsg("Loading")
-//        } else {
-//            waitingView.stopAnimating()
-//            waitingView.setMsg("No Notes")
-//        }
-//        return waitingView
-//    }
+    func title(forEmptyDataSet scrollView: UIScrollView!) -> NSAttributedString! {
+        return NSAttributedString(string: "You don't have any notes now")
+    }
+    
+    func buttonTitle(forEmptyDataSet scrollView: UIScrollView!, for state: UIControl.State) -> NSAttributedString! {
+        return NSAttributedString(string: "New notes", attributes: [NSAttributedString.Key.foregroundColor: view.tintColor, NSAttributedString.Key.underlineStyle: NSUnderlineStyle.single.rawValue])
+    }
+    
+    func emptyDataSetDidTapButton(_ scrollView: UIScrollView!) {
+        didWriteItemTapped()
+    }
 }

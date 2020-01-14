@@ -26,6 +26,12 @@ class NotebookViewController: UITableViewController {
         setUp()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        tableView.reloadData()
+    }
+    
     //MARK: - Action
     @objc func didPullToRefreshing(refreshControl: UIRefreshControl) {
         Storage.default.retrieveNotebooks { [weak self] (result) in

@@ -96,7 +96,7 @@ public class AiTmed {
                                                     sk: sk,
                                                     userId: vertex.id,
                                                     jwt: jwt)
-                        credential.save()
+                        credential.save()//todo
                         completion(.success(()))
                     }
                 })

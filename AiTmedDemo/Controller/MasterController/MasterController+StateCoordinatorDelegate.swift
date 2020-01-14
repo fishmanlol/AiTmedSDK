@@ -10,6 +10,7 @@ import UIKit
 
 extension MasterController: StateCoordinatorDelegate {
     func didSelectedNotesGroup(_ notesGroup: NotesGroup) {
-        
+        let navigation = primaryNav(rootSplit)
+        navigation.pushViewController(freshNotesController(with: notesGroup), animated: true)
     }
 }

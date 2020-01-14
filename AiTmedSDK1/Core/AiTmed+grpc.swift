@@ -48,6 +48,7 @@ extension AiTmed {
         request.objType = ObjectType.edge.code
         request.jwt = jwt
         request.type = args.type
+        request.type = args.type
         request.xfname = "bvid"
         if let maxCount = args.maxCount {
             request.maxcount = maxCount
