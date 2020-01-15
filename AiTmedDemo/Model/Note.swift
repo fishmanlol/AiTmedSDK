@@ -14,22 +14,28 @@ struct Note {
     var id: Data
     var notebook: Notebook
     var title: String = ""
-    var content: Data = Data()
+    var rawContent: Data = Data()
     var ctime: Date = Date()
     var mtime: Date = Date()
     var isBroken = false
+    var mime: MimeType
     var displayContent: String {
-        return String(data: content, encoding: .utf8) ?? ""
+        if mime == .plain {
+            return String(data: rawContent, encoding: .utf8) ?? ""
+        } else {
+            return String(data: rawContent, encoding: .utf8) ?? ""
+        }
     }
     
-    init(id: Data, notebook: Notebook, title: String = "", content: Data = Data(), isBroken: Bool = false, mtime: Date = Date(), ctime: Date = Date()) {
+    init(id: Data, notebook: Notebook, title: String = "", content: Data = Data(), isBroken: Bool = false, mtime: Date = Date(), ctime: Date = Date(), mime: MimeType) {
         self.id = id
         self.notebook = notebook
         self.title = title
-        self.content = content
+        self.rawContent = content
         self.isBroken = isBroken
         self.mtime = mtime
         self.ctime = ctime
+        self.mime = mime
     }
     
     func update(title: String? = nil, content: Data? = nil, completion: @escaping (Result<Void, PrynoteError>) -> Void) {

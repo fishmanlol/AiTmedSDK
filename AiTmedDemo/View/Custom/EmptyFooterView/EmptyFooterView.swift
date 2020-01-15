@@ -8,72 +8,120 @@
 
 import UIKit
 
-protocol EmptyFooterViewDelegate: AnyObject {
-    var title: NSAttributedString? { get }
-    var buttonTitle: NSAttributedString? { get }
-    func emptyFooterViewDidButtonTapped(_ v: EmptyFooterView)
-}
-
-extension EmptyFooterViewDelegate {
-    var title: NSAttributedString? {
-        return nil
-    }
-    
-    var buttonTitle: NSAttributedString? {
-        return nil
-    }
-    
-    func emptyFooterViewDidButtonTapped(_ v: EmptyFooterView) {}
+@objc protocol EmptyFooterViewDatasource: AnyObject {
+    @objc optional func buttonTitle(forEmptyFooter footer: EmptyFooterView!) -> NSAttributedString?
+    @objc optional func title(forEmptyFooter footer: EmptyFooterView!) -> NSAttributedString?
+    @objc optional func emptyFooterViewDidButtonTapped(_ v: EmptyFooterView)
 }
 
 class EmptyFooterView: UIView {
     lazy var titleLabel: UILabel = createTitleLabel()
     lazy var titleButton: UIButton = createTitleButton()
     
-    weak var delegate: EmptyFooterViewDelegate?
+    weak var datasource: EmptyFooterViewDatasource?
+    
+    init(datasource: EmptyFooterViewDatasource) {
+        self.datasource = datasource
+        super.init(frame: .zero)
+        setNeedsUpdateConstraints()
+    }
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        
+        setNeedsUpdateConstraints()
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError()
+    }
+    
+    override func layoutSubviews() {
+        <#code#>
+    }
     
     override func updateConstraints() {
         super.updateConstraints()
         
-        guard let delegate = delegate else { return }
-        let _title = delegate.title
-        let _buttonTitle =  delegate.buttonTitle
+        guard let datasource = datasource else { return }
+        let _title = datasource.title?(forEmptyFooter: self)
+        let _buttonTitle =  datasource.buttonTitle?(forEmptyFooter: self)
         
         //if only title
-        if _title != nil && delegate.buttonTitle == nil {
+        if _title != nil && _buttonTitle == nil {
             titleLabel.snp.makeConstraints { (make) in
-                
+                make.centerX.equalToSuperview()
+                make.centerY.equalToSuperview().offset(-60)
             }
             return
         }
         
         //if only button
-        if _title == nil && delegate.buttonTitle != nil {
+        if _title == nil && _buttonTitle != nil {
+            titleButton.snp.makeConstraints { (make) in
+                make.centerX.equalToSuperview()
+                make.centerY.equalToSuperview().offset(-60)
+            }
             return
         }
         
         //if both
         if _title != nil && _buttonTitle != nil {
+            titleLabel.snp.makeConstraints { (make) in
+                make.centerX.equalToSuperview()
+                make.left.equalToSuperview().inset(16)
+                make.centerY.equalToSuperview().offset(-60)
+            }
+            
+            titleButton.snp.makeConstraints { (make) in
+                make.centerX.equalToSuperview()
+                make.top.equalTo(titleLabel.snp.bottom).offset(8)
+            }
             return
         }
     }
     
     @objc private func didButtonTapped() {
-        delegate?.emptyFooterViewDidButtonTapped(self)
+        datasource?.emptyFooterViewDidButtonTapped?(self)
     }
     
     private func createTitleLabel() -> UILabel {
         let label = UILabel()
-        label.attributedText = delegate?.title
+        label.numberOfLines = 0
+        label.textAlignment = .center
+        label.attributedText = datasource?.title?(forEmptyFooter: self)
         addSubview(label)
         return label
     }
     
     private func createTitleButton() -> UIButton {
         let button = UIButton(type: .system)
-        button.setAttributedTitle(delegate?.buttonTitle, for: .normal)
-        button.addTarget(self, action: #selector(didButtonTapped), for: .touchUpInside)
+        button.setAttributedTitle(datasource?.buttonTitle?(forEmptyFooter: self), for: .normal)
+        button.addTarget(datasource, action: #selector(EmptyFooterViewDatasource.emptyFooterViewDidButtonTapped(_:)), for: .touchUpInside)
         addSubview(button)
         return button
+    }
+}
+
+private var footerDatasourceKey: Void = ()
+
+extension UITableView {
+    weak var emptyFooterViewDatasource: EmptyFooterViewDatasource? {
+        get {
+            return objc_getAssociatedObject(self, &footerDatasourceKey) as? EmptyFooterViewDatasource
+        }
+        
+        set {
+            objc_setAssociatedObject(self, &footerDatasourceKey, newValue, .OBJC_ASSOCIATION_ASSIGN)
+            
+        }
+    }
+    
+    func showEmptyFooter() {
+        tableFooterView = EmptyFooterView(frame: frame)
+    }
+    
+    func hideEmptyFooter() {
+        tableFooterView = UIView()
     }
 }

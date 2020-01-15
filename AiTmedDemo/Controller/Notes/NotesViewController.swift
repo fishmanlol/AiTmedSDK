@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import DZNEmptyDataSet
 
 class NotesViewController: UITableViewController {
     var group: NotesGroup
@@ -48,10 +47,10 @@ class NotesViewController: UITableViewController {
         switch group {
         case .all:
             displayNotebookList { [unowned self] notebook in
-                self.displayEditorController(for: notebook)
+                self.stateCoordinator.willCreateNote(in: notebook)
             }
         case .single(let notebook):
-            displayEditorController(for: notebook)
+            stateCoordinator.willCreateNote(in: notebook)
         default:
             fatalError()
         }
@@ -101,8 +100,8 @@ class NotesViewController: UITableViewController {
     private func setUp() {
         //tableview
         tableView.register(UINib(resource: R.nib.noteCell), forCellReuseIdentifier: Constant.Identifier.NOTECELL)
-        tableView.emptyDataSetSource = self
-        tableView.emptyDataSetDelegate = self
+//        tableView.emptyDataSetSource = self
+//        tableView.emptyDataSetDelegate = self
         tableView.tableFooterView = UIView()
         tableView.backgroundView = UIImageView(image: R.image.paper_light())
         tableView.allowsMultipleSelection = false
@@ -138,21 +137,32 @@ class NotesViewController: UITableViewController {
         updateToolbar()
     }
     
-    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        tableView.reloadEmptyDataSet()
-    }
 }
 
-extension NotesViewController: DZNEmptyDataSetSource, DZNEmptyDataSetDelegate {
-    func title(forEmptyDataSet scrollView: UIScrollView!) -> NSAttributedString! {
-        return NSAttributedString(string: "You don't have any notes now")
+extension NotesViewController: EmptyFooterViewDatasource {
+    func title(forEmptyFooter footer: EmptyFooterView!) -> NSAttributedString? {
+        return NSAttributedString(string: "You don't have any notes now", attributes: [NSAttributedString.Key.foregroundColor: UIColor.gray, NSAttributedString.Key.font: UIFont.systemFont(ofSize: 27, weight: .medium)])
     }
     
-    func buttonTitle(forEmptyDataSet scrollView: UIScrollView!, for state: UIControl.State) -> NSAttributedString! {
+    func buttonTitle(forEmptyFooter footer: EmptyFooterView!) -> NSAttributedString? {
         return NSAttributedString(string: "New notes", attributes: [NSAttributedString.Key.foregroundColor: view.tintColor, NSAttributedString.Key.underlineStyle: NSUnderlineStyle.single.rawValue])
     }
     
-    func emptyDataSetDidTapButton(_ scrollView: UIScrollView!) {
+    func emptyFooterViewDidButtonTapped(_ v: EmptyFooterView) {
         didWriteItemTapped()
     }
 }
+
+//extension NotesViewController: DZNEmptyDataSetSource, DZNEmptyDataSetDelegate {
+//    func title(forEmptyDataSet scrollView: UIScrollView!) -> NSAttributedString! {
+//        return NSAttributedString(string: "You don't have any notes now")
+//    }
+//
+//    func buttonTitle(forEmptyDataSet scrollView: UIScrollView!, for state: UIControl.State) -> NSAttributedString! {
+//        return NSAttributedString(string: "New notes", attributes: [NSAttributedString.Key.foregroundColor: view.tintColor, NSAttributedString.Key.underlineStyle: NSUnderlineStyle.single.rawValue])
+//    }
+//
+//    func emptyDataSetDidTapButton(_ scrollView: UIScrollView!) {
+//        didWriteItemTapped()
+//    }
+//}

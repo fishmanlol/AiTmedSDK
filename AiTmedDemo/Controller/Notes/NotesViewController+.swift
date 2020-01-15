@@ -14,6 +14,8 @@ extension NotesViewController {
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+
+        
         return group.count
     }
     
@@ -23,6 +25,22 @@ extension NotesViewController {
         
         configure(cell, with: note)
         return cell
+    }
+    
+    override func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        if self.tableView(tableView, numberOfRowsInSection: section) == 0 {
+            return tableView.bounds.height
+        }
+        return 0
+    }
+    
+    override func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+        if section == 0 {
+            let footer = EmptyFooterView(datasource: self)
+            return footer
+        }
+        
+        return nil
     }
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {

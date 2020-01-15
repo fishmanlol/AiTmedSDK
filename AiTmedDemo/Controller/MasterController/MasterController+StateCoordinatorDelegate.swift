@@ -13,4 +13,15 @@ extension MasterController: StateCoordinatorDelegate {
         let navigation = primaryNav(rootSplit)
         navigation.pushViewController(freshNotesController(with: notesGroup), animated: true)
     }
+    
+    func willCreateNote(in notebook: Notebook) {
+        let editor = freshEditor(notebook: notebook, mode: .create)
+        let navigation = primaryNav(rootSplit)
+        
+        if isHorizontallyRegular {
+            rootSplit.viewControllers = [navigation, editor]
+        } else {
+            navigation.pushViewController(editor, animated: true)
+        }
+    }
 }

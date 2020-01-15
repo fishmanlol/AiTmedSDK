@@ -48,7 +48,7 @@ class Notebook {
                 completion(.failure(.unkown))
             case .success(let _notes):
                 let notes = _notes.map {
-                    Note(id: $0.id, notebook: self, title: $0.title, content: $0.content, isBroken: $0.isBroken, mtime: $0.mtime, ctime: $0.ctime)
+                    Note(id: $0.id, notebook: self, title: $0.title, content: $0.content, isBroken: $0.isBroken, mtime: $0.mtime, ctime: $0.ctime, mime: $0.mime)
                 }
                 self.notes = notes
                 completion(.success(()))

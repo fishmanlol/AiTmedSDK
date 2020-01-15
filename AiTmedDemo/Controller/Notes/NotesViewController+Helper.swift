@@ -85,6 +85,7 @@ extension NotesViewController {
     }
     
     func displayEditorController(for notebook: Notebook) {
+
         print("display editor!")
     }
 }

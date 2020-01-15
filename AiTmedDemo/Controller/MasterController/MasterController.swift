@@ -44,6 +44,10 @@ class MasterController: UIViewController {
         return vc
     }
     
+    func freshEditor(notebook: Notebook, mode: EditorViewController.Mode) -> EditorViewController {
+        return EditorViewController(stateCoordinator, notebook: notebook, mode: mode)
+    }
+    
     private func installRootSplit() {
         rootSplit.delegate = self
         rootSplit.preferredDisplayMode = .allVisible

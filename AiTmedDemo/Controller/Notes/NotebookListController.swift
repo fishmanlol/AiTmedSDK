@@ -85,6 +85,18 @@ extension NotebookListController: UITableViewDataSource {
         return header
     }
     
+    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        if self.tableView(tableView, numberOfRowsInSection: section) == 0 {
+            return tableView.bounds.height
+        }
+        
+        return 0
+    }
+    
+    func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+        return EmptyFooterView(datasource: self)
+    }
+    
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         return 60
     }
@@ -108,6 +120,12 @@ extension NotebookListController: UITableViewDataSource {
     }
 }
 
+extension NotebookListController: EmptyFooterViewDatasource {
+    func title(forEmptyFooter footer: EmptyFooterView!) -> NSAttributedString? {
+        return NSAttributedString(string: "No notebook", attributes: [NSAttributedString.Key.foregroundColor: UIColor.gray, NSAttributedString.Key.font: UIFont.systemFont(ofSize: 27, weight: .medium)])
+    }
+}
+
 extension NotebookListController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let oldSelectedIndex = selectedIndex
@@ -126,8 +144,8 @@ extension NotebookListController: NotebookListHeaderDelegate {
     }
 }
 
-protocol NotebookListHeaderDelegate: AnyObject {
-    func headerDidTapAddButton(_ header: NotebookListHeader)
+@objc protocol NotebookListHeaderDelegate: AnyObject {
+    @objc func headerDidTapAddButton(_ header: NotebookListHeader)
 }
 
 class NotebookListHeader: UIView {
@@ -144,21 +162,16 @@ class NotebookListHeader: UIView {
         fatalError()
     }
     
-    @objc func didTapAddButton() {
-        delegate.headerDidTapAddButton(self)
-    }
-    
     private func setUp() {
         let addButton = UIButton(type: .system)
         addButton.setContentHuggingPriority(.required, for: .horizontal)
         addButton.setImage(R.image.add_circle(), for: .normal)
-        addButton.addTarget(self, action: #selector(didTapAddButton), for: .touchUpInside)
+        addButton.addTarget(delegate, action: #selector(NotebookListHeaderDelegate.headerDidTapAddButton), for: .touchUpInside)
         self.addButton = addButton
         addSubview(addButton)
         
         addButton.snp.makeConstraints { (make) in
-            make.right.equalToSuperview().inset(16)
-            make.centerY.equalToSuperview()
+            make.centerY.centerX.equalToSuperview()
         }
     }
 }

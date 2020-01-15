@@ -4,9 +4,10 @@
 target 'AiTmedDemo' do
   # Comment the next line if you don't want to use dynamic frameworks
   use_frameworks!
+  
   pod 'SnapKit'
   pod 'PhoneNumberKit', '~> 3.1'
-  pod 'DZNEmptyDataSet'
+  pod 'IQKeyboardManagerSwift'
   pod 'R.swift'
   pod 'Reveal-SDK', :configurations => ['Debug']
   # Pods for AiTmedDemo

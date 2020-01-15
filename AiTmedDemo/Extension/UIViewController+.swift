@@ -13,6 +13,10 @@ extension UIViewController {
         return isViewLoaded && view.window != nil
     }
     
+    var topBarHeight: CGFloat {
+        return UIApplication.shared.statusBarFrame.height + (navigationController?.navigationBar.frame.height ?? 0)
+    }
+    
     func displayAutoDismissAlert(msg: String, wait: TimeInterval = 1) {
         DispatchQueue.main.async {
             let alert = UIAlertController(title: nil, message: msg, preferredStyle: .alert)

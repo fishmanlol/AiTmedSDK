@@ -10,11 +10,39 @@ import Foundation
 
 protocol StateCoordinatorDelegate: class {
     func didSelectedNotesGroup(_ notesGroup: NotesGroup)
+    func didSelectedNote(_ note: Note)
+    func willCreateNote(in notebook: Notebook)
+    func didCreate(_ note: Note, in notebook: Notebook)
+    func didDelete(_ note: Note, in notebook: Notebook)
+}
+
+extension StateCoordinatorDelegate {
+    func didSelectedNotesGroup(_ notesGroup: NotesGroup) {}
+    func didSelectedNote(_ note: Note) {}
+    func willCreateNote(in notebook: Notebook) {}
+    func didCreate(_ note: Note, in notebook: Notebook) {}
+    func didDelete(_ note: Note, in notebook: Notebook) {}
 }
 
 class StateCoordinator {
     func select(_ notesGroup: NotesGroup) {
         delegate?.didSelectedNotesGroup(notesGroup)
+    }
+    
+    func select(_ note: Note, in notebook: Notebook) {
+        delegate?.didSelectedNote(note)
+    }
+    
+    func willCreateNote(in notebook: Notebook) {
+        delegate?.willCreateNote(in: notebook)
+    }
+    
+    func didCreate(_ note: Note, in notebook: Notebook) {
+        delegate?.didCreate(note, in: notebook)
+    }
+    
+    func delete(_ note: Note, in notebook: Notebook) {
+        delegate?.didDelete(note, in: notebook)
     }
     
     weak var delegate: StateCoordinatorDelegate?

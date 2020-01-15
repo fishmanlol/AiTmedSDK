@@ -110,8 +110,8 @@
 		8E9FE46523C56F780046AD9D /* _Note.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E9FE46423C56F780046AD9D /* _Note.swift */; };
 		8E9FE46723C56FE70046AD9D /* _Notebook.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E9FE46623C56FE70046AD9D /* _Notebook.swift */; };
 		8ED8DAED23CD26E300A33AE7 /* NotebookListController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ED8DAEC23CD26E300A33AE7 /* NotebookListController.swift */; };
-		8ED8DAEF23CD353E00A33AE7 /* EditorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ED8DAEE23CD353D00A33AE7 /* EditorViewController.swift */; };
 		8ED8DAF423CD49BF00A33AE7 /* EmptyFooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ED8DAF323CD49BF00A33AE7 /* EmptyFooterView.swift */; };
+		8EE0C04723CE6D770050141C /* EditorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EE0C04623CE6D760050141C /* EditorViewController.swift */; };
 		B6596DBD03EE0AD4FC54D84F /* Pods_AiTmedDemo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0A80ADB6876C137594ED3877 /* Pods_AiTmedDemo.framework */; };
 /* End PBXBuildFile section */
 
@@ -250,8 +250,8 @@
 		8E9FE46423C56F780046AD9D /* _Note.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = _Note.swift; sourceTree = "<group>"; };
 		8E9FE46623C56FE70046AD9D /* _Notebook.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = _Notebook.swift; sourceTree = "<group>"; };
 		8ED8DAEC23CD26E300A33AE7 /* NotebookListController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotebookListController.swift; sourceTree = "<group>"; };
-		8ED8DAEE23CD353D00A33AE7 /* EditorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorViewController.swift; sourceTree = "<group>"; };
 		8ED8DAF323CD49BF00A33AE7 /* EmptyFooterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyFooterView.swift; sourceTree = "<group>"; };
+		8EE0C04623CE6D760050141C /* EditorViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditorViewController.swift; sourceTree = "<group>"; };
 		BF44A316F99131DACE5078A6 /* Pods-AiTmedSDK1.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AiTmedSDK1.debug.xcconfig"; path = "Target Support Files/Pods-AiTmedSDK1/Pods-AiTmedSDK1.debug.xcconfig"; sourceTree = "<group>"; };
 		C062DDAF7D5A1F75D9337D3F /* Pods-AiTmedDemo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AiTmedDemo.release.xcconfig"; path = "Target Support Files/Pods-AiTmedDemo/Pods-AiTmedDemo.release.xcconfig"; sourceTree = "<group>"; };
 		E2ACA0527ED9DDE03918ED42 /* Pods-AiTmedSDK1.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AiTmedSDK1.release.xcconfig"; path = "Target Support Files/Pods-AiTmedSDK1/Pods-AiTmedSDK1.release.xcconfig"; sourceTree = "<group>"; };
@@ -537,7 +537,7 @@
 		8E9FE40523C54F170046AD9D /* Editor */ = {
 			isa = PBXGroup;
 			children = (
-				8ED8DAEE23CD353D00A33AE7 /* EditorViewController.swift */,
+				8EE0C04623CE6D760050141C /* EditorViewController.swift */,
 			);
 			path = Editor;
 			sourceTree = "<group>";
@@ -999,9 +999,9 @@
 				8E79742B23C65B9E00819670 /* Storage.swift in Sources */,
 				8E9FE45D23C55D930046AD9D /* PrynoteError.swift in Sources */,
 				8E79745C23C6B0BC00819670 /* NotebookViewController+UITableViewDelegate.swift in Sources */,
-				8ED8DAEF23CD353E00A33AE7 /* EditorViewController.swift in Sources */,
 				8E9FE3E523C54E6A0046AD9D /* Country.swift in Sources */,
 				8E79746023C6B23100819670 /* NotebookEditingController.swift in Sources */,
+				8EE0C04723CE6D770050141C /* EditorViewController.swift in Sources */,
 				109D16AF23C8544E007064B2 /* NotebookViewController+EditingControllerDelegate.swift in Sources */,
 				8E9FE3E223C54E6A0046AD9D /* TYInput.swift in Sources */,
 				8E9FE3FC23C54E8C0046AD9D /* UIViewController+.swift in Sources */,
