@@ -128,7 +128,7 @@ struct R: Rswift.Validatable {
     fileprivate init() {}
   }
 
-  /// This `R.image` struct is generated, and contains static references to 19 images.
+  /// This `R.image` struct is generated, and contains static references to 20 images.
   struct image {
     /// Image `add_circle`.
     static let add_circle = Rswift.ImageResource(bundle: R.hostingBundle, name: "add_circle")
@@ -136,6 +136,8 @@ struct R: Rswift.Validatable {
     static let add = Rswift.ImageResource(bundle: R.hostingBundle, name: "add")
     /// Image `arrow_back`.
     static let arrow_back = Rswift.ImageResource(bundle: R.hostingBundle, name: "arrow_back")
+    /// Image `arrow_down`.
+    static let arrow_down = Rswift.ImageResource(bundle: R.hostingBundle, name: "arrow_down")
     /// Image `arrow_right_bold`.
     static let arrow_right_bold = Rswift.ImageResource(bundle: R.hostingBundle, name: "arrow_right_bold")
     /// Image `arrow_right`.
@@ -187,6 +189,13 @@ struct R: Rswift.Validatable {
     /// `UIImage(named: "arrow_back", bundle: ..., traitCollection: ...)`
     static func arrow_back(compatibleWith traitCollection: UIKit.UITraitCollection? = nil) -> UIKit.UIImage? {
       return UIKit.UIImage(resource: R.image.arrow_back, compatibleWith: traitCollection)
+    }
+    #endif
+
+    #if os(iOS) || os(tvOS)
+    /// `UIImage(named: "arrow_down", bundle: ..., traitCollection: ...)`
+    static func arrow_down(compatibleWith traitCollection: UIKit.UITraitCollection? = nil) -> UIKit.UIImage? {
+      return UIKit.UIImage(resource: R.image.arrow_down, compatibleWith: traitCollection)
     }
     #endif
 
@@ -305,7 +314,7 @@ struct R: Rswift.Validatable {
     fileprivate init() {}
   }
 
-  /// This `R.nib` struct is generated, and contains static references to 4 nibs.
+  /// This `R.nib` struct is generated, and contains static references to 5 nibs.
   struct nib {
     /// Nib `NoteCell`.
     static let noteCell = _R.nib._NoteCell()
@@ -313,6 +322,8 @@ struct R: Rswift.Validatable {
     static let notebookCell = _R.nib._NotebookCell()
     /// Nib `NotebookHeader`.
     static let notebookHeader = _R.nib._NotebookHeader()
+    /// Nib `NotebookSelectionView`.
+    static let notebookSelectionView = _R.nib._NotebookSelectionView()
     /// Nib `PlaceholderViewController`.
     static let placeholderViewController = _R.nib._PlaceholderViewController()
 
@@ -341,6 +352,14 @@ struct R: Rswift.Validatable {
     #endif
 
     #if os(iOS) || os(tvOS)
+    /// `UINib(name: "NotebookSelectionView", in: bundle)`
+    @available(*, deprecated, message: "Use UINib(resource: R.nib.notebookSelectionView) instead")
+    static func notebookSelectionView(_: Void = ()) -> UIKit.UINib {
+      return UIKit.UINib(resource: R.nib.notebookSelectionView)
+    }
+    #endif
+
+    #if os(iOS) || os(tvOS)
     /// `UINib(name: "PlaceholderViewController", in: bundle)`
     @available(*, deprecated, message: "Use UINib(resource: R.nib.placeholderViewController) instead")
     static func placeholderViewController(_: Void = ()) -> UIKit.UINib {
@@ -358,6 +377,10 @@ struct R: Rswift.Validatable {
 
     static func notebookHeader(owner ownerOrNil: AnyObject?, options optionsOrNil: [UINib.OptionsKey : Any]? = nil) -> NotebookHeader? {
       return R.nib.notebookHeader.instantiate(withOwner: ownerOrNil, options: optionsOrNil)[0] as? NotebookHeader
+    }
+
+    static func notebookSelectionView(owner ownerOrNil: AnyObject?, options optionsOrNil: [UINib.OptionsKey : Any]? = nil) -> NotebookSelectionView? {
+      return R.nib.notebookSelectionView.instantiate(withOwner: ownerOrNil, options: optionsOrNil)[0] as? NotebookSelectionView
     }
 
     static func placeholderViewController(owner ownerOrNil: AnyObject?, options optionsOrNil: [UINib.OptionsKey : Any]? = nil) -> PlaceholderViewController? {
@@ -405,6 +428,7 @@ struct _R: Rswift.Validatable {
     static func validate() throws {
       try _NotebookCell.validate()
       try _NotebookHeader.validate()
+      try _NotebookSelectionView.validate()
     }
 
     struct _NoteCell: Rswift.NibResourceType, Rswift.ReuseIdentifierType {
@@ -452,6 +476,23 @@ struct _R: Rswift.Validatable {
 
       static func validate() throws {
         if UIKit.UIImage(named: "arrow_right_bold", in: R.hostingBundle, compatibleWith: nil) == nil { throw Rswift.ValidationError(description: "[R.swift] Image named 'arrow_right_bold' is used in nib 'NotebookHeader', but couldn't be loaded.") }
+        if #available(iOS 11.0, tvOS 11.0, *) {
+        }
+      }
+
+      fileprivate init() {}
+    }
+
+    struct _NotebookSelectionView: Rswift.NibResourceType, Rswift.Validatable {
+      let bundle = R.hostingBundle
+      let name = "NotebookSelectionView"
+
+      func firstView(owner ownerOrNil: AnyObject?, options optionsOrNil: [UINib.OptionsKey : Any]? = nil) -> NotebookSelectionView? {
+        return instantiate(withOwner: ownerOrNil, options: optionsOrNil)[0] as? NotebookSelectionView
+      }
+
+      static func validate() throws {
+        if UIKit.UIImage(named: "folder", in: R.hostingBundle, compatibleWith: nil) == nil { throw Rswift.ValidationError(description: "[R.swift] Image named 'folder' is used in nib 'NotebookSelectionView', but couldn't be loaded.") }
         if #available(iOS 11.0, tvOS 11.0, *) {
         }
       }

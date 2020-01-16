@@ -36,10 +36,6 @@ class EmptyFooterView: UIView {
         fatalError()
     }
     
-    override func layoutSubviews() {
-        <#code#>
-    }
-    
     override func updateConstraints() {
         super.updateConstraints()
         

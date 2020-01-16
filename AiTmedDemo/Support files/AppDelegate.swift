@@ -1,8 +1,7 @@
 //
 //  AppDelegate.swift
 //  AiTmedDemo
-//
-//  Created by Yi Tong on 1/7/20.
+////  Created by Yi Tong on 1/7/20.
 //  Copyright © 2020 Yi Tong. All rights reserved.
 //
 
@@ -18,13 +17,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
         configureRootVC()
-        configureKeyBoardManager()
         return true
-    }
-    
-    private func configureKeyBoardManager() {
-//        IQKeyboardManager.shared.enable = true
-//        IQKeyboardManager.shared.enableAutoToolbar = false
     }
     
     private func configureRootVC() {

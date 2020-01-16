@@ -112,6 +112,8 @@
 		8ED8DAED23CD26E300A33AE7 /* NotebookListController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ED8DAEC23CD26E300A33AE7 /* NotebookListController.swift */; };
 		8ED8DAF423CD49BF00A33AE7 /* EmptyFooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ED8DAF323CD49BF00A33AE7 /* EmptyFooterView.swift */; };
 		8EE0C04723CE6D770050141C /* EditorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EE0C04623CE6D760050141C /* EditorViewController.swift */; };
+		8EFB6E2E23CFD74400045C25 /* NotebookSelectionView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8EFB6E2D23CFD74400045C25 /* NotebookSelectionView.xib */; };
+		8EFB6E3023CFD75E00045C25 /* NotebookSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EFB6E2F23CFD75E00045C25 /* NotebookSelectionView.swift */; };
 		B6596DBD03EE0AD4FC54D84F /* Pods_AiTmedDemo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0A80ADB6876C137594ED3877 /* Pods_AiTmedDemo.framework */; };
 /* End PBXBuildFile section */
 
@@ -252,6 +254,8 @@
 		8ED8DAEC23CD26E300A33AE7 /* NotebookListController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotebookListController.swift; sourceTree = "<group>"; };
 		8ED8DAF323CD49BF00A33AE7 /* EmptyFooterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyFooterView.swift; sourceTree = "<group>"; };
 		8EE0C04623CE6D760050141C /* EditorViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditorViewController.swift; sourceTree = "<group>"; };
+		8EFB6E2D23CFD74400045C25 /* NotebookSelectionView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = NotebookSelectionView.xib; sourceTree = "<group>"; };
+		8EFB6E2F23CFD75E00045C25 /* NotebookSelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotebookSelectionView.swift; sourceTree = "<group>"; };
 		BF44A316F99131DACE5078A6 /* Pods-AiTmedSDK1.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AiTmedSDK1.debug.xcconfig"; path = "Target Support Files/Pods-AiTmedSDK1/Pods-AiTmedSDK1.debug.xcconfig"; sourceTree = "<group>"; };
 		C062DDAF7D5A1F75D9337D3F /* Pods-AiTmedDemo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AiTmedDemo.release.xcconfig"; path = "Target Support Files/Pods-AiTmedDemo/Pods-AiTmedDemo.release.xcconfig"; sourceTree = "<group>"; };
 		E2ACA0527ED9DDE03918ED42 /* Pods-AiTmedSDK1.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AiTmedSDK1.release.xcconfig"; path = "Target Support Files/Pods-AiTmedSDK1/Pods-AiTmedSDK1.release.xcconfig"; sourceTree = "<group>"; };
@@ -434,6 +438,7 @@
 		8E9FE3D723C54DA00046AD9D /* Custom */ = {
 			isa = PBXGroup;
 			children = (
+				8EFB6E2C23CFD73A00045C25 /* NotebookSelectionView */,
 				8ED8DAF223CD49A700A33AE7 /* EmptyFooterView */,
 				8E9FE41523C54F7C0046AD9D /* FoldableHeader */,
 				8E9FE40A23C54F560046AD9D /* WaitingView */,
@@ -689,6 +694,15 @@
 			path = EmptyFooterView;
 			sourceTree = "<group>";
 		};
+		8EFB6E2C23CFD73A00045C25 /* NotebookSelectionView */ = {
+			isa = PBXGroup;
+			children = (
+				8EFB6E2D23CFD74400045C25 /* NotebookSelectionView.xib */,
+				8EFB6E2F23CFD75E00045C25 /* NotebookSelectionView.swift */,
+			);
+			path = NotebookSelectionView;
+			sourceTree = "<group>";
+		};
 		B370B79D016476FD385BCDF5 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
@@ -816,6 +830,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8EFB6E2E23CFD74400045C25 /* NotebookSelectionView.xib in Resources */,
 				8E9FE3C823C54BFB0046AD9D /* LaunchScreen.storyboard in Resources */,
 				8E9FE41223C54F760046AD9D /* NotebookCell.xib in Resources */,
 				8E9FE3E423C54E6A0046AD9D /* countries in Resources */,
@@ -989,6 +1004,7 @@
 				8E9FE3F823C54E8C0046AD9D /* Date+.swift in Sources */,
 				8E9FE3F923C54E8C0046AD9D /* PhoneNumber.swift in Sources */,
 				8E9FE42523C552C50046AD9D /* TY.swift in Sources */,
+				8EFB6E3023CFD75E00045C25 /* NotebookSelectionView.swift in Sources */,
 				8E9FE45923C55B020046AD9D /* Notebook.swift in Sources */,
 				8E9FE3FA23C54E8C0046AD9D /* UINavigationController.swift in Sources */,
 				8E9FE41423C54F760046AD9D /* NoteCell.swift in Sources */,

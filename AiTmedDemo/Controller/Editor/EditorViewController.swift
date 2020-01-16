@@ -7,11 +7,15 @@
 //
 
 import UIKit
+import IQKeyboardManagerSwift
 
 class EditorViewController: UIViewController {
     weak var backgroudImageView: UIImageView!
     weak var titleTextField: UITextField!
-    weak var contentTextView: UITextView!
+    weak var notebookSelectionView: NotebookSelectionView!
+    weak var contentTextView: IQTextView!
+    weak var scrollView: UIScrollView!
+    weak var partBackgroundView: UIImageView!
     
     lazy var doneItem: UIBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(didDoneItemTapped))
     lazy var shareToItem = UIBarButtonItem(image: R.image.share_to(), style: .done, target: self, action: #selector(didShareToItemTapped))
@@ -24,7 +28,7 @@ class EditorViewController: UIViewController {
     let notebook: Notebook
     let mode: Mode
     let stateCoordinator: StateCoordinator
-    
+        
     enum Mode {
         case create
         case update(Note)
@@ -40,7 +44,9 @@ class EditorViewController: UIViewController {
     
     override func loadView() {
         super.loadView()
-//        self.view = UIScrollView(frame: UIScreen.main.bounds)
+        let sv = UIScrollView(frame: UIScreen.main.bounds)
+        self.scrollView = sv
+        self.view = sv
     }
     
     init(_ stateCoordinator: StateCoordinator, notebook: Notebook, mode: Mode) {
@@ -60,13 +66,35 @@ class EditorViewController: UIViewController {
         setUp()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        IQKeyboardManager.shared.enable = true
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        IQKeyboardManager.shared.enable = false
+    }
+    
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         
         titleTextField.addUnderLineIfNeeded()
+        partBackgroundView.snp.updateConstraints { $0.height.equalTo(topBarHeight + 44)}
     }
     
     //MARK: - Action
+    @objc func dismissItemTapped() {
+        view.endEditing(true)
+    }
+    
+    @objc func didTapGesureRecognized(tap: UITapGestureRecognizer) {
+        let location = tap.location(in: nil)
+        if location.y > titleTextField.frame.maxY {
+            contentTextView.becomeFirstResponder()
+        }
+    }
+    
     @objc func didTrashItemTapped() {
 //        displayWaitingView(msg: "Removing...")
 //        note.notebook.remove(note)
@@ -134,47 +162,68 @@ class EditorViewController: UIViewController {
     }
     
     private func setUp() {
-//        let contentView = UIView()
-//        view.addSubview(contentView)
-//        contentView.snp.makeConstraints { (make) in
-//            make.edges.width.height.equalToSuperview()
-//        }
-        
-        let backgroudImageView = UIImageView(image: R.image.paper_light())
-        self.backgroudImageView = backgroudImageView
-        view.addSubview(backgroudImageView)
-        backgroudImageView.snp.makeConstraints { (make) in
-            make.edges.equalToSuperview()
-        }
-        
-        let titleTextField = UITextField()
-        titleTextField.placeholder = "Title..."
-        self.titleTextField = titleTextField
-        view.addSubview(titleTextField)
-        titleTextField.snp.makeConstraints { (make) in
-            make.left.equalTo(view.safeAreaLayoutGuide).offset(16)
-            make.centerX.equalToSuperview()
-            make.height.equalTo(36)
-            make.top.equalToSuperview().inset(topBarHeight + 8)
-        }
-        
-        let contentTextView = UITextView()
-//        contentTextView.delegate = self
-        contentTextView.backgroundColor = .clear
-        self.contentTextView = contentTextView
-        view.addSubview(contentTextView)
-        contentTextView.snp.makeConstraints { (make) in
-            make.left.equalTo(view.safeAreaLayoutGuide).offset(16)
-            make.bottom.equalTo(view.safeAreaLayoutGuide).offset(16)
-            make.centerX.equalToSuperview()
-            make.top.equalTo(titleTextField.snp.bottom).offset(8)
-        }
-        
-        toolbarItems = [trashItem, spaceItem, cameraItem, spaceItem, composeItem]
-        
         //navigation bar
         navigationItem.largeTitleDisplayMode = .never
         navigationItem.setRightBarButton(shareToItem, animated: false)
+        
+        scrollView.backgroundColor = UIColor(patternImage: R.image.paper_light()!)
+        let tap = UITapGestureRecognizer(target: self, action: #selector(didTapGesureRecognized))
+        scrollView.addGestureRecognizer(tap)
+        
+        let contentView = UIView()
+        view.addSubview(contentView)
+        contentView.snp.makeConstraints { (make) in
+            make.edges.width.equalToSuperview()
+        }
+
+        let titleTextField = UITextField()
+        titleTextField.font = UIFont.systemFont(ofSize: 27, weight: .medium)
+        titleTextField.placeholder = "Title..."
+        self.titleTextField = titleTextField
+        contentView.addSubview(titleTextField)
+        titleTextField.snp.makeConstraints { (make) in
+            make.left.equalToSuperview().inset(16)
+            make.centerX.equalToSuperview()
+            make.height.equalTo(36)
+            make.top.equalToSuperview().inset(54)
+        }
+        
+        let contentTextView = IQTextView()
+        IQKeyboardManager.shared.previousNextDisplayMode = .alwaysHide
+        IQKeyboardManager.shared.toolbarDoneBarButtonItemImage = R.image.arrow_down()
+        contentTextView.placeholder = "Start writing here..."
+        contentTextView.placeholderTextColor = UIColor.lightGray
+        contentTextView.font = UIFont.systemFont(ofSize: 17, weight: .regular)
+        contentTextView.isScrollEnabled = false
+        contentTextView.returnKeyType = .next
+        contentTextView.enablesReturnKeyAutomatically = true
+        contentTextView.backgroundColor = .clear
+        self.contentTextView = contentTextView
+        contentView.addSubview(contentTextView)
+        contentTextView.snp.makeConstraints { (make) in
+            make.right.left.bottom.equalToSuperview().inset(16)
+            make.top.equalTo(titleTextField.snp.bottom).offset(8)
+        }
+        
+        let partBackgroundView = UIImageView(image: R.image.paper_light())
+        self.partBackgroundView = partBackgroundView
+        view.addSubview(partBackgroundView)
+        partBackgroundView.snp.makeConstraints { (make) in
+            make.left.right.top.equalTo(scrollView.frameLayoutGuide)
+            make.height.equalTo(0)
+        }
+        
+        let notebookSelectionView = NotebookSelectionView.initWithNib()
+        notebookSelectionView.setNotebooktitle(notebook.title)
+        self.notebookSelectionView = notebookSelectionView
+        view.addSubview(notebookSelectionView)
+        notebookSelectionView.snp.makeConstraints { (make) in
+            make.left.equalTo(scrollView.safeAreaLayoutGuide).offset(8)
+            make.right.equalTo(scrollView.safeAreaLayoutGuide).offset(-8)
+            make.height.equalTo(36)
+            make.top.equalTo(scrollView.safeAreaLayoutGuide).offset(8)
+        }
+        
+        toolbarItems = [trashItem, spaceItem, cameraItem, spaceItem, composeItem]
     }
 }
-
