@@ -28,7 +28,8 @@ class EditorViewController: UIViewController {
     let notebook: Notebook
     let mode: Mode
     let stateCoordinator: StateCoordinator
-        
+    let keyboard = Keyboard()
+    
     enum Mode {
         case create
         case update(Note)
@@ -79,7 +80,6 @@ class EditorViewController: UIViewController {
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         
-        titleTextField.addUnderLineIfNeeded()
         partBackgroundView.snp.updateConstraints { $0.height.equalTo(topBarHeight + 44)}
     }
     
@@ -101,7 +101,7 @@ class EditorViewController: UIViewController {
     }
     
     @objc func didCameraItemTapped() {
-        
+        displayAutoDismissAlert(msg: "Not implemented yet")
     }
     
     @objc func didComposeItemTapped() {
@@ -109,7 +109,7 @@ class EditorViewController: UIViewController {
     }
     
     @objc func didShareToItemTapped() {
-        
+        displayAutoDismissAlert(msg: "Not implemented yet")
     }
     
     @objc func didDoneItemTapped() {
@@ -225,5 +225,13 @@ class EditorViewController: UIViewController {
         }
         
         toolbarItems = [trashItem, spaceItem, cameraItem, spaceItem, composeItem]
+        
+        keyboard.observeKeyboardWillShow { (_) in
+            self.navigationItem.setRightBarButtonItems([self.doneItem, self.shareToItem], animated: false)
+        }
+        
+        keyboard.observeKeyboardWillHide { (_) in
+            self.navigationItem.setRightBarButtonItems([self.shareToItem], animated: false)
+        }
     }
 }
