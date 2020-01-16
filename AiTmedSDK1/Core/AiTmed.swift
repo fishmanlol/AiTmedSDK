@@ -53,8 +53,7 @@ public class AiTmed {
     public static func hasCredential(for phoneNumber: String) -> Bool {
         if let _ = shared.c {
             return true
-        } else if let cre = Credential(phoneNumber: phoneNumber) {
-            print(cre.esk)
+        } else if let _ = Credential(phoneNumber: phoneNumber) {
             return true
         } else {
             return false
@@ -103,10 +102,6 @@ public class AiTmed {
             }
         }
     }
-    
-    
-    
-    
     
     public static func sendOPTCode(args: SendOPTCodeArgs, completion: @escaping (Swift.Result<Void, AiTmedError>) -> Void) {
         shared.transform(args: args) { (result) in

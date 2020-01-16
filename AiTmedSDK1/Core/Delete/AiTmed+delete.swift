@@ -22,9 +22,9 @@ extension AiTmed {
                 completion(.failure(error))
             case .success(let edges):
                 var success = true
-                
                 let group = DispatchGroup()
                 for edge in edges {
+                    group.enter()
                     deleteEdge(id: edge.id, completion: { (result) in
                         switch result {
                         case .failure(_):
@@ -32,13 +32,12 @@ extension AiTmed {
                         case .success(_):
                             break
                         }
+                        
+                        group.leave()
                     })
                 }
                 
-                DispatchQueue.global().async {
-                    let sem = DispatchSemaphore(value: 0)
-                    
-                    
+                group.notify(queue: DispatchQueue.global(), execute: {
                     if success {
                         shared._delete(ids: [id], jwt: shared.c.jwt, completion: { (result) in
                             switch result {
@@ -52,7 +51,7 @@ extension AiTmed {
                     } else {
                         completion(.failure(.unkown))
                     }
-                }
+                })
             }
         }
 //        shared._retreiveEdge(args: RetrieveNotebooksArgs(ids: [], maxCount: nil), jwt: shared.c.jwt) { (result) in
