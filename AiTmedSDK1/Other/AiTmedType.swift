@@ -16,9 +16,10 @@ public struct AiTmedType {
     
     //Retreieve edge
     static let notebook: Int32 = 10001
+    static let root: Int32 = 10000
     
     //CreateVertex
-    static let createUser: Int32 = 1
+    static let user: Int32 = 1
     
     //CreateDoc
     static let embedData: Int32 = 10001

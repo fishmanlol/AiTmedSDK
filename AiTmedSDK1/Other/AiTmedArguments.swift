@@ -97,15 +97,6 @@ public struct CreateUserArgs {
 
 //Doc
 
-
-public class UpdateDocumentArgs: CreateDocumentArgs {
-    var docID: Data
-    public init(title: String = "", content: Data = Data(), isEncrypt: Bool = false, mime: MimeType = .data, folderID: Data, docID: Data) {
-        self.docID = docID
-        super.init(title: title, content: content, isEncrypt: isEncrypt, mime: mime, folderID: folderID)
-    }
-}
-
 public class RetrieveDocArgs {
     let folderID: Data
     

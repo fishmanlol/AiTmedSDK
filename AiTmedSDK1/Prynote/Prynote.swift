@@ -7,60 +7,15 @@
 //
 
 import Foundation
-import Alamofire
 import Dispatch
 
 extension AiTmed {
     public class Prynote {
-        
-        
-        
-        public static func updateDocument(args: UpdateDocumentArgs, completion: @escaping (Swift.Result<Document, AiTmedError>) -> Void) {
+        static func updateDocument(args: UpdateDocumentArgs, completion: @escaping (Swift.Result<Document, AiTmedError>) -> Void) {
             createDocument(args: args, completion: completion)
         }
         
-        public static func retrieveDocument(args: RetrieveDocArgs, completion: @escaping (Swift.Result<[Document], AiTmedError>) -> Void) {
-            shared._retrieveDoc(args: args, jwt: shared.c.jwt) { (result) in
-                switch result {
-                case .failure(let error):
-                    completion(.failure(error))
-                case .success(let (docs, jwt)):
-                    shared.c.jwt = jwt
-                    var documents: [Document] = []
-                    let group = DispatchGroup()
-                    for var document in docs.map({ Document($0) }) {
-                        group.enter()
-
-                        if document.isOnS3, let downloadURL = document.downloadURL {
-                            Alamofire.download(downloadURL).responseData(completionHandler: { (response) in
-                                print("download url: \(downloadURL)")
-                                switch response.result {
-                                case .failure(let error):
-                                    document.isBroken = true
-                                case .success(let data):
-                                    if document.isZipped {
-                                        document.content = data.unzip()
-                                    } else {
-                                        document.content = data
-                                    }
-                                }
-                                
-                                documents.append(document)
-                                group.leave()
-                            })
-                        } else {
-                            documents.append(document)
-                            group.leave()
-                        }
-                    }
-
-                    group.notify(queue: DispatchQueue.main, execute: {
-                        print("documents----------------------------------", documents)
-                        completion(.success(documents))
-                    })
-                }
-            }
-        }
+        
         
 //        public static func retrieveNotebooks(args: RetrieveNotebooksArgs, completion: @escaping (Swift.Result<[Notebook], AiTmedError>) -> Void) {
 //            shared.transform(args: args) { (result) in
@@ -90,7 +45,7 @@ extension AiTmed {
 //            }
 //        }
         
-        public static func createNoteBook(args: CreateNotebookArgs, completion: @escaping (Swift.Result<Notebook, AiTmedError>) -> Void) {
+        public static func createNoteBook(args: CreateNotebookArgs, completion: @escaping (Result<Notebook, AiTmedError>) -> Void) {
             shared.transform(args: args) { (result) in
                 switch result {
                 case .failure(let error):
@@ -113,14 +68,14 @@ extension AiTmed {
             }
         }
         
-        public static func updateNotebook(args: UpdateNotebookArgs, completion: @escaping (Swift.Result<Notebook, AiTmedError>) -> Void) {
+        public static func updateNotebook(args: UpdateNotebookArgs, completion: @escaping (Result<Notebook, AiTmedError>) -> Void) {
             shared.transform(args: args) { (result) in
                 switch result {
                 case .failure(let error):
                     completion(.failure(error))
                 case .success(var edge):
                     edge.id = args.id
-                    shared._createEdge(edge: edge, jwt: shared.c!.jwt, completion: { (result: Swift.Result<(Edge, String), AiTmedError>) in
+                    shared._createEdge(edge: edge, jwt: shared.c!.jwt, completion: { (result: Result<(Edge, String), AiTmedError>) in
                         switch result {
                         case .failure(let error):
                             completion(.failure(error))
@@ -137,9 +92,9 @@ extension AiTmed {
             }
         }
         
-        public static func removeNotebook(id: Data, completion: @escaping (Swift.Result<Void, AiTmedError>) -> Void) {
+        public static func removeNotebook(id: Data, completion: @escaping (Result<Void, AiTmedError>) -> Void) {
             //first find out all notes
-            AiTmed.deleteEdge(id: id, completion: completion)
+            AiTmed.deleteEdge(args: DeleteArgs(id: id), completion: completion)
         }
     }
 }

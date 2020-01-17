@@ -9,6 +9,7 @@
 import Foundation
 
 extension AiTmed {
+    ///call back
     func transform(args: SendOPTCodeArgs, completion: (Swift.Result<Edge, AiTmedError>) -> Void) {
         guard Validator.phoneNumber(args.phoneNumber),
             let name = [AiTmedNameKey.phoneNumber: args.phoneNumber].toJSON() else {
@@ -20,6 +21,19 @@ extension AiTmed {
         edge.type = AiTmedType.sendOPTCode
         edge.name = name
         completion(.success(edge))
+    }
+    
+    ///sync
+    func transform(args: SendOPTCodeArgs) -> Result<Edge, AiTmedError> {
+        guard Validator.phoneNumber(args.phoneNumber),
+            let name = [AiTmedNameKey.phoneNumber: args.phoneNumber].toJSON() else {
+                return .failure(.unkown)
+        }
+        
+        var edge = Edge()
+        edge.type = AiTmedType.sendOPTCode
+        edge.name = name
+        return .success(edge)
     }
     
     func transform(args: CreateUserArgs, completion: (Swift.Result<(Vertex, Key), AiTmedError>) -> Void) {
@@ -36,7 +50,7 @@ extension AiTmed {
         }
         
         var vertex = Vertex()
-        vertex.type = AiTmedType.createUser
+        vertex.type = AiTmedType.user
         vertex.tage = args.code
         vertex.uid = args.phoneNumber
         vertex.pk = keyPair.publicKey.toData()

@@ -19,13 +19,13 @@ extension AiTmed {
     }
     
     public static func deleteNote(id: Data, completion: @escaping (Result<Void, AiTmedError>) -> Void) {
-        deleteDoc(id: id, completion: completion)
+//        deleteDoc(id: id, completion: completion)
     }
     
     public static func retrieveNotes(notebookID: Data, completion: @escaping (Result<[_Note], AiTmedError>) -> Void) {
         completion(.success([]))
     }
-    
+
     //MARK: - Notebook
     public static func addNotebook(title: String, isEncrypt: Bool, completion: @escaping (Result<_Notebook, AiTmedError>) -> Void) {
         let type = AiTmedType.notebook
@@ -34,20 +34,11 @@ extension AiTmed {
             return
         }
         
-        var besak: Data?
-        var eesak: Data?
-        
-        if isEncrypt {
-            guard let c = shared.c, let sk = c.sk, let keyPair = shared.e.generateXESAK(sendSecretKey: sk, recvPublicKey: c.pk) else {
-                completion(.failure(.unkown))
-                return
-            }
-            
-            besak = keyPair.0.toData()
-            eesak = keyPair.1.toData()
+        guard let args = CreateEdgeArgs(type: type, name: name, isEncrypt: isEncrypt) else {
+            completion(.failure(.unkown))
+            return
         }
         
-        let args = CreateEdgeArgs(type: type, name: name, bvid: nil, besak: besak, eesak: eesak)
         AiTmed.createEdge(args: args) { (result) in
             switch result {
             case .failure(let error):
@@ -70,8 +61,7 @@ extension AiTmed {
             completion(.failure(.unkown))
             return
         }
-        
-        let args = UpdateEdgeArgs(type: type, name: name, bvid: id)
+        let args = UpdateEdgeArgs(id: id, type: type, name: name)
         AiTmed.updateEdge(args: args) { (result) in
             switch result {
             case .failure(let error):
@@ -89,12 +79,12 @@ extension AiTmed {
     }
     
     public static func deleteNotebook(id: Data, completion: @escaping (Result<Void, AiTmedError>) -> Void) {
-        deleteEdge(id: id, completion: completion)
+        deleteEdge(args: DeleteArgs(id: id), completion: completion)
     }
     
     public static func retrieveNotebooks(maxCount: Int32? = nil, completion: @escaping (Result<[_Notebook], AiTmedError>) -> Void) {
         let type = AiTmedType.notebook
-        let args = RetrieveEdgesArgs(ids: [], type: type, maxCount: maxCount)
+        let args = RetrieveArgs(ids: [], type: type, maxCount: maxCount)
         
         retrieveEdges(args: args) { (result) in
             switch result {

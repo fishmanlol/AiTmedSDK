@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import AiTmedSDK1
 
 class NotebookViewController: UITableViewController {
     let stateCoordinator: StateCoordinator
@@ -53,6 +54,14 @@ class NotebookViewController: UITableViewController {
     
     @objc func didTapSetting() {
         print(#function)
+        AiTmed.deleteUser { (result) in
+            switch result {
+            case .failure(let error):
+                print(error.localizedDescription)
+            case .success(_):
+                print("delete success!")
+            }
+        }
     }
     
     @objc func didTapAdd() {

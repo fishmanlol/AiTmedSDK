@@ -9,9 +9,9 @@
 import Foundation
 
 extension AiTmed {
-    //MARK: - Helper
+    //MARK: - Retrieve xesk pair from edge
     static func xeskPairInEdge(_ id: Data, completion: @escaping (Result<(Key, Key)?, AiTmedError>) -> Void) {
-        AiTmed.retrieveEdges(args: RetrieveEdgesArgs(ids: [id], maxCount: nil)) { (result) in
+        AiTmed.retrieveEdges(args: RetrieveSingleArgs(id: id)) { (result) in
             switch result {
             case .failure(let error):
                 completion(.failure(error))
@@ -23,5 +23,18 @@ extension AiTmed {
                 }
             }
         }
+    }
+    
+    //MARK: - Make sure each api call has permission
+    func checkStatus() -> AiTmedError? {
+        if let c = c {
+            if c.status == .login {
+                return nil
+            } else if c.status == .locked {
+                return .credentialFailed(.passwordNeeded)
+            }
+        }
+        
+        return .credentialFailed(.signInNeeded)
     }
 }
