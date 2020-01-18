@@ -29,52 +29,48 @@ extension AiTmed {
     //MARK: - Notebook
     public static func addNotebook(title: String, isEncrypt: Bool, completion: @escaping (Result<_Notebook, AiTmedError>) -> Void) {
         let type = AiTmedType.notebook
-        guard let name = [AiTmedNameKey.title: title].toJSON() else {
+        guard let name = [AiTmedNameKey.title: title].toJSON(),
+                let args = CreateEdgeArgs(type: type, name: name, isEncrypt: isEncrypt) else {
             completion(.failure(.unkown))
             return
         }
         
-        guard let args = CreateEdgeArgs(type: type, name: name, isEncrypt: isEncrypt) else {
-            completion(.failure(.unkown))
-            return
-        }
-        
-        AiTmed.createEdge(args: args) { (result) in
-            switch result {
-            case .failure(let error):
-                completion(.failure(error))
-            case .success(let edge):
-                var title = ""
-                if let dict = edge.name.toJSONDict(), let t = dict["title"] as? String {
-                    title = t
-                }
-                let _notebook = _Notebook(id: edge.id, title: title, isEncrypt: !edge.besak.isEmpty, ctime:
-                    edge.ctime, mtime: edge.mtime)
-                completion(.success(_notebook))
+        AiTmed.createEdge(args: args)
+        .done { (edge) in
+            guard let dict = edge.name.toJSONDict(), let title = dict["title"] as? String else {
+                completion(.failure(.unkown))
+                return
             }
+            
+            let _notebook = _Notebook(id: edge.id, title: title, isEncrypt: !edge.besak.isEmpty, ctime:
+                edge.ctime, mtime: edge.mtime)
+            completion(.success(_notebook))
+        }.catch { (error) in
+            completion(.failure(error.toAiTmedError()))
         }
     }
     
-    public static func updateNotebook(id: Data, title: String, completion: @escaping (Result<_Notebook, AiTmedError>) -> Void) {
+    public static func updateNotebook(id: Data, title: String, isEncrypt: Bool, completion: @escaping (Result<_Notebook, AiTmedError>) -> Void) {
         let type = AiTmedType.notebook
         guard let name = [AiTmedNameKey.title: title].toJSON() else {
             completion(.failure(.unkown))
             return
         }
-        let args = UpdateEdgeArgs(id: id, type: type, name: name)
-        AiTmed.updateEdge(args: args) { (result) in
-            switch result {
-            case .failure(let error):
-                completion(.failure(error))
-            case .success(let edge):
-                var title = ""
-                if let dict = edge.name.toJSONDict(), let t = dict["title"] as? String {
-                    title = t
-                }
-                let _notebook = _Notebook(id: edge.id, title: title, isEncrypt: !edge.besak.isEmpty, ctime:
-                    edge.ctime, mtime: edge.mtime)
-                completion(.success(_notebook))
+        
+        let args = UpdateEdgeArgs(id: id, type: type, name: name, isEncrypt: isEncrypt)
+        
+        AiTmed.updateEdge(args: args)
+        .done { (edge) in
+            guard let dict = edge.name.toJSONDict(), let title = dict["title"] as? String else {
+                completion(.failure(.unkown))
+                return
             }
+            
+            let _notebook = _Notebook(id: edge.id, title: title, isEncrypt: !edge.besak.isEmpty, ctime:
+                edge.ctime, mtime: edge.mtime)
+            completion(.success(_notebook))
+        }.catch { (error) in
+            completion(.failure(error.toAiTmedError()))
         }
     }
     
@@ -86,22 +82,18 @@ extension AiTmed {
         let type = AiTmedType.notebook
         let args = RetrieveArgs(ids: [], type: type, maxCount: maxCount)
         
-        retrieveEdges(args: args) { (result) in
-            switch result {
-            case .failure(let error):
-                completion(.failure(error))
-            case .success(let edges):
-                var _notebooks: [_Notebook] = []
-                for edge in edges {
-                    var title = ""
-                    if let dict = edge.name.toJSONDict(), let t = dict["title"] as? String {
-                        title = t
-                    }
-                    let _notebook = _Notebook(id: edge.id, title: title, isEncrypt: !edge.besak.isEmpty, ctime: edge.ctime, mtime: edge.mtime)
-                    _notebooks.append(_notebook)
+        AiTmed.retrieveEdges(args: args)
+        .done { (edges) in
+            let _notebooks: [_Notebook] = edges.map {
+                var title = ""
+                if let dict = $0.name.toJSONDict(), let t = dict["title"] as? String {
+                    title = t
                 }
-                completion(.success(_notebooks))
+                return _Notebook(id: $0.id, title: title, isEncrypt: !$0.besak.isEmpty, ctime: $0.ctime, mtime: $0.mtime)
             }
+            completion(.success(_notebooks))
+        }.catch { (error) in
+            completion(.failure(error.toAiTmedError()))
         }
     }
 }

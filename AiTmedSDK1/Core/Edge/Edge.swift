@@ -5,79 +5,88 @@
 //  Created by Yi Tong on 1/16/20.
 //  Copyright © 2020 Yi Tong. All rights reserved.
 //
-
+import PromiseKit
 import Foundation
+
 
 extension AiTmed {
     //MARK: - Create
-    static func createEdge(args: CreateEdgeArgs, completion: @escaping (Result<Edge, AiTmedError>) -> Void) {
-        var jwt: String = ""
-        if let c = shared.c {
-            jwt = c.jwt
+    static func createEdge(args: CreateEdgeArgs) -> Promise<Edge> {
+        let jwt: String
+        
+        if args.type == AiTmedType.sendOPTCode || args.type == AiTmedType.login {//if send verification code, jwt == "", we use login to exchange jwt
+            jwt = ""
+        } else if args.type == AiTmedType.retrieveCredential {//if retrieve credential, use temporary jwt
+            jwt = AiTmed.shared.tmpJWT
+        } else {
+            jwt = AiTmed.shared.c.jwt
         }
         
-        shared.transform(args: args) { (result) in
-            switch result {
-            case .failure(let error):
-                completion(.failure(error))
-            case .success(let edge):
-                shared._createEdge(edge: edge, jwt: jwt, completion: { (result) in
-                    switch result {
-                    case .failure(let error):
-                        completion(.failure(error))
-                    case .success(let (edge, jwt)):
-                        shared.c.jwt = jwt
-                        completion(.success(edge))
-                    }
-                })
+        return Promise<Edge> { resolver in
+            shared.transform(args: args) { (result) in
+                switch result {
+                case .failure(let error):
+                    resolver.reject(error)
+                case .success(let edge):
+                    shared.g.createEdge(edge: edge, jwt: jwt, completion: { (result) in
+                        switch result {
+                        case .failure(let error):
+                            resolver.reject(error)
+                        case .success(let (edge, jwt)):
+                            if args.type == AiTmedType.sendOPTCode {//if send verification code, returned jwt saved in tmpJWT
+                                shared.tmpJWT = jwt
+                            } else if args.type == AiTmedType.retrieveCredential {//if retrieve credential, save credential
+                                guard let dict = edge.name.toJSONDict(),
+                                        let phoneNumber = dict[AiTmedNameKey.phoneNumber.rawValue] as? String,
+                                        let credential = Credential(json: edge.deat, for: phoneNumber) else {
+                                            resolver.reject(AiTmedError.unkown)
+                                            return
+                                }
+                                credential.save()
+                                shared.c = credential
+                            } else {
+                                shared.c.jwt = jwt
+                            }
+                            resolver.fulfill(edge)
+                        }
+                    })
+                }
             }
         }
     }
     
     //MARK: - Update
-    static func updateEdge(args: UpdateEdgeArgs, completion: @escaping (Result<Edge, AiTmedError>) -> Void) {
-        createEdge(args: args, completion: completion)
+    static func updateEdge(args: UpdateEdgeArgs) -> Promise<Edge> {
+        return createEdge(args: args)
     }
     
     //MARK: - Retrieve
     ///for convinience, we can retrieve single edge
-    static func retrieveEdge(args: RetrieveSingleArgs, completion: @escaping (Result<Edge, AiTmedError>) -> Void) {
-        retrieveEdges(args: args) { (result) in
-            switch result {
-            case .failure(let error):
-                completion(.failure(error))
-            case .success(let edges):
-                guard let edge = edges.first else {
-                    completion(.failure(.unkown))
-                    return
-                }
-                
-                completion(.success(edge))
-            }
-        }
+    static func retrieveEdge(args: RetrieveSingleArgs) -> Promise<Edge> {
+        return retrieveEdges(args: args).firstValue
     }
     
-    static func retrieveEdges(args: RetrieveArgs, completion: @escaping (Result<[Edge], AiTmedError>) -> Void) {
-        shared.transform(args: args) { (result) in
-            switch result {
-            case .failure(let error):
-                completion(.failure(error))
-            case .success(let _args):
-                shared._retreiveEdges(args: _args, jwt: shared.c.jwt, completion: { (result) in
-                    switch result {
-                    case .failure(let error):
-                        completion(.failure(error))
-                    case .success(let (edges, jwt)):
-                        shared.c.jwt = jwt
-                        completion(.success(edges))
-                    }
-                })
+    static func retrieveEdges(args: RetrieveArgs) -> Promise<[Edge]> {
+        return Promise<[Edge]> { resolver in
+            if let error = shared.checkStatus() {
+                resolver.reject(error)
+                return
             }
+            
+            shared.g.retreiveEdges(args: args, jwt: shared.c.jwt, completion: { (result) in
+                switch result {
+                case .failure(let error):
+                    resolver.reject(error)
+                case .success(let (edges, jwt)):
+                    shared.c.jwt = jwt
+                    resolver.fulfill(edges)
+                }
+            })
         }
     }
     
     //MARK: - Delete
-    static func deleteEdge(args: DeleteArgs, completion: @escaping (Result<Void, AiTmedError>) -> Void) {
+    static func deleteEdge(args: DeleteArgs, completion: @escaping (Swift.Result<Void, AiTmedError>) -> Void) {
         guard let c = shared.c, c.status == .login else {
             completion(.failure(.credentialFailed(.credentialNeeded)))
             return

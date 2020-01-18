@@ -130,18 +130,9 @@ class StartViewController: UIViewController {
                                 self.displayAlert(title: error.message, msg: nil)
                             }
                         case .success(_):
-                            Storage.default.retrieveNotebooks(completion: { (result) in
-                                switch result {
-                                case .failure(let error):
-                                    DispatchQueue.main.async {
-                                        self.displayAlert(title: error.message, msg: nil)
-                                    }
-                                case .success(_):
-                                    DispatchQueue.main.async {
-                                        self.navigationController?.pushViewController(MasterController(), animated: false)
-                                    }
-                                }
-                            })
+                            DispatchQueue.main.async {
+                                self.navigationController?.pushViewController(MasterController(), animated: false)
+                            }
                         }
                     })
                 }

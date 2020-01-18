@@ -11,14 +11,6 @@ import Foundation
 extension AiTmed {
     ///Create and update use same 
     func transform(args: CreateEdgeArgs, completion: (Swift.Result<Edge, AiTmedError>) -> Void) {
-        //create user and send opt code don't need to check status
-        if args.type != AiTmedType.user && args.type != AiTmedType.sendOPTCode {
-            if  let error = checkStatus() {
-                completion(.failure(error))
-                return
-            }
-        }
-        
         var edge = Edge()
         edge.type = args.type
         edge.name = args.name

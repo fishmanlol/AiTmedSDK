@@ -37,5 +37,5 @@ public class AiTmed {
         client = Aitmed_Ecos_V1beta1_EcosAPIServiceClient(address: host, secure: true)
         client.timeout = grpcTimeout
     }
-    var OPTCodeJwt: [String: String] = [:]
+    var tmpJWT: String = ""
 }

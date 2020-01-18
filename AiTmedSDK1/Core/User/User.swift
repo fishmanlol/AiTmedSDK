@@ -6,6 +6,7 @@
 //  Copyright © 2020 Yi Tong. All rights reserved.
 //
 
+import PromiseKit
 import Foundation
 
 extension AiTmed {
@@ -22,60 +23,35 @@ extension AiTmed {
     
     //MARK: - Retrieve credential
     public static func retrieveCredential(args: RetrieveCredentialArgs, completion: @escaping (Swift.Result<Void, AiTmedError>) -> Void) {
-        guard let _jwt = shared.OPTCodeJwt[args.phoneNumber] else {
+        guard let name = [AiTmedNameKey.phoneNumber: args.phoneNumber, AiTmedNameKey.OPTCode: args.code].toJSON() else {
             completion(.failure(.unkown))
             return
         }
         
-        shared.transform(args: args) { (result) in
-            switch result {
-            case .failure(let error):
-                completion(.failure(error))
-            case .success(let _edge):
-                shared._createEdge(edge: _edge, jwt: _jwt, completion: { (result: Swift.Result<(Edge, String), AiTmedError>) in
-                    switch result {
-                    case .failure(let error):
-                        completion(.failure(error))
-                    case .success(let (edge, jwt)):
-                        if let dict = edge.deat.toJSONDict(),
-                            let pkStr = dict[AiTmedDeatKey.pk.rawValue] as? String,
-                            let pk = Key(pkStr),
-                            let eskStr = dict[AiTmedDeatKey.esk.rawValue] as? String,
-                            let esk = Key(eskStr),
-                            let userIdStr = dict[AiTmedDeatKey.userId.rawValue] as? String,
-                            let userIdBytes = shared.e.base642Bin(userIdStr) {
-                            let userId = Data(userIdBytes)
-                            let credential = Credential(phoneNumber: args.phoneNumber, pk: pk, esk: esk, userId: userId, jwt: jwt)
-                            credential.save()
-                            completion(.success(()))
-                        } else {
-                            print("decode deat of retreive credential failed")
-                            completion(.failure(.unkown))
-                        }
-                    }
-                })
-            }
+        let arguments = CreateEdgeArgs(type: AiTmedType.retrieveCredential, name: name, isEncrypt: false)!
+        createEdge(args: arguments)
+        .done { (edge) in
+            completion(.success(()))
+        }.catch { (error) in
+            completion(.failure(error.toAiTmedError()))
         }
     }
     
     //MARK: - Log in
     public static func login(args: LoginArgs, completion: @escaping (Swift.Result<Void, AiTmedError>) -> Void) {
-        shared.transform(args: args) { (result) in
-            switch result {
-            case .failure(let error):
-                completion(.failure(error))
-            case .success(let (_edge, credential)):
-                shared._createEdge(edge: _edge, jwt: credential.jwt, completion: { (result: Swift.Result<(Edge, String), AiTmedError>) in
-                    switch result {
-                    case .failure(let error):
-                        completion(.failure(error))
-                    case .success(let (_, jwt)):
-                        shared.c = credential
-                        shared.c?.jwt = jwt
-                        completion(.success(()))
-                    }
-                })
-            }
+        //Is new device?
+        guard let c = Credential(phoneNumber: args.phoneNumber) else {
+            completion(.failure(.credentialFailed(.credentialNeeded)))
+            return
+        }
+        
+        shared.c = c
+        let arguments = CreateEdgeArgs(type: AiTmedType.login, name: "", isEncrypt: false, bvid: c.userId, evid: nil)!
+        createEdge(args: arguments)
+        .done { (edge) in
+            completion(.success(()))
+        }.catch { (error) in
+            completion(.failure(error.toAiTmedError()))
         }
     }
     
@@ -86,35 +62,27 @@ extension AiTmed {
     
     //MARK: - Create user
     public static func createUser(args: CreateUserArgs, completion: @escaping (Swift.Result<Void, AiTmedError>) -> Void) {
-        DispatchQueue.global().async {
-            guard let jwt = shared.OPTCodeJwt[args.phoneNumber] else {
+        guard Validator.password(args.password),
+            Validator.phoneNumber(args.phoneNumber) else {
                 completion(.failure(.unkown))
                 return
-            }
-            
-            shared.transform(args: args) { (result) in
-                switch result {
-                case .failure(let error):
-                    completion(.failure(error))
-                case .success(let (_vertex, sk)):
-                    let result = shared.g.createVertex(vertex: _vertex, jwt: <#T##String#>)
-                    shared._createVertex(vertex: _vertex, jwt: jwt, completion: { (result: Swift.Result<(Vertex, String), AiTmedError>) in
-                        switch result {
-                        case .failure(let error):
-                            completion(.failure(error))
-                        case .success(let (vertex, jwt)):
-                            let credential = Credential(phoneNumber: args.phoneNumber,
-                                                        pk: Key(vertex.pk),
-                                                        esk: Key(vertex.esk),
-                                                        sk: sk,
-                                                        userId: vertex.id,
-                                                        jwt: jwt)
-                            credential.save()//todo
-                            completion(.success(()))
-                        }
-                    })
-                }
-            }
+        }
+        
+        guard let keyPair = shared.e.generateAKey(),
+            let esk = shared.e.generateESKey(from: keyPair.secretKey, using: args.password)?.toData() else {
+                completion(.failure(.unkown))
+                return
+        }
+        
+        let pk = keyPair.publicKey.toData()
+        let sk = keyPair.secretKey.toData()
+        let args = CreateVertexArgs(type: AiTmedType.user, tage: args.code, uid: args.phoneNumber, pk: pk, esk: esk, sk: sk)
+        
+        createVertex(args: args)
+        .done { (vertex) in
+            completion(.success(()))
+        }.catch { (error) in
+            completion(.failure(error.toAiTmedError()))
         }
     }
     
@@ -129,28 +97,18 @@ extension AiTmed {
     }
     
     //MARK: - Send verification code
-    public static func sendOPTCode(args: SendOPTCodeArgs, completion: @escaping (Result<Void, AiTmedError>) -> Void) {
-        DispatchQueue.global().async {
-            let result = shared.transform(args: args)
-            
-            guard case let .success(edge) = result else {
-                return
-            }
-            
-            shared.transform(args: args) { (result) in
-                switch result {
-                case .failure(let error):
-                    completion(.failure(error))
-                case .success(let edge):
-                    let result = shared.g.createEdge(edge: edge, jwt: "")
-                    switch result {
-                    case .failure(let error):
-                        completion(.failure(error))
-                    case .success(_):
-                        completion(.success(()))
-                    }
-                }
-            }
+    public static func sendOPTCode(args: SendOPTCodeArgs, completion: @escaping (Swift.Result<Void, AiTmedError>) -> Void) {
+        guard let name = [AiTmedNameKey.phoneNumber: args.phoneNumber].toJSON(),
+                let args = CreateEdgeArgs(type: AiTmedType.sendOPTCode, name: name, isEncrypt: false) else {
+            completion(.failure(.unkown))
+            return
+        }
+        
+        createEdge(args: args)
+        .done { (edge) in
+            completion(.success(()))
+        }.catch { (error) in
+            completion(Swift.Result.failure(error.toAiTmedError()))
         }
     }
 }

@@ -42,9 +42,9 @@ class CreateEdgeArgs {
 
 class UpdateEdgeArgs: CreateEdgeArgs {
     let id: Data
-    
-    init(id: Data, type: Int32, name: String, bvid: Data? = nil, evid: Data? = nil) {
+    ///isEncrypt must be same as before
+    init(id: Data, type: Int32, name: String, isEncrypt: Bool, bvid: Data? = nil, evid: Data? = nil) {
         self.id = id
-        super.init(type: type, name: name, isEncrypt: false, bvid: bvid, evid: evid)!
+        super.init(type: type, name: name, isEncrypt: isEncrypt, bvid: bvid, evid: evid)!
     }
 }

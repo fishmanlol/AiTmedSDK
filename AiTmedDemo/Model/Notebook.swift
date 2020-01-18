@@ -57,7 +57,7 @@ class Notebook {
     }
     
     func update(title: String, completion: @escaping (Result<Void, PrynoteError>) -> Void) {
-        AiTmed.updateNotebook(id: id, title: title) { (result) in
+        AiTmed.updateNotebook(id: id, title: title, isEncrypt: isEncrypt) { (result) in
             switch result {
             case .failure(let error):
                 completion(.failure(.unkown))

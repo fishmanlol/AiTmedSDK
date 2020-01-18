@@ -10,21 +10,21 @@ import Foundation
 
 extension AiTmed {
     //transform RetrieveArgs and DeleteArgs
-    func transform(args: RetrieveArgs, completion: (Result<RetrieveArgs, AiTmedError>) -> Void) {
-        if let error = checkStatus() {
-            completion(.failure(error))
-            return
-        }
-        completion(.success(args))
-    }
-    
-    func transform(args: DeleteArgs, completion: (Result<DeleteArgs, AiTmedError>) -> Void) {
-        if let error = checkStatus() {
-            completion(.failure(error))
-            return
-        }
-        completion(.success(args))
-    }
+//    func transform(args: RetrieveArgs, completion: (Result<RetrieveArgs, AiTmedError>) -> Void) {
+//        if let error = checkStatus() {
+//            completion(.failure(error))
+//            return
+//        }
+//        completion(.success(args))
+//    }
+//    
+//    func transform(args: DeleteArgs, completion: (Result<DeleteArgs, AiTmedError>) -> Void) {
+//        if let error = checkStatus() {
+//            completion(.failure(error))
+//            return
+//        }
+//        completion(.success(args))
+//    }
 }
 
 //MARK: - Retrieve

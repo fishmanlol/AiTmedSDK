@@ -9,12 +9,7 @@
 import Foundation
 
 extension AiTmed {
-    func transform(args: CreateVertexArgs, completion: (Result<(Vertex, String), AiTmedError>) -> Void) {
-        guard let jwt = OPTCodeJwt[args.uid] else {
-            completion(.failure(.unkown))
-            return
-        }
-        
+    func transform(args: CreateVertexArgs, completion: (Result<Vertex, AiTmedError>) -> Void) {
         var vertex = Vertex()
         vertex.type = AiTmedType.user
         vertex.tage = args.tage
@@ -26,6 +21,6 @@ extension AiTmed {
             vertex.id = arguments.id
         }
         
-        completion(.success((vertex, jwt)))
+        completion(.success(vertex))
     }
 }

@@ -17,13 +17,15 @@ class CreateVertexArgs {
     let uid: String
     let pk: Data
     let esk: Data
+    let sk: Data
     
-    init(type: Int32, tage: Int32, uid: String, pk: Data, esk: Data) {
+    init(type: Int32, tage: Int32, uid: String, pk: Data, esk: Data, sk: Data) {
         self.type = type
         self.tage = tage
         self.uid = uid
         self.pk = pk
         self.esk = esk
+        self.sk = sk
     }
 }
 
@@ -31,8 +33,8 @@ class CreateVertexArgs {
 class UpdateVertexArgs: CreateVertexArgs {
     let id: Data//the id of this vertex
     
-    init(type: Int32, tage: Int32, uid: String, pk: Data, esk: Data, id: Data) {
+    init(id: Data, type: Int32, tage: Int32, uid: String, pk: Data, esk: Data, sk: Data) {
         self.id = id
-        super.init(type: type, tage: tage, uid: uid, pk: pk, esk: esk)
+        super.init(type: type, tage: tage, uid: uid, pk: pk, esk: esk, sk: sk)
     }
 }

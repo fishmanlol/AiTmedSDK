@@ -17,7 +17,7 @@ struct Credential {
     let pk: Key
     let esk: Key
     let userId: Data
-    var jwt: String {
+    var jwt: String = "" {
         didSet {
             defaults.setValue(jwt, forKey: "jwt" + phoneNumber)
         }
@@ -32,6 +32,24 @@ struct Credential {
     var status: Status {
         get {
             return sk == nil ? .locked : .login
+        }
+    }
+    
+    init?(json: String, for phoneNumber: String) {
+        if let dict = json.toJSONDict(),
+            let pkStr = dict[AiTmedDeatKey.pk.rawValue] as? String,
+            let pk = Key(pkStr),
+            let eskStr = dict[AiTmedDeatKey.esk.rawValue] as? String,
+            let esk = Key(eskStr),
+            let userIdStr = dict[AiTmedDeatKey.userId.rawValue] as? String,
+            let userIdBytes = AiTmed.shared.e.base642Bin(userIdStr) {
+            self.phoneNumber = phoneNumber
+            self.pk = pk
+            self.esk = esk
+            self.userId = Data(userIdBytes)
+        } else {
+            print("decode deat of retreive credential failed")
+            return nil
         }
     }
     
