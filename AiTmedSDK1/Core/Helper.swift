@@ -11,45 +11,35 @@ import PromiseKit
 
 extension AiTmed {
     //MARK: - Retrieve xesk pair from edge
-    static func xeskPairInEdge(_ id: Data, completion: @escaping (Result<(Key, Key)?, AiTmedError>) -> Void) {
-        
-        AiTmed.retrieveEdges(args: RetrieveSingleArgs(id: id)) { (result) in
-            switch result {
-            case .failure(let error):
-                completion(.failure(error))
-            case .success(let edges):
-                if let edge = edges.first, edge.besak.count > 0, edge.eesak.count > 0  {
-                    completion(.success((Key(edge.besak), Key(edge.eesak))))
-                } else {
-                    completion(.success(nil))
-                }
-            }
-        }
-    }
+//    static func xeskPairInEdge(_ id: Data, completion: @escaping (Result<(Key, Key)?, AiTmedError>) -> Void) {
+//
+//        AiTmed.retrieveEdges(args: RetrieveSingleArgs(id: id)) { (result) in
+//            switch result {
+//            case .failure(let error):
+//                completion(.failure(error))
+//            case .success(let edges):
+//                if let edge = edges.first, edge.besak.count > 0, edge.eesak.count > 0  {
+//                    completion(.success((Key(edge.besak), Key(edge.eesak))))
+//                } else {
+//                    completion(.success(nil))
+//                }
+//            }
+//        }
+//    }
     
     static func xeskPairInEdge(_ id: Data) -> Promise<(Key, Key)?> {
         return Promise<(Key, Key)?> { resolver in
-
-            AiTmed.retrieveEdge(args: RetrieveSingleArgs(id: id))
-            .done { (edge) in
-                
-            }.catch { (error) in
-                    
-                }.finally {
-                    <#code#>
-            }
-        }
-        
-        AiTmed.retrieveEdges(args: RetrieveSingleArgs(id: id)) { (result) in
-            switch result {
-            case .failure(let error):
-                completion(.failure(error))
-            case .success(let edges):
-                if let edge = edges.first, edge.besak.count > 0, edge.eesak.count > 0  {
-                    completion(.success((Key(edge.besak), Key(edge.eesak))))
+            firstly { () -> Promise<Edge> in
+                let args = RetrieveSingleArgs(id: id)
+                return retrieveEdge(args: args)
+            }.done { (edge) in
+                if !edge.besak.isEmpty && !edge.eesak.isEmpty {
+                    resolver.fulfill((Key(edge.besak), Key(edge.eesak)))
                 } else {
-                    completion(.success(nil))
+                    resolver.fulfill(nil)
                 }
+            }.catch { (error) in
+                resolver.reject(error)
             }
         }
     }

@@ -10,40 +10,35 @@ import Foundation
 
 class CreateDocumentArgs {
     let title: String
-    let content: Data
+    let rawContent: Data
+    let mime: MediaType
     let isEncrypt: Bool
     let folderID: Data
-    let mime: MimeType
-    let type: Int32
+    let isBinary: Bool
+    let isExtraKeyNeeded: Bool
+    let isInvitable: Bool
+    let isEditable: Bool
+    let isViewable: Bool
     
-    var isOnS3: Bool {
-        return type == AiTmedType.s3Data
-    }
-    
-    var isZipSatisfied: Bool {
-        return content.isZipSatisfied
-    }
-    
-    init(folderID: Data, isEncrypt: Bool, title: String, content: Data = Data(), mime: MimeType = .data) {
+    init(title: String, rawContent: Data, mime: MediaType, isEncrypt: Bool, folderID: Data, isBinary: Bool, isExtraKeyNeeded: Bool = false, isInvitable: Bool = true, isEditable: Bool = true, isViewable: Bool = true) {
         self.title = title
-        self.content = content
+        self.rawContent = rawContent
+        self.mime = mime
         self.isEncrypt = isEncrypt
         self.folderID = folderID
-        self.mime = mime
-        
-        if content.isEmbedSatisfied {
-            type = AiTmedType.embedData
-        } else {
-            type = AiTmedType.s3Data
-        }
+        self.isBinary = isBinary
+        self.isExtraKeyNeeded = isExtraKeyNeeded
+        self.isInvitable = isInvitable
+        self.isEditable = isEditable
+        self.isViewable = isViewable
     }
 }
 
 class UpdateDocumentArgs: CreateDocumentArgs {
     let id: Data
-    
-    init(id: Data, folderID: Data, isEncrypt: Bool, title: String, content: Data = Data(), mime: MimeType = .data) {
+
+    init(id: Data, title: String, rawContent: Data, mime: MediaType, isEncrypt: Bool, folderID: Data, isBinary: Bool, isExtraKeyNeeded: Bool = false, isInvitable: Bool = true, isEditable: Bool = true, isViewable: Bool = true) {
         self.id = id
-        super.init(folderID: folderID, isEncrypt: isEncrypt, title: title, content: content, mime: mime)
+        super.init(title: title, rawContent: rawContent, mime: mime, isEncrypt: isEncrypt, folderID: folderID, isBinary: isBinary, isExtraKeyNeeded: isExtraKeyNeeded, isInvitable: isInvitable, isEditable: isEditable, isViewable: isViewable)
     }
 }

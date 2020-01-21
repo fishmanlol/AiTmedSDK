@@ -29,12 +29,14 @@ extension AiTmed {
         }
         
         let arguments = CreateEdgeArgs(type: AiTmedType.retrieveCredential, name: name, isEncrypt: false)!
-        createEdge(args: arguments)
-        .done { (edge) in
+        
+        firstly { () -> Promise<Edge> in
+            createEdge(args: arguments)
+        }.done({ (edge) in
             completion(.success(()))
-        }.catch { (error) in
+        }).catch({ (error) in
             completion(.failure(error.toAiTmedError()))
-        }
+        })
     }
     
     //MARK: - Log in
@@ -47,12 +49,14 @@ extension AiTmed {
         
         shared.c = c
         let arguments = CreateEdgeArgs(type: AiTmedType.login, name: "", isEncrypt: false, bvid: c.userId, evid: nil)!
-        createEdge(args: arguments)
-        .done { (edge) in
+        
+        firstly { () -> Promise<Edge> in
+            createEdge(args: arguments)
+        }.done({ (edge) in
             completion(.success(()))
-        }.catch { (error) in
+        }).catch({ (error) in
             completion(.failure(error.toAiTmedError()))
-        }
+        })
     }
     
     //MARK: - Log out
@@ -76,10 +80,11 @@ extension AiTmed {
         
         let pk = keyPair.publicKey.toData()
         let sk = keyPair.secretKey.toData()
-        let args = CreateVertexArgs(type: AiTmedType.user, tage: args.code, uid: args.phoneNumber, pk: pk, esk: esk, sk: sk)
+        let arguments = CreateVertexArgs(type: AiTmedType.user, tage: args.code, uid: args.phoneNumber, pk: pk, esk: esk, sk: sk)
         
-        createVertex(args: args)
-        .done { (vertex) in
+        firstly { () -> Promise<Vertex> in
+            createVertex(args: arguments)
+        }.done { (edge) in
             completion(.success(()))
         }.catch { (error) in
             completion(.failure(error.toAiTmedError()))
@@ -104,8 +109,9 @@ extension AiTmed {
             return
         }
         
-        createEdge(args: args)
-        .done { (edge) in
+        firstly { () -> Promise<Edge> in
+            createEdge(args: args)
+        }.done { (edge) in
             completion(.success(()))
         }.catch { (error) in
             completion(Swift.Result.failure(error.toAiTmedError()))

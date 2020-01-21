@@ -8,9 +8,15 @@
 
 import Foundation
 import Alamofire
+import PromiseKit
 
 extension AiTmed {
     //MARK: - Create
+    static func createDocument(args: CreateDocumentArgs) -> Promise<Document> {
+        
+    }
+    
+    
     static func createDocument(args: CreateDocumentArgs, completion: @escaping (Swift.Result<Document, AiTmedError>) -> Void) {
         shared.transform(args: args) { (result) in
             switch result {
@@ -100,19 +106,38 @@ extension AiTmed {
         }
     }
     
-    static func deleteDocument(args: DeleteArgs, completion: @escaping (Swift.Result<Void, AiTmedError>) -> Void) {
-        guard let c = shared.c, c.status == .login else {
-            completion(.failure(.credentialFailed(.credentialNeeded)))
-            return
-        }
-        
-        shared._delete(ids: [args.id], jwt: shared.c!.jwt) { (result: Swift.Result<String, AiTmedError>) in
-            switch result {
-            case .failure(let error):
-                completion(.failure(error))
-            case .success(let jwt):
-                shared.c.jwt = jwt
-                completion(.success(()))
+//    static func deleteDocument(args: DeleteArgs, completion: @escaping (Swift.Result<Void, AiTmedError>) -> Void) {
+//        guard let c = shared.c, c.status == .login else {
+//            completion(.failure(.credentialFailed(.credentialNeeded)))
+//            return
+//        }
+//
+//        shared._delete(ids: [args.id], jwt: shared.c!.jwt) { (result: Swift.Result<String, AiTmedError>) in
+//            switch result {
+//            case .failure(let error):
+//                completion(.failure(error))
+//            case .success(let jwt):
+//                shared.c.jwt = jwt
+//                completion(.success(()))
+//            }
+//        }
+//    }
+    
+    static func deleteDocument(args: DeleteArgs) -> Promise<Void> {
+        return Promise<Void> { resolver in
+            if let error = shared.checkStatus() {
+                resolver.reject(error)
+                return
+            }
+            
+            shared.g.delete(ids: [args.id], jwt: shared.c.jwt) { (result: Swift.Result<String, AiTmedError>) in
+                switch result {
+                case .failure(let error):
+                    resolver.reject(error)
+                case .success(let jwt):
+                    shared.c.jwt = jwt
+                    resolver.fulfill(())
+                }
             }
         }
     }
