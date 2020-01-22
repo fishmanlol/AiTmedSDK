@@ -27,20 +27,35 @@ extension AiTmed {
 //        }
 //    }
     
-    static func xeskPairInEdge(_ id: Data) -> Promise<(Key, Key)?> {
-        return Promise<(Key, Key)?> { resolver in
-            firstly { () -> Promise<Edge> in
-                let args = RetrieveSingleArgs(id: id)
-                return retrieveEdge(args: args)
-            }.done { (edge) in
-                if !edge.besak.isEmpty && !edge.eesak.isEmpty {
-                    resolver.fulfill((Key(edge.besak), Key(edge.eesak)))
-                } else {
-                    resolver.fulfill(nil)
-                }
-            }.catch { (error) in
-                resolver.reject(error)
+//    static func xeskPairInEdge(_ id: Data) -> Promise<(Key, Key)?> {
+//        return Promise<(Key, Key)?> { resolver in
+//            firstly { () -> Promise<Edge> in
+//                let args = RetrieveSingleArgs(id: id)
+//                return retrieveEdge(args: args)
+//            }.done { (edge) in
+//                if !edge.besak.isEmpty && !edge.eesak.isEmpty {
+//                    resolver.fulfill((Key(edge.besak), Key(edge.eesak)))
+//                } else {
+//                    resolver.fulfill(nil)
+//                }
+//            }.catch { (error) in
+//                resolver.reject(error)
+//            }
+//        }
+//    }
+    
+    static func xeskPairInEdge(_ id: Data) -> Swift.Result<(Key, Key)?, AiTmedError> {
+        do {
+            let args = RetrieveSingleArgs(id: id)
+            let edge = try retrieveEdge(args: args).wait()
+            
+            if !edge.besak.isEmpty && !edge.eesak.isEmpty {
+                return Swift.Result.success((Key(edge.besak), Key(edge.eesak)))
+            } else {
+                return Swift.Result.success(nil)
             }
+        } catch {
+            return Swift.Result.failure(AiTmedError.unkown)
         }
     }
     

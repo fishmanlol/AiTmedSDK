@@ -86,6 +86,17 @@ extension AiTmed {
     }
     
     //MARK: - Delete
+    static func deleteEdge(args: DeleteArgs) -> Promise<Void> {
+        return Promise<Void> { resolver in
+            if let error = shared.checkStatus() {
+                resolver.reject(error)
+                return
+            }
+            
+            shared.g.
+        }
+    }
+    
     static func deleteEdge(args: DeleteArgs, completion: @escaping (Swift.Result<Void, AiTmedError>) -> Void) {
         guard let c = shared.c, c.status == .login else {
             completion(.failure(.credentialFailed(.credentialNeeded)))

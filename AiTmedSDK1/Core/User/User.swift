@@ -12,7 +12,7 @@ import Foundation
 extension AiTmed {
     //MARK: - Has credential
     public static func hasCredential(for phoneNumber: String) -> Bool {
-        if let _ = shared.c {
+        if let c = shared.c, c.phoneNumber == phoneNumber {
             return true
         } else if let _ = Credential(phoneNumber: phoneNumber) {
             return true
