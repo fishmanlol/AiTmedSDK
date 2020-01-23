@@ -114,6 +114,35 @@ class EditorViewController: UIViewController {
     
     @objc func didDoneItemTapped() {
         view.endEditing(true)
+        isLoading = true
+        let title = titleTextField.text ?? ""
+        let content = contentTextView.text.data(using: .utf8) ?? Data()
+        switch mode {
+        case .create:
+            notebook.addNote(title: title, content: content) { [weak self] (result) in
+                DispatchQueue.main.async {
+                    self?.isLoading = false
+                    switch result {
+                    case .failure(let error):
+                        self?.displayAutoDismissAlert(msg: error.message)
+                    case .success(_):
+                        print("create success!")
+                    }
+                }
+            }
+        case .update(let note):
+            note.update(title: title, content: content) { [weak self] (result) in
+                DispatchQueue.main.async {
+                    self?.isLoading = false
+                    switch result {
+                    case .failure(let error):
+                        self?.displayAutoDismissAlert(msg: error.message)
+                    case .success(_):
+                        print("update success!")
+                    }
+                }
+            }
+        }
 //        isLoading = true
 //        if let id = note.id {
 //            delegate?.willSaveNote(self, note: note)

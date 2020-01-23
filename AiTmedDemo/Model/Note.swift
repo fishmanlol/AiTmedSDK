@@ -18,16 +18,11 @@ struct Note {
     var ctime: Date = Date()
     var mtime: Date = Date()
     var isBroken = false
-    var mime: MimeType
     var displayContent: String {
-        if mime == .plain {
-            return String(data: rawContent, encoding: .utf8) ?? ""
-        } else {
-            return String(data: rawContent, encoding: .utf8) ?? ""
-        }
+        return String(data: rawContent, encoding: .utf8) ?? ""
     }
     
-    init(id: Data, notebook: Notebook, title: String = "", content: Data = Data(), isBroken: Bool = false, mtime: Date = Date(), ctime: Date = Date(), mime: MimeType) {
+    init(id: Data, notebook: Notebook, title: String = "", content: Data = Data(), isBroken: Bool = false, mtime: Date = Date(), ctime: Date = Date()) {
         self.id = id
         self.notebook = notebook
         self.title = title
@@ -35,7 +30,6 @@ struct Note {
         self.isBroken = isBroken
         self.mtime = mtime
         self.ctime = ctime
-        self.mime = mime
     }
     
     func update(title: String? = nil, content: Data? = nil, completion: @escaping (Result<Void, PrynoteError>) -> Void) {
@@ -44,6 +38,7 @@ struct Note {
             case .failure(let error):
                 completion(.failure(.unkown))
             case .success(_):
+                NotificationCenter.default.post(name: .didUpdateNote, object: self)
                 completion(.success(()))
             }
         }
@@ -55,6 +50,7 @@ struct Note {
             case .failure(let error):
                 completion(.failure(.unkown))
             case .success(_):
+                NotificationCenter.default.post(name: .didRemoveNote, object: self)
                 completion(.success(()))
             }
         }

@@ -11,9 +11,9 @@ import Dispatch
 
 extension AiTmed {
     public class Prynote {
-        static func updateDocument(args: UpdateDocumentArgs, completion: @escaping (Swift.Result<Document, AiTmedError>) -> Void) {
-            createDocument(args: args, completion: completion)
-        }
+//        static func updateDocument(args: UpdateDocumentArgs, completion: @escaping (Swift.Result<Document, AiTmedError>) -> Void) {
+//            createDocument(args: args, completion: completion)
+//        }
         
         
         
@@ -94,7 +94,8 @@ extension AiTmed {
         
         public static func removeNotebook(id: Data, completion: @escaping (Result<Void, AiTmedError>) -> Void) {
             //first find out all notes
-            AiTmed.deleteEdge(args: DeleteArgs(id: id), completion: completion)
+            fatalError()
+//            AiTmed.deleteEdge(args: DeleteArgs(id: id), completion: completion)
         }
     }
 }

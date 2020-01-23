@@ -14,20 +14,21 @@ extension AiTmed {
     //MARK: - Create
     static func createDocument(args: CreateDocumentArgs) -> Promise<Document> {
         return Promise<Document> { resolver1 in
-            firstly { () -> Promise<(Doc, Data, Bool, Bool)> in
+            firstly { () -> Promise<(Doc, Data)> in
                 shared.transform(args: args)//transform arguments to Doc object which will used to be create
-            }.then { (doc, data, isOnServer, isZipped) -> Promise<((URL, Data)?, Document)> in
+            }.then { (_doc, data) -> Promise<((URL, Data)?, Document)> in
                 return Promise<((URL, Data)?, Document)> { resolver2 in
-                    shared.g.createDoc(doc: doc, jwt: shared.c.jwt, completion: { (result) in
+                    shared.g.createDoc(doc: _doc, jwt: shared.c.jwt, completion: { (result) in
                         switch result {
                         case .failure(let error):
                             resolver2.reject(error)
                         case .success(let (doc, jwt)):
                             shared.c.jwt = jwt
                             
-                            let document = Document(id: doc.id, folderID: args.folderID, title: args.title, content: data, isBroken: false, isOnServer: isOnServer, isZipped: isZipped, isBinary: args.isBinary, isEncrypted: args.isEncrypt, isExtraKeyNeeded: args.isExtraKeyNeeded, isInvitable: args.isInvitable, isEditable: args.isEditable, isViewable: args.isViewable)
+                            let documentType = DocumentType(value: UInt32(doc.type))
+                            let document = Document(id: doc.id, folderID: doc.eid, title: args.title, content: data, isBroken: false, mediaType: args.mediaType, type: documentType, mtime: doc.mtime, ctime: doc.ctime)
                             
-                            if isOnServer {
+                            if documentType.isOnServer {
                                 resolver2.fulfill((nil, document))
                             } else {//on S3
                                 //unwrap deat
@@ -35,7 +36,7 @@ extension AiTmed {
                                     let urlString = dict["url"] as? String,
                                     let sig = dict["sig"] as? String,
                                     let url = URL(string: urlString + "?" + sig),
-                                    let _ = dict["exptime"] as? Int64 {
+                                    let _ = dict["exptime"] as? String {
                                     resolver2.fulfill(((url, data), document))
                                 } else {
                                     print("create document deat parse error")
@@ -127,52 +128,63 @@ extension AiTmed {
 //        }
 //    }
     
-    static func retrieveDocuments(args: RetrieveDocArgs) -> Promise<[Document]> {
-        return Promise<[Document]> { resolver in
+    static func retrieveDoc(args: RetrieveDocArgs) -> Promise<[Doc]> {
+        return Promise<[Doc]> { resolver in
             shared.g.retrieveDoc(args: args, jwt: shared.c.jwt, completion: { (result) in
                 switch result {
                 case .failure(let error):
                     resolver.reject(error)
                 case .success(let (docs, jwt)):
                     shared.c.jwt = jwt
+                    resolver.fulfill(docs)
+                }
+            })
+        }
+    }
+    
+    static func retrieveDocuments(args: RetrieveDocArgs) -> Promise<[Document]> {
+        return Promise<[Document]> { resolver in
+            shared.g.retrieveDoc(args: args, jwt: shared.c.jwt, completion: { (result) in
+                switch result {
+                case .failure(let error):
+                    resolver.reject(error)
+                    return
+                case .success(let (docs, jwt)):
+                    shared.c.jwt = jwt
                     var documents: [Document] = []
+                    var success = true
                     let group = DispatchGroup()
                     
                     for doc in docs {
                         group.enter()
                         
                         DispatchQueue.global().async {
-                            let isOnServer = doc.type.isSet(0)
-                            let isZipped = doc.type.isSet(1)
-                            let isBinary = doc.type.isSet(2)
-                            let isEncrypt = doc.type.isSet(3)
-                            let isExtraKeyNeeded = doc.type.isSet(4)
-                            let isInvitable = doc.type.isSet(24)
-                            let isEditable = doc.type.isSet(25)
-                            let isViewable = doc.type.isSet(26)
-                            var mediaType: MediaType = .other
+                            defer {
+                                print("defer leave")
+                                group.leave() }
+                            
+                            let documentType = DocumentType(value: UInt32(doc.type))
+                            
                             var title = ""
                             var unprocceedData = Data()
-                            var isBroken = false
+                            var mediaType: MediaType = .other
                             
                             if let nameDict = doc.name.toJSONDict(),
-                                let t = nameDict["title"] as? String,
-                                let mimeString = nameDict["type"] as? String,
-                                let mime = MediaType(rawValue: mimeString) {
-                                mediaType = mime
+                                let t = nameDict["title"] as? String {
                                 title = t
                             }
                             
-                            if isOnServer {
+                            if documentType.isOnServer {
                                 if let nameDict = doc.name.toJSONDict(),
                                     let d = nameDict["data"] as? String,
-                                    let dd = Data(base64Encoded: d) {
+                                    let dd = Data(base64Encoded: d),
+                                    let mt = nameDict["type"] as? String,
+                                    let _mediaType = MediaType(rawValue: mt) {
                                     unprocceedData = dd
+                                    mediaType = _mediaType
                                 } else {
-                                    isBroken = true
+                                    success = false
                                 }
-                                
-                                group.leave()
                             } else {
                                 if let deatDict = doc.deat.toJSONDict(),
                                     let urlString = deatDict["url"] as? String {
@@ -181,45 +193,78 @@ extension AiTmed {
                                         print("download url: \(urlString)")
                                         switch response.result {
                                         case .failure(let error):
-                                            isBroken = true
+                                            success = false
                                         case .success(let data):
                                             unprocceedData = data
+                                            
+                                            if !documentType.isBinary {
+                                                if let base64 = String(data: unprocceedData, encoding: .utf8), let d = Data(base64Encoded: base64) {
+                                                    unprocceedData = d
+                                                } else {
+                                                    success = false
+                                                }
+                                            }
                                         }
                                         sem.signal()
-                                        group.leave()
                                     })
                                     sem.wait()
                                 } else {
-                                    isBroken = true
-                                    group.leave()
+                                    success = false
+                                    return
                                 }
                             }
                             
-                            if isEncrypt {
-                                let keypair = AiTmed.xeskPairInEdge(args.folderID)
-                
+                            guard success else { return }
+                            
+                            if documentType.isEncrypt {
+                                let result = AiTmed.xeskPairInEdge(args.folderID)
                                 
+                                switch result {
+                                case .failure(let error):
+                                    success = false
+                                    return
+                                case .success(let keypair):
+                                    if let kp = keypair {
+                                        let (besak, _) = kp
+                                        if let sak = shared.e.generateSAK(xesak: besak, sendPublicKey: shared.c.pk, recvSecretKey: shared.c.sk!) {
+            
+                                            if let decryptedData = shared.e.sKeyDecrypt(secretKey: sak, data: [UInt8](unprocceedData)) {
+                                                print("decrpted success")
+                                                unprocceedData = Data(decryptedData)
+                                            } else {
+                                                print("decrypted failed")
+                                                success = false
+                                                return
+                                            }
+                                        } else {
+                                            success = false
+                                            return
+                                        }
+                                    }
+                                }
                             }
                             
+                            if documentType.isZipped {
+                                if let unzipped = unprocceedData.unzip() {
+                                    unprocceedData = unzipped
+                                } else {
+                                    success = false
+                                    return
+                                }
+                            }
                             
+                            let document = Document(id: doc.id, folderID: doc.eid, title: title, content: unprocceedData, isBroken: false, mediaType: mediaType, type: documentType, mtime: doc.mtime, ctime: doc.ctime)
+                            documents.append(document)
                         }
-                        
-                        
-                        
-//                        if isOnServer {
-//                            var content = Data()
-//                            if let dict = doc.deat.toJSONDict(),
-//                                let embedBase64 = dict["data"] as? String,
-//                                let embedData = Data(base64Encoded: embedBase64) {
-//                                content = embedData
-//                            }
-//                        } else {
-//                            if let dict
-//                            Alamofire.download(<#T##url: URLConvertible##URLConvertible#>)
-//                        }
-                        
-//                        let document = Document(id: doc.id, folderID: doc.fid, title: title, content: <#T##Data#>, isBroken: <#T##Bool#>, isOnServer: <#T##Bool#>, isZipped: <#T##Bool#>, isBinary: <#T##Bool#>, isEncrypted: <#T##Bool#>, isExtraKeyNeeded: <#T##Bool#>, isInvitable: <#T##Bool#>, isEditable: <#T##Bool#>, isViewable: <#T##Bool#>)
                     }
+                    
+                    group.notify(queue: DispatchQueue.global(), execute: {
+                        if success {
+                            resolver.fulfill(documents)
+                        } else {
+                            resolver.reject(AiTmedError.unkown)
+                        }
+                    })
                 }
             })
         }

@@ -11,34 +11,36 @@ import Foundation
 class CreateDocumentArgs {
     let title: String
     let rawContent: Data
-    let mime: MediaType
-    let isEncrypt: Bool
+    let applicationDataType: ApplicationDataType
+    let mediaType: MediaType
     let folderID: Data
+    let isOnServer: Bool
+    let isZipped: Bool
+    let isEncrypt: Bool
     let isBinary: Bool
     let isExtraKeyNeeded: Bool
-    let isInvitable: Bool
     let isEditable: Bool
-    let isViewable: Bool
     
-    init(title: String, rawContent: Data, mime: MediaType, isEncrypt: Bool, folderID: Data, isBinary: Bool, isExtraKeyNeeded: Bool = false, isInvitable: Bool = true, isEditable: Bool = true, isViewable: Bool = true) {
+    init(title: String, rawContent: Data, applicationDataType: ApplicationDataType, mediaType: MediaType, isEncrypt: Bool, folderID: Data, isOnServer: Bool, isZipped: Bool, isBinary: Bool = false, isExtraKeyNeeded: Bool = false, isEditable: Bool = true) {
         self.title = title
         self.rawContent = rawContent
-        self.mime = mime
-        self.isEncrypt = isEncrypt
+        self.applicationDataType = applicationDataType
+        self.mediaType = mediaType
         self.folderID = folderID
+        self.isOnServer = isOnServer
+        self.isZipped = isZipped
+        self.isEncrypt = isEncrypt
         self.isBinary = isBinary
         self.isExtraKeyNeeded = isExtraKeyNeeded
-        self.isInvitable = isInvitable
         self.isEditable = isEditable
-        self.isViewable = isViewable
     }
 }
 
 class UpdateDocumentArgs: CreateDocumentArgs {
     let id: Data
 
-    init(id: Data, title: String, rawContent: Data, mime: MediaType, isEncrypt: Bool, folderID: Data, isBinary: Bool, isExtraKeyNeeded: Bool = false, isInvitable: Bool = true, isEditable: Bool = true, isViewable: Bool = true) {
+    init(id: Data, title: String, rawContent: Data, applicationDataType: ApplicationDataType, mediaType: MediaType, isEncrypt: Bool, folderID: Data, isOnServer: Bool, isZipped: Bool, isBinary: Bool = false, isExtraKeyNeeded: Bool = false, isEditable: Bool = true) {
         self.id = id
-        super.init(title: title, rawContent: rawContent, mime: mime, isEncrypt: isEncrypt, folderID: folderID, isBinary: isBinary, isExtraKeyNeeded: isExtraKeyNeeded, isInvitable: isInvitable, isEditable: isEditable, isViewable: isViewable)
+        super.init(title: title, rawContent: rawContent, applicationDataType: applicationDataType, mediaType: mediaType, isEncrypt: isEncrypt, folderID: folderID, isOnServer: isOnServer, isZipped: isZipped)
     }
 }

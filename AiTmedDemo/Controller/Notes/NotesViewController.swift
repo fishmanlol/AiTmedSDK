@@ -64,10 +64,9 @@ class NotesViewController: UITableViewController {
     }
     
     @objc func didLoadAllNotesInNotebook(no: Notification) {
-//        dismissWaitingView()
-//        DispatchQueue.main.async {
-//            self.tableView.reloadData()
-//        }
+        DispatchQueue.main.async {
+            self.tableView.reloadData()
+        }
     }
     
     @objc func didAddNote(no: Notification) {
@@ -112,7 +111,7 @@ class NotesViewController: UITableViewController {
         //Observers
 //        NotificationCenter.default
 //            .addObserver(self, selector: #selector(didLoadAllNotes), name: .didLoadAllNotes, object: storage)
-//        NotificationCenter.default.addObserver(self, selector: #selector(didLoadAllNotesInNotebook), name: .didLoadAllNotesInNotebook, object: _notebook)
+        NotificationCenter.default.addObserver(self, selector: #selector(didLoadAllNotesInNotebook), name: .didLoadAllNotesInNotebook, object: nil)
 //        NotificationCenter.default.addObserver(self, selector: #selector(didAddNote), name: .didAddNote, object: nil)
 //        NotificationCenter.default.addObserver(self, selector: #selector(didRemoveNote), name: .didRemoveNote, object: nil)
     }

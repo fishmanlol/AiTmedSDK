@@ -93,57 +93,78 @@ extension AiTmed {
                 return
             }
             
-            shared.g.
+            firstly { () -> Promise<[Doc]> in
+                retrieveDoc(args: RetrieveDocArgs(folderID: args.id))
+            }.then({ (docs) -> Promise<Void> in
+                let deletePromises = docs.map { deleteDocument(args: DeleteArgs(id: $0.id)) }
+                return when(fulfilled: deletePromises)
+            }).then({ (_) -> Promise<Void> in
+                return Promise<Void> { resolver1 in
+                    shared.g.delete(ids: [args.id], jwt: shared.c.jwt, completion: { (result) in
+                        switch result {
+                        case .failure(let error):
+                            resolver1.reject(error)
+                        case .success(_):
+                            resolver1.fulfill(())
+                        }
+                    })
+                }
+            }).done({ (_) in
+                resolver.fulfill(())
+            }).catch({ (error) in
+                resolver.reject(error)
+            })
         }
     }
     
-    static func deleteEdge(args: DeleteArgs, completion: @escaping (Swift.Result<Void, AiTmedError>) -> Void) {
-        guard let c = shared.c, c.status == .login else {
-            completion(.failure(.credentialFailed(.credentialNeeded)))
-            return
-        }
-        
-        shared._retrieveDoc(args: RetrieveDocArgs(folderID: args.id), jwt: shared.c.jwt) { (result) in
-            switch result {
-            case .failure(let error):
-                completion(.failure(error))
-            case .success(let (docs, jwt)):
-                shared.c.jwt = jwt
-                var success = true
-                
-                DispatchQueue.global().async {
-                    let sem = DispatchSemaphore(value: 0)
-                    for doc in docs {
-                        deleteDocument(args: DeleteArgs(id: doc.id), completion: { (result) in
-                            switch result {
-                            case .failure(let error):
-                                print(error.localizedDescription)
-                                success = false
-                            case .success(_):
-                                break
-                            }
-                            sem.signal()
-                        })
-                        sem.wait()
-                    }
-                    
-                    if success {
-                        shared._delete(ids: [args.id], jwt: shared.c.jwt, completion: { (result) in
-                            switch result {
-                            case .failure(_):
-                                completion(.failure(.unkown))
-                            case .success(let j):
-                                shared.c.jwt = j
-                                completion(.success(()))
-                            }
-                        })
-                    } else {
-                        completion(.failure(.unkown))
-                    }
-                }
-            }
-        }
-    }
+//    static func deleteEdge(args: DeleteArgs, completion: @escaping (Swift.Result<Void, AiTmedError>) -> Void) {
+//        guard let c = shared.c, c.status == .login else {
+//            completion(.failure(.credentialFailed(.credentialNeeded)))
+//            return
+//        }
+//        
+//        shared._retrieveDoc(args: RetrieveDocArgs(folderID: args.id), jwt: shared.c.jwt) { (result) in
+//            switch result {
+//            case .failure(let error):
+//                completion(.failure(error))
+//            case .success(let (docs, jwt)):
+//                shared.c.jwt = jwt
+//                var success = true
+//                
+//                DispatchQueue.global().async {
+//                    let sem = DispatchSemaphore(value: 0)
+//                    for doc in docs {
+//                        
+//                        deleteDocument(args: DeleteArgs(id: doc.id), completion: { (result) in
+//                            switch result {
+//                            case .failure(let error):
+//                                print(error.localizedDescription)
+//                                success = false
+//                            case .success(_):
+//                                break
+//                            }
+//                            sem.signal()
+//                        })
+//                        sem.wait()
+//                    }
+//                    
+//                    if success {
+//                        shared._delete(ids: [args.id], jwt: shared.c.jwt, completion: { (result) in
+//                            switch result {
+//                            case .failure(_):
+//                                completion(.failure(.unkown))
+//                            case .success(let j):
+//                                shared.c.jwt = j
+//                                completion(.success(()))
+//                            }
+//                        })
+//                    } else {
+//                        completion(.failure(.unkown))
+//                    }
+//                }
+//            }
+//        }
+//    }
 }
 
 

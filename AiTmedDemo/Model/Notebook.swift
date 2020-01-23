@@ -27,13 +27,14 @@ class Notebook {
     }
     
     func addNote(title: String, content: Data, completion: @escaping (Result<Note, PrynoteError>) -> Void) {
-        AiTmed.addNote(title: title, content: content, isEncrypt: isEncrypt) { (result) in
+        AiTmed.addNote(folderID: id, title: title, content: content, isEncrypt: isEncrypt) { (result) in
             switch result {
             case .failure(let error):
                 completion(.failure(.unkown))
             case .success(let _note):
-                fatalError()
-//                completion(.success(Note()))
+                let note = Note(id: _note.id, notebook: self, title: _note.title, content: _note.content, isBroken: _note.isBroken, mtime: _note.mtime, ctime: _note.ctime)
+                NotificationCenter.default.post(name: .didAddNote, object: self, userInfo: nil)
+                completion(.success(note))
             }
         }
     }
@@ -42,15 +43,16 @@ class Notebook {
         self.isReady = false
         AiTmed.retrieveNotes(notebookID: id) { (result) in
             self.isReady = true
-            NotificationCenter.default.post(name: .didLoadAllNotesInNotebook, object: self)
             switch result {
             case .failure(let error):
                 completion(.failure(.unkown))
+                NotificationCenter.default.post(name: .didLoadAllNotesInNotebook, object: self)
             case .success(let _notes):
                 let notes = _notes.map {
-                    Note(id: $0.id, notebook: self, title: $0.title, content: $0.content, isBroken: $0.isBroken, mtime: $0.mtime, ctime: $0.ctime, mime: $0.mime)
+                    Note(id: $0.id, notebook: self, title: $0.title, content: $0.content, isBroken: $0.isBroken, mtime: $0.mtime, ctime: $0.ctime)
                 }
                 self.notes = notes
+                NotificationCenter.default.post(name: .didLoadAllNotesInNotebook, object: self)
                 completion(.success(()))
             }
         }
@@ -67,6 +69,7 @@ class Notebook {
                 self.title = _notebook.title
                 
                 Storage.default.sortByTitle()
+                NotificationCenter.default.post(name: .didUpdateNotebook, object: self)
                 completion(.success(()))
             }
         }

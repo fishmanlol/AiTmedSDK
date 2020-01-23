@@ -20,6 +20,7 @@
 		109D16AF23C8544E007064B2 /* NotebookViewController+EditingControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 109D16AE23C8544E007064B2 /* NotebookViewController+EditingControllerDelegate.swift */; };
 		8E2388AE23D2420100B40C52 /* Error+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E2388AD23D2420100B40C52 /* Error+.swift */; };
 		8E511D9523C80F9E008C5321 /* UIViewController+froze.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E511D9423C80F9E008C5321 /* UIViewController+froze.swift */; };
+		8E59BEE023D8DCA00008C1BF /* DocumentType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E59BEDF23D8DCA00008C1BF /* DocumentType.swift */; };
 		8E79742923C6573300819670 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E79742823C6573300819670 /* User.swift */; };
 		8E79742B23C65B9E00819670 /* Storage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E79742A23C65B9E00819670 /* Storage.swift */; };
 		8E79742D23C65EE600819670 /* AiTmed+transform.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E79742C23C65EE600819670 /* AiTmed+transform.swift */; };
@@ -116,7 +117,7 @@
 		8EF1C7B123D11CBB00CCB4FE /* Vertex+transform.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EF1C7B023D11CBB00CCB4FE /* Vertex+transform.swift */; };
 		8EF1C7B423D11DD900CCB4FE /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EF1C7B323D11DD900CCB4FE /* User.swift */; };
 		8EF1C7BA23D13C0000CCB4FE /* GRPC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EF1C7B923D13C0000CCB4FE /* GRPC.swift */; };
-		8EFA5A8A23D788C2006BDAAB /* Int32.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EFA5A8923D788C2006BDAAB /* Int32.swift */; };
+		8EFA5A8A23D788C2006BDAAB /* UInt32.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EFA5A8923D788C2006BDAAB /* UInt32.swift */; };
 		8EFB6E2E23CFD74400045C25 /* NotebookSelectionView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8EFB6E2D23CFD74400045C25 /* NotebookSelectionView.xib */; };
 		8EFB6E3023CFD75E00045C25 /* NotebookSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EFB6E2F23CFD75E00045C25 /* NotebookSelectionView.swift */; };
 		B6596DBD03EE0AD4FC54D84F /* Pods_AiTmedDemo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0A80ADB6876C137594ED3877 /* Pods_AiTmedDemo.framework */; };
@@ -162,6 +163,7 @@
 		57FDED9EF3127EFCBF4C1B00 /* Pods_AiTmedSDK1.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AiTmedSDK1.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8E2388AD23D2420100B40C52 /* Error+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Error+.swift"; sourceTree = "<group>"; };
 		8E511D9423C80F9E008C5321 /* UIViewController+froze.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+froze.swift"; sourceTree = "<group>"; };
+		8E59BEDF23D8DCA00008C1BF /* DocumentType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentType.swift; sourceTree = "<group>"; };
 		8E79742823C6573300819670 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		8E79742A23C65B9E00819670 /* Storage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Storage.swift; sourceTree = "<group>"; };
 		8E79742C23C65EE600819670 /* AiTmed+transform.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AiTmed+transform.swift"; sourceTree = "<group>"; };
@@ -263,7 +265,7 @@
 		8EF1C7B023D11CBB00CCB4FE /* Vertex+transform.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Vertex+transform.swift"; sourceTree = "<group>"; };
 		8EF1C7B323D11DD900CCB4FE /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		8EF1C7B923D13C0000CCB4FE /* GRPC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GRPC.swift; sourceTree = "<group>"; };
-		8EFA5A8923D788C2006BDAAB /* Int32.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Int32.swift; sourceTree = "<group>"; };
+		8EFA5A8923D788C2006BDAAB /* UInt32.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UInt32.swift; sourceTree = "<group>"; };
 		8EFB6E2D23CFD74400045C25 /* NotebookSelectionView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = NotebookSelectionView.xib; sourceTree = "<group>"; };
 		8EFB6E2F23CFD75E00045C25 /* NotebookSelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotebookSelectionView.swift; sourceTree = "<group>"; };
 		BF44A316F99131DACE5078A6 /* Pods-AiTmedSDK1.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AiTmedSDK1.debug.xcconfig"; path = "Target Support Files/Pods-AiTmedSDK1/Pods-AiTmedSDK1.debug.xcconfig"; sourceTree = "<group>"; };
@@ -619,7 +621,7 @@
 				8E9FE43723C553000046AD9D /* Data+.swift */,
 				8E79746223C7D43000819670 /* Dictionary+.swift */,
 				8E79746423C7D43E00819670 /* String+.swift */,
-				8EFA5A8923D788C2006BDAAB /* Int32.swift */,
+				8EFA5A8923D788C2006BDAAB /* UInt32.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -695,6 +697,7 @@
 			children = (
 				8EF1C7A523D108BF00CCB4FE /* Document.swift */,
 				8E9FE44A23C553290046AD9D /* Document+type.swift */,
+				8E59BEDF23D8DCA00008C1BF /* DocumentType.swift */,
 				8EF1C78623D0D8EB00CCB4FE /* Document+transform.swift */,
 				8EF1C7AA23D10A5E00CCB4FE /* CreateDocumentArgs.swift */,
 			);
@@ -969,6 +972,7 @@
 				1090FA7323C5AA4F002B05E6 /* AiTmedDeatKey.swift in Sources */,
 				8EF1C7AB23D10A5E00CCB4FE /* CreateDocumentArgs.swift in Sources */,
 				8E2388AE23D2420100B40C52 /* Error+.swift in Sources */,
+				8E59BEE023D8DCA00008C1BF /* DocumentType.swift in Sources */,
 				8E9FE46523C56F780046AD9D /* _Note.swift in Sources */,
 				8E9FE46323C564E70046AD9D /* AiTmed+Prynote.swift in Sources */,
 				1090FA7723C5AA4F002B05E6 /* AiTmedType.swift in Sources */,
@@ -980,7 +984,7 @@
 				8E9FE43923C553000046AD9D /* Keychain.swift in Sources */,
 				1090FA7423C5AA4F002B05E6 /* AiTmedError.swift in Sources */,
 				8E9FE46723C56FE70046AD9D /* _Notebook.swift in Sources */,
-				8EFA5A8A23D788C2006BDAAB /* Int32.swift in Sources */,
+				8EFA5A8A23D788C2006BDAAB /* UInt32.swift in Sources */,
 				8EF1C7BA23D13C0000CCB4FE /* GRPC.swift in Sources */,
 				8EF1C7B423D11DD900CCB4FE /* User.swift in Sources */,
 				8EF1C7AF23D10D1500CCB4FE /* CreateEdgeArgs.swift in Sources */,
