@@ -52,7 +52,7 @@ extension AiTmed {
         
         for item in deleteList {
             group.enter()
-            let retrieveNotebookArgs = RetrieveArgs(ids: [], type: item, maxCount: nil)
+            let retrieveNotebookArgs = RetrieveArgs(ids: [], xfname: "bvid", type: item, maxCount: nil)
 //            AiTmed.retrieveEdges(args: retrieveNotebookArgs) { (result) in
 //                switch result {
 //                case .failure(_):

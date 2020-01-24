@@ -30,15 +30,15 @@ extension AiTmed {
             //if encrypt, fetch besak
             DispatchQueue.global().async {
                 if args.isEncrypt {
-                    let result = AiTmed.xeskPairInEdge(args.folderID)
+                    let result = AiTmed.beskInEdge(args.folderID)
                     switch result {
                     case .failure(let error):
                         resolver.reject(error)
                         return
-                    case .success(let keypair):
-                        if let kp = keypair,
+                    case .success(let _besak):
+                        if let besak = _besak,
                             let sk = self.c.sk,
-                            let sak = self.e.generateSAK(xesak: kp.0, sendPublicKey: self.c.pk, recvSecretKey: sk),
+                            let sak = self.e.generateSAK(xesak: besak, sendPublicKey: self.c.pk, recvSecretKey: sk),
                             let encryptedData = self.e.sKeyEncrypt(secretKey: sak, data: [UInt8](data))  {
                             data = Data(encryptedData)
                             dict["data"] = data.base64EncodedString()
@@ -71,11 +71,6 @@ extension AiTmed {
                 type.applicationDataType = args.applicationDataType
                 type.mediaTypeKind = args.mediaType.kind
                 doc.type = Int32(type.value)
-                
-                if let updateArgs = args as? UpdateDocumentArgs {
-                    doc.id = updateArgs.id
-                }
-                
                 resolver.fulfill((doc, data))
             }
         }

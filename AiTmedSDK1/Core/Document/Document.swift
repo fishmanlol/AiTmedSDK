@@ -26,7 +26,7 @@ extension AiTmed {
                             shared.c.jwt = jwt
                             
                             let documentType = DocumentType(value: UInt32(doc.type))
-                            let document = Document(id: doc.id, folderID: doc.eid, title: args.title, content: data, isBroken: false, mediaType: args.mediaType, type: documentType, mtime: doc.mtime, ctime: doc.ctime)
+                            let document = Document(id: doc.id, folderID: doc.eid, title: args.title, content: args.rawContent, isBroken: false, mediaType: args.mediaType, type: documentType, mtime: doc.mtime, ctime: doc.ctime)
                             
                             if documentType.isOnServer {
                                 resolver2.fulfill((nil, document))
@@ -81,53 +81,6 @@ extension AiTmed {
         }
     }
     
-    
-//    static func createDocument(args: CreateDocumentArgs, completion: @escaping (Swift.Result<Document, AiTmedError>) -> Void) {
-//        shared.transform(args: args) { (result) in
-//            switch result {
-//            case .failure(let error):
-//                completion(.failure(error))
-//            case .success(let doc):
-//                //when success in creating doc, then decide whether need to upload to S3
-//                shared._createDoc(doc: doc, jwt: shared.c!.jwt, completion: { (result) in
-//                    switch result {
-//                    case .failure(let error):
-//                        completion(.failure(error))
-//                    case .success(let (doc, jwt)):
-//                        shared.c.jwt = jwt
-//                        let document = Document(doc)
-//                        if !args.isOnS3 {
-//                            completion(.success(document))
-//                        } else {
-//                            if let uploadURL = document.uploadURL {
-//                                Alamofire.upload(args.content, to: uploadURL, method: .put, headers: nil).responseString(completionHandler: { (r) in
-//                                    print("upload: \n \(uploadURL)")
-//                                    print(r.description)
-//                                    if let error = r.error {
-//                                        print("createDocument failed: \(error.localizedDescription)")
-//                                        completion(.failure(.unkown))
-//                                        return
-//                                    }
-//
-//                                    switch r.result {
-//                                    case .failure(let error):
-//                                        print("error: ", error)
-//                                        completion(.failure(.unkown))
-//                                    case .success(let str):
-//                                        print("success: ", str)
-//                                        completion(.success(document))
-//                                    }
-//                                })
-//                            } else {
-//                                completion(.failure(.unkown))
-//                            }
-//                        }
-//                    }
-//                })
-//            }
-//        }
-//    }
-    
     static func retrieveDoc(args: RetrieveDocArgs) -> Promise<[Doc]> {
         return Promise<[Doc]> { resolver in
             shared.g.retrieveDoc(args: args, jwt: shared.c.jwt, completion: { (result) in
@@ -154,14 +107,12 @@ extension AiTmed {
                     var documents: [Document] = []
                     var success = true
                     let group = DispatchGroup()
-                    
+                    let serialQueue = DispatchQueue(label: "serial")
                     for doc in docs {
                         group.enter()
                         
                         DispatchQueue.global().async {
-                            defer {
-                                print("defer leave")
-                                group.leave() }
+                            defer { group.leave() }
                             
                             let documentType = DocumentType(value: UInt32(doc.type))
                             
@@ -169,22 +120,23 @@ extension AiTmed {
                             var unprocceedData = Data()
                             var mediaType: MediaType = .other
                             
-                            if let nameDict = doc.name.toJSONDict(),
-                                let t = nameDict["title"] as? String {
+                            guard let nameDict = doc.name.toJSONDict() else { return }
+                            if let t = nameDict["title"] as? String {
                                 title = t
+                            }
+                            if let mt = nameDict["type"] as? String {
+                                mediaType = MediaType(rawValue: mt) ?? .other
                             }
                             
                             if documentType.isOnServer {
                                 if let nameDict = doc.name.toJSONDict(),
                                     let d = nameDict["data"] as? String,
-                                    let dd = Data(base64Encoded: d),
-                                    let mt = nameDict["type"] as? String,
-                                    let _mediaType = MediaType(rawValue: mt) {
+                                    let dd = Data(base64Encoded: d){
                                     unprocceedData = dd
-                                    mediaType = _mediaType
                                 } else {
                                     success = false
                                 }
+                                
                             } else {
                                 if let deatDict = doc.deat.toJSONDict(),
                                     let urlString = deatDict["url"] as? String {
@@ -215,17 +167,16 @@ extension AiTmed {
                             }
                             
                             guard success else { return }
-                            
+                            print("title: \(title)------------")
                             if documentType.isEncrypt {
-                                let result = AiTmed.xeskPairInEdge(args.folderID)
+                                let result = AiTmed.beskInEdge(args.folderID)
                                 
                                 switch result {
                                 case .failure(let error):
                                     success = false
                                     return
-                                case .success(let keypair):
-                                    if let kp = keypair {
-                                        let (besak, _) = kp
+                                case .success(let _besak):
+                                    if let besak = _besak {
                                         if let sak = shared.e.generateSAK(xesak: besak, sendPublicKey: shared.c.pk, recvSecretKey: shared.c.sk!) {
             
                                             if let decryptedData = shared.e.sKeyDecrypt(secretKey: sak, data: [UInt8](unprocceedData)) {
@@ -244,17 +195,25 @@ extension AiTmed {
                                 }
                             }
                             
+                            print("title: \(title)------------encrypt finish")
+                            
                             if documentType.isZipped {
                                 if let unzipped = unprocceedData.unzip() {
+                                    print("unzip success")
                                     unprocceedData = unzipped
                                 } else {
+                                    print("unzip failed")
                                     success = false
                                     return
                                 }
                             }
                             
+                            print("title: \(title)------------zip finish")
+                            
                             let document = Document(id: doc.id, folderID: doc.eid, title: title, content: unprocceedData, isBroken: false, mediaType: mediaType, type: documentType, mtime: doc.mtime, ctime: doc.ctime)
-                            documents.append(document)
+                            serialQueue.sync {
+                                documents.append(document)
+                            }
                         }
                     }
                     
@@ -267,6 +226,20 @@ extension AiTmed {
                     })
                 }
             })
+        }
+    }
+    
+    static func updateDocument(args: UpdateDocumentArgs) -> Promise<Document> {
+        return Promise<Document> { resolver in
+            firstly { () -> Promise<Void> in
+                deleteDocument(args: DeleteArgs(id: args.id))
+            }.then { (_) -> Promise<Document> in
+                createDocument(args: args)
+            }.done { (document) -> Void in
+                resolver.fulfill(document)
+            }.catch { (error) -> Void in
+                resolver.reject(error)
+            }
         }
     }
     

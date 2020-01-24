@@ -13,7 +13,7 @@ protocol StateCoordinatorDelegate: class {
     func didSelectedNote(_ note: Note)
     func willCreateNote(in notebook: Notebook)
     func didCreate(_ note: Note, in notebook: Notebook)
-    func didDelete(_ note: Note, in notebook: Notebook)
+    func didDelete(_ note: Note)
 }
 
 extension StateCoordinatorDelegate {
@@ -21,7 +21,7 @@ extension StateCoordinatorDelegate {
     func didSelectedNote(_ note: Note) {}
     func willCreateNote(in notebook: Notebook) {}
     func didCreate(_ note: Note, in notebook: Notebook) {}
-    func didDelete(_ note: Note, in notebook: Notebook) {}
+    func didDelete(_ note: Note) {}
 }
 
 class StateCoordinator {
@@ -29,7 +29,7 @@ class StateCoordinator {
         delegate?.didSelectedNotesGroup(notesGroup)
     }
     
-    func select(_ note: Note, in notebook: Notebook) {
+    func select(_ note: Note) {
         delegate?.didSelectedNote(note)
     }
     
@@ -41,8 +41,8 @@ class StateCoordinator {
         delegate?.didCreate(note, in: notebook)
     }
     
-    func delete(_ note: Note, in notebook: Notebook) {
-        delegate?.didDelete(note, in: notebook)
+    func delete(_ note: Note) {
+        delegate?.didDelete(note)
     }
     
     weak var delegate: StateCoordinatorDelegate?

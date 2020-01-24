@@ -14,6 +14,7 @@ extension AiTmed {
         public var title: String
         public var content: Data
         public var mediaType: MediaType
+        public var isEncrypt: Bool
         public var ctime: Date = Date()
         public var mtime: Date = Date()
         public var isBroken = false

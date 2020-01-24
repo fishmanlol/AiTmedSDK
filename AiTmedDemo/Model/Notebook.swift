@@ -27,12 +27,14 @@ class Notebook {
     }
     
     func addNote(title: String, content: Data, completion: @escaping (Result<Note, PrynoteError>) -> Void) {
-        AiTmed.addNote(folderID: id, title: title, content: content, isEncrypt: isEncrypt) { (result) in
+        AiTmed.addNote(folderID: id, title: title, content: content, isEncrypt: isEncrypt) { [weak self] (result) in
+            guard let strongSelf = self else { return }
             switch result {
             case .failure(let error):
                 completion(.failure(.unkown))
             case .success(let _note):
-                let note = Note(id: _note.id, notebook: self, title: _note.title, content: _note.content, isBroken: _note.isBroken, mtime: _note.mtime, ctime: _note.ctime)
+                let note = Note(id: _note.id, notebook: strongSelf, isEncrypt: _note.isEncrypt, title: _note.title, content: _note.content, isBroken: _note.isBroken, mtime: _note.mtime, ctime: _note.ctime)
+                strongSelf.notes.insert(note, at: 0)
                 NotificationCenter.default.post(name: .didAddNote, object: self, userInfo: nil)
                 completion(.success(note))
             }
@@ -49,7 +51,7 @@ class Notebook {
                 NotificationCenter.default.post(name: .didLoadAllNotesInNotebook, object: self)
             case .success(let _notes):
                 let notes = _notes.map {
-                    Note(id: $0.id, notebook: self, title: $0.title, content: $0.content, isBroken: $0.isBroken, mtime: $0.mtime, ctime: $0.ctime)
+                    Note(id: $0.id, notebook: self, isEncrypt: $0.isEncrypt, title: $0.title, content: $0.content, isBroken: $0.isBroken, mtime: $0.mtime, ctime: $0.ctime)
                 }
                 self.notes = notes
                 NotificationCenter.default.post(name: .didLoadAllNotesInNotebook, object: self)

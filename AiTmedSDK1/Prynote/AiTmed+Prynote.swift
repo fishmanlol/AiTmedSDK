@@ -12,20 +12,29 @@ import PromiseKit
 extension AiTmed {
     //MARK: - Note
     public static func addNote(folderID: Data, title: String, content: Data, isEncrypt: Bool, completion: @escaping (Swift.Result<_Note, AiTmedError>) -> Void) {
-        let args = CreateDocumentArgs(title: title, rawContent: content, applicationDataType: .data, mediaType: .plain, isEncrypt: isEncrypt, folderID: folderID, isOnServer: true, isZipped: false)
+        let zipped = content.zip()
+        let args = CreateDocumentArgs(title: title, rawContent: zipped, applicationDataType: .data, mediaType: .plain, isEncrypt: isEncrypt, folderID: folderID, isOnServer: true, isZipped: true)
 
         firstly { () -> Promise<Document> in
             createDocument(args: args)
             }.done { (document) in
-                let _note = _Note(id: document.id, title: document.title, content: document.content, mediaType: document.mediaType, ctime: document.ctime, mtime: document.mtime, isBroken: document.isBroken)
+                let _note = _Note(id: document.id, title: document.title, content: document.content, mediaType: document.mediaType, isEncrypt: document.type.isEncrypt, ctime: document.ctime, mtime: document.mtime, isBroken: document.isBroken)
                 completion(.success(_note))
             }.catch { (error) in
                 completion(.failure(error.toAiTmedError()))
         }
     }
     
-    public static func updateNote(id: Data, notebookID: Data, title: String?, content: Data?, completion: @escaping (Swift.Result<Void, AiTmedError>) -> Void) {
-        
+    public static func updateNote(id: Data, notebookID: Data, title: String, content: Data, isEncrypt: Bool, completion: @escaping (Swift.Result<_Note, AiTmedError>) -> Void) {
+        let args = UpdateDocumentArgs(id: id, title: title, rawContent: content, applicationDataType: .data, mediaType: .plain, isEncrypt: isEncrypt, folderID: notebookID, isOnServer: true, isZipped: false)
+        firstly { () -> Promise<Document> in
+            updateDocument(args: args)
+        }.done { (document) -> Void in
+            let _note = _Note(id: document.id, title: document.title, content: document.content, mediaType: document.mediaType, isEncrypt: document.type.isEncrypt, ctime: document.ctime, mtime: document.mtime, isBroken: document.isBroken)
+            completion(.success(_note))
+        }.catch { (error) in
+            completion(.failure(error.toAiTmedError()))
+        }
     }
     
     public static func deleteNote(id: Data, completion: @escaping (Swift.Result<Void, AiTmedError>) -> Void) {
@@ -38,7 +47,7 @@ extension AiTmed {
             AiTmed.retrieveDocuments(args: args)
             }.map { (documents) -> [_Note] in
                 documents.map {
-                    return _Note(id: $0.id, title: $0.title, content: $0.content, mediaType: $0.mediaType, ctime: $0.ctime, mtime: $0.mtime, isBroken: $0.isBroken)
+                    return _Note(id: $0.id, title: $0.title, content: $0.content, mediaType: $0.mediaType, isEncrypt: $0.type.isEncrypt, ctime: $0.ctime, mtime: $0.mtime, isBroken: $0.isBroken)
                 }
             }.done { (_notes) in
                 completion(.success(_notes))
@@ -63,7 +72,7 @@ extension AiTmed {
                 return
             }
             
-            let _notebook = _Notebook(id: edge.id, title: title, isEncrypt: !edge.besak.isEmpty, ctime:
+            let _notebook = _Notebook(id: edge.id, title: title, isEncrypt: isEncrypt, ctime:
                 edge.ctime, mtime: edge.mtime)
             completion(.success(_notebook))
         }.catch { (error) in
@@ -107,7 +116,7 @@ extension AiTmed {
     
     public static func retrieveNotebooks(maxCount: Int32? = nil, completion: @escaping (Swift.Result<[_Notebook], AiTmedError>) -> Void) {
         let type = AiTmedType.notebook
-        let args = RetrieveArgs(ids: [], type: type, maxCount: maxCount)
+        let args = RetrieveArgs(ids: [], xfname: "bvid", type: type, maxCount: maxCount)
         
         AiTmed.retrieveEdges(args: args)
         .done { (edges) in

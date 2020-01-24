@@ -44,19 +44,22 @@ extension AiTmed {
 //        }
 //    }
     
-    static func xeskPairInEdge(_ id: Data) -> Swift.Result<(Key, Key)?, AiTmedError> {
-        do {
-            let args = RetrieveSingleArgs(id: id)
-            let edge = try retrieveEdge(args: args).wait()
-            
-            if !edge.besak.isEmpty && !edge.eesak.isEmpty {
-                return Swift.Result.success((Key(edge.besak), Key(edge.eesak)))
-            } else {
-                return Swift.Result.success(nil)
-            }
-        } catch {
-            return Swift.Result.failure(AiTmedError.unkown)
+    static func beskInEdge(_ id: Data) -> Swift.Result<Key?, AiTmedError> {
+        guard let edge = try? retrieveEdge(args: RetrieveSingleArgs(id: id)).wait() else { return .failure(AiTmedError.unkown)}
+        var besak: Key?
+        if !edge.besak.isEmpty {
+            besak = Key(edge.besak)
         }
+        return .success(besak)
+    }
+    
+    static func eeskInEdge(_ id: Data) -> Swift.Result<Key?, AiTmedError> {
+        guard let edge = try? retrieveEdge(args: RetrieveSingleArgs(id: id)).wait() else { return .failure(AiTmedError.unkown)}
+        var eesak: Key?
+        if !edge.eesak.isEmpty {
+            eesak = Key(edge.eesak)
+        }
+        return .success(eesak)
     }
     
     //MARK: - Make sure each api call has permission

@@ -18,11 +18,11 @@ extension UInt32 {
     }
     
     func isSet(_ i: Int) -> Bool {
-        return (1 << i) & self == 1
+        return (1 << i) & self != 0
     }
     
     func isUnset(_ i: Int) -> Bool {
-        return (1 << i) & self == 0
+        return !isSet(i)
     }
     
     mutating func unset(from s: Int, through e: Int) {

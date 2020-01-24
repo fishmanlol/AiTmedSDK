@@ -30,19 +30,21 @@ extension AiTmed {
 //MARK: - Retrieve
 class RetrieveArgs {
     let ids: [Data]//if empty, all objects in that type will be retrieved
+    var xfname: String // the "field name", for which the "id" is compared against, default field name is "id"
     var type: Int32?
     var maxCount: Int32?//if nil, no limitation on maxCount
     
-    init(ids: [Data] = [], type: Int32? = nil, maxCount: Int32? = nil) {
+    init(ids: [Data], xfname: String, type: Int32? = nil, maxCount: Int32? = nil) {
         self.ids = ids
         self.type = type
         self.maxCount = maxCount
+        self.xfname = xfname
     }
 }
 
 class RetrieveSingleArgs: RetrieveArgs {
     init(id: Data, type: Int32? = nil) {
-        super.init(ids: [id], type: type, maxCount: nil)
+        super.init(ids: [id], xfname: "id", type: type, maxCount: nil)
     }
 }
 

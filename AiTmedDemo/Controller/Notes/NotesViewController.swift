@@ -52,7 +52,7 @@ class NotesViewController: UITableViewController {
         case .single(let notebook):
             stateCoordinator.willCreateNote(in: notebook)
         default:
-            fatalError()
+            displayAutoDismissAlert(msg: "Can not share with others")
         }
     }
     
@@ -70,15 +70,16 @@ class NotesViewController: UITableViewController {
     }
     
     @objc func didAddNote(no: Notification) {
-//        guard let note = no.userInfo?[Constant.UserInfoKey.note] as? Note else { return }
-//        notes.insert(note, at: 0)
-//        dismissWaitingView()
-//        DispatchQueue.main.async {
-//            self.tableView.insertRows(at: [IndexPath(row: 0, section: 0)], with: .automatic)
-//            self.updateToolbar()
-//            self.tableView.selectRow(at: IndexPath(row: 0, section: 0), animated: false, scrollPosition: .none)
-////            self.stateCoordinator?.select(self.notes.first, in: self.notebook)
-//        }
+        DispatchQueue.main.async {
+            self.tableView.reloadData()
+        }
+    }
+    
+    @objc func didUpdateNote(no: Notification) {
+        DispatchQueue.main.async {
+            self.tableView.reloadData()
+        }
+
     }
     
     @objc func didRemoveNote(no: Notification) {
@@ -112,8 +113,9 @@ class NotesViewController: UITableViewController {
 //        NotificationCenter.default
 //            .addObserver(self, selector: #selector(didLoadAllNotes), name: .didLoadAllNotes, object: storage)
         NotificationCenter.default.addObserver(self, selector: #selector(didLoadAllNotesInNotebook), name: .didLoadAllNotesInNotebook, object: nil)
-//        NotificationCenter.default.addObserver(self, selector: #selector(didAddNote), name: .didAddNote, object: nil)
-//        NotificationCenter.default.addObserver(self, selector: #selector(didRemoveNote), name: .didRemoveNote, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(didAddNote), name: .didAddNote, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(didUpdateNote), name: .didUpdateNote, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(didRemoveNote), name: .didRemoveNote, object: nil)
     }
     
     private func updateToolbar() {

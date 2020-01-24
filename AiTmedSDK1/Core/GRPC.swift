@@ -115,7 +115,8 @@ class GRPC {
         request.id = args.ids
         request.objType = ObjectType.edge.code
         request.jwt = jwt
-        request.xfname = "bvid"
+        request.xfname = args.xfname
+
         
         if let type = args.type {
             request.type = type

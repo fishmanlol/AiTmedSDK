@@ -19,14 +19,19 @@ class EditorViewController: UIViewController {
     
     lazy var doneItem: UIBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(didDoneItemTapped))
     lazy var shareToItem = UIBarButtonItem(image: R.image.share_to(), style: .done, target: self, action: #selector(didShareToItemTapped))
-    lazy var indicatorItem = UIBarButtonItem(customView: UIActivityIndicatorView(style: .gray))
     lazy var trashItem = UIBarButtonItem(barButtonSystemItem: .trash, target: self, action: #selector(didTrashItemTapped))
     lazy var cameraItem = UIBarButtonItem(barButtonSystemItem: .camera, target: self, action: #selector(didCameraItemTapped))
     lazy var composeItem = UIBarButtonItem(barButtonSystemItem: .compose, target: self, action: #selector(didComposeItemTapped))
     lazy var spaceItem = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
+    lazy var indicatorItem: UIBarButtonItem = {
+        let indictor = UIActivityIndicatorView(style: .gray)
+        indictor.hidesWhenStopped = true
+        indictor.startAnimating()
+        return UIBarButtonItem(customView: indictor)
+    }()
     
     let notebook: Notebook
-    let mode: Mode
+    var mode: Mode
     let stateCoordinator: StateCoordinator
     let keyboard = Keyboard()
     
@@ -125,7 +130,8 @@ class EditorViewController: UIViewController {
                     switch result {
                     case .failure(let error):
                         self?.displayAutoDismissAlert(msg: error.message)
-                    case .success(_):
+                    case .success(let note):
+                        self?.mode = .update(note)
                         print("create success!")
                     }
                 }
@@ -143,51 +149,16 @@ class EditorViewController: UIViewController {
                 }
             }
         }
-//        isLoading = true
-//        if let id = note.id {
-//            delegate?.willSaveNote(self, note: note)
-//            storage.updateNoteAtRemote(note) { [weak self] (result) in
-//                guard let weakSelf = self else { return }
-//                weakSelf.isLoading = false
-//
-//                switch result {
-//                case .failure(let error):
-//                    weakSelf.displayAutoDismissAlert(msg: "update note failed")
-//                    weakSelf.delegate?.didSaveNote(weakSelf, note: weakSelf.note, success: false)
-//                case .success(_):
-//                    weakSelf.delegate?.didSaveNote(weakSelf, note: weakSelf.note, success: true)
-//                    if weakSelf.traitCollection.horizontalSizeClass == .compact {
-//                        weakSelf.dismiss(animated: true, completion: nil)
-//                    }
-//                }
-//            }
-//        } else {
-//            delegate?.willSaveNote(self, note: note)
-//            storage.addNoteAtRemote(note) { [weak self] (result) in
-//                guard let weakSelf = self else { return }
-//                weakSelf.isLoading = false
-//                switch result {
-//                case .failure(let error):
-//                    weakSelf.displayAutoDismissAlert(msg: "Add note failed")
-//                    weakSelf.delegate?.didSaveNote(weakSelf, note: weakSelf.note, success: false)
-//                case .success(_):
-//                    weakSelf.delegate?.didSaveNote(weakSelf, note: weakSelf.note, success: true)
-//                    if weakSelf.traitCollection.horizontalSizeClass == .compact {
-//                        weakSelf.dismiss(animated: true, completion: nil)
-//                    }
-//                }
-//            }
-//        }
     }
     
     private func didChangeLoadingState() {
-//        if isLoading {
-//            navigationItem.rightBarButtonItems = [shareToItem, indicatorItem]
-//        } else if isKeyboardOnScreen {
-//            navigationItem.rightBarButtonItems = [shareToItem, doneItem]
-//        } else {
-//            navigationItem.rightBarButtonItems = [shareToItem]
-//        }
+        if isLoading {
+            navigationItem.setRightBarButtonItems([indicatorItem, shareToItem], animated: false)
+        } else if IQKeyboardManager.shared.keyboardShowing {
+            navigationItem.setRightBarButtonItems([doneItem, shareToItem], animated: false)
+        } else {
+            navigationItem.setRightBarButtonItems([shareToItem], animated: false)
+        }
     }
     
     private func setUp() {
@@ -261,6 +232,11 @@ class EditorViewController: UIViewController {
         
         keyboard.observeKeyboardWillHide { (_) in
             self.navigationItem.setRightBarButtonItems([self.shareToItem], animated: false)
+        }
+        
+        if case let .update(note) = mode {
+            titleTextField.text = note.title
+            contentTextView.text = note.displayContent
         }
     }
 }
