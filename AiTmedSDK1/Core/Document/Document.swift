@@ -13,10 +13,63 @@ import PromiseKit
 extension AiTmed {
     //MARK: - Create
     static func createDocument(args: CreateDocumentArgs) -> Promise<Document> {
+        DispatchQueue.global().async(.promise, execute: { () -> Document in
+            var content = args.content
+            
+            let _ = try checkStatus().wait()//check status
+            
+            if args.isZipped {//zip
+                content = try zip(args.content).wait()
+            }
+            
+            if args.isEncrypt {//encrypt
+                let besak = try besakInEdge(args.folderID).wait()
+                let sak = try getSak(besak: besak, sendPK: shared.c.pk, recvSK: shared.c.sk!).wait()
+                content = try encrypt(content, sak: sak).wait()
+            }
+            
+            if !args.isBinary {//base64
+                content = content.base64EncodedData()
+            }
+            
+            //compose name
+            var dict: [String: Any] = ["title": args.title, "type": args.mediaType.rawValue]
+            if args.isOnServer {//if data store on server
+                dict["data"] = String(bytes: content, encoding: .utf8)
+            }
+            
+            let name = try dict.toJSON().wait()
+            
+            //create type
+            let type = DocumentType.initWithArgs(args: args)
+            
+            //create doc
+            var _doc = Doc()
+            _doc.name = name
+            _doc.type = Int32(type.value)
+            _doc.eid = args.folderID
+            _doc.size = Int32(content.count)
+            let (doc, jwt) = try shared.g.createDoc(doc: _doc, jwt: shared.c.jwt)
+            shared.c.jwt = jwt
+            
+            if !args.isOnServer {//if the data store on S3
+                let deat = try doc.deat.toJSONDict().wait()
+                guard let urlString = deat["url"] as? String,
+                        let sig = deat["sig"] as? String,
+                        let expire = deat["exptime"] as? String else {
+                        throw AiTmedError.unkown
+                        return
+                }
+                
+                
+            }
+        })
+        
         return Promise<Document> { resolver1 in
             firstly { () -> Promise<(Doc, Data)> in
                 shared.transform(args: args)//transform arguments to Doc object which will used to be create
             }.then { (_doc, data) -> Promise<((URL, Data)?, Document)> in
+                
                 return Promise<((URL, Data)?, Document)> { resolver2 in
                     shared.g.createDoc(doc: _doc, jwt: shared.c.jwt, completion: { (result) in
                         switch result {
@@ -26,7 +79,7 @@ extension AiTmed {
                             shared.c.jwt = jwt
                             
                             let documentType = DocumentType(value: UInt32(doc.type))
-                            let document = Document(id: doc.id, folderID: doc.eid, title: args.title, content: args.rawContent, isBroken: false, mediaType: args.mediaType, type: documentType, mtime: doc.mtime, ctime: doc.ctime)
+                            let document = Document(id: doc.id, folderID: doc.eid, title: args.title, content: args.content, isBroken: false, mediaType: args.mediaType, type: documentType, mtime: doc.mtime, ctime: doc.ctime)
                             
                             if documentType.isOnServer {
                                 resolver2.fulfill((nil, document))
@@ -195,12 +248,14 @@ extension AiTmed {
                                 }
                             }
                             
-                            print("title: \(title)------------encrypt finish")
+                            print("title: \(title)------------encrypt finish, before zip, document type: \(documentType.isZipped), actual zip: \(unprocceedData.isZipped()), base64: \(unprocceedData.base64EncodedString())")
                             
                             if documentType.isZipped {
+                                
                                 if let unzipped = unprocceedData.unzip() {
                                     print("unzip success")
                                     unprocceedData = unzipped
+                                    print("title: \(title)------------after zip, document type: \(documentType.isZipped), actual zip: \(unprocceedData.isZipped()), base64: \(unprocceedData.base64EncodedString())")
                                 } else {
                                     print("unzip failed")
                                     success = false

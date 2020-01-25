@@ -10,40 +10,6 @@ import Foundation
 import PromiseKit
 
 extension AiTmed {
-    //MARK: - Retrieve xesk pair from edge
-//    static func xeskPairInEdge(_ id: Data, completion: @escaping (Result<(Key, Key)?, AiTmedError>) -> Void) {
-//
-//        AiTmed.retrieveEdges(args: RetrieveSingleArgs(id: id)) { (result) in
-//            switch result {
-//            case .failure(let error):
-//                completion(.failure(error))
-//            case .success(let edges):
-//                if let edge = edges.first, edge.besak.count > 0, edge.eesak.count > 0  {
-//                    completion(.success((Key(edge.besak), Key(edge.eesak))))
-//                } else {
-//                    completion(.success(nil))
-//                }
-//            }
-//        }
-//    }
-    
-//    static func xeskPairInEdge(_ id: Data) -> Promise<(Key, Key)?> {
-//        return Promise<(Key, Key)?> { resolver in
-//            firstly { () -> Promise<Edge> in
-//                let args = RetrieveSingleArgs(id: id)
-//                return retrieveEdge(args: args)
-//            }.done { (edge) in
-//                if !edge.besak.isEmpty && !edge.eesak.isEmpty {
-//                    resolver.fulfill((Key(edge.besak), Key(edge.eesak)))
-//                } else {
-//                    resolver.fulfill(nil)
-//                }
-//            }.catch { (error) in
-//                resolver.reject(error)
-//            }
-//        }
-//    }
-    
     static func beskInEdge(_ id: Data) -> Swift.Result<Key?, AiTmedError> {
         guard let edge = try? retrieveEdge(args: RetrieveSingleArgs(id: id)).wait() else { return .failure(AiTmedError.unkown)}
         var besak: Key?
@@ -73,5 +39,99 @@ extension AiTmed {
         }
         
         return .credentialFailed(.signInNeeded)
+    }
+    
+    static func checkStatus() -> Promise<Void> {
+        return Promise<Void> { resolver in
+            if let c = shared.c {
+                if c.status == .login {
+                    resolver.fulfill(())
+                } else if c.status == .locked {
+                    resolver.reject(AiTmedError.credentialFailed(.passwordNeeded))
+                }
+            }
+            
+            resolver.reject(AiTmedError.credentialFailed(.signInNeeded))
+        }
+    }
+    
+    static func besakInEdge(_ id: Data) -> Promise<Key> {
+        return DispatchQueue.global().async(.promise) { () -> Key in
+            let edge = try retrieveEdge(args: RetrieveSingleArgs(id: id)).wait()
+            
+            guard !edge.besak.isEmpty else { throw AiTmedError.unkown }
+            
+            return Key(edge.besak)
+        }
+    }
+    
+    static func getSak(besak: Key, sendPK: Key, recvSK: Key) -> Promise<Key> {
+        return Promise<Key> { resolver in
+            if let sak = shared.e.generateSAK(xesak: besak, sendPublicKey: sendPK, recvSecretKey: recvSK) {
+                resolver.fulfill(sak)
+            } else {
+                resolver.reject(AiTmedError.unkown)
+            }
+        }
+    }
+    
+    static func zip(_ data: Data) -> Promise<Data> {
+        return Promise<Data>.value(data.zip())
+    }
+    
+    static func encrypt(_ data: Data, sak: Key) -> Promise<Data> {
+        return Promise<Data> { resolver in
+            if let encryptedData = shared.e.sKeyEncrypt(secretKey: sak, data: [UInt8](data)) {
+                resolver.fulfill(Data(encryptedData))
+            } else {
+                resolver.reject(AiTmedError.unkown)
+            }
+        }
+    }
+}
+
+extension StringProtocol {
+    func toJSONDict() -> Promise<[String: Any]> {
+        return Promise<[String: Any]> { resolver in
+            if let data = self.data(using: .utf8),
+                let dict = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
+                resolver.fulfill(dict)
+            } else {
+                resolver.reject(AiTmedError.unkown)
+            }
+        }
+    }
+}
+
+extension Dictionary where Key == AiTmedNameKey {
+    func toJSON() -> Promise<String> {
+        return Promise<String> { resolver in
+            var newDict: [String: Value] = [:]
+            for (key, value) in self {
+                newDict[key.rawValue] = value
+            }
+            
+            guard let data = try? JSONSerialization.data(withJSONObject: newDict, options: []),
+                    let json = String(bytes: data, encoding: .utf8) else {
+                resolver.reject(AiTmedError.unkown)
+                return
+            }
+            
+            resolver.fulfill(json)
+        }
+    }
+}
+
+extension Dictionary where Key == String {
+    func toJSON() -> Promise<String> {
+        return Promise<String> { resolver in
+            guard let data = try? JSONSerialization.data(withJSONObject: self, options: []),
+                let json = String(bytes: data, encoding: .utf8) else {
+                    resolver.reject(AiTmedError.unkown)
+                    return
+            }
+            
+            resolver.fulfill(json)
+        }
     }
 }

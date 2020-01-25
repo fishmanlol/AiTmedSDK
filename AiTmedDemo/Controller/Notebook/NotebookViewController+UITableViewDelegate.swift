@@ -21,6 +21,7 @@ extension NotebookViewController {
                         self.displayAutoDismissAlert(msg: "Delete notebook failed")
                     case .success(_):
                         self.asyncDeleteIfNeeded(indexPath)
+                        self.asyncReloadIfNeeded(IndexPath(row: 0, section: 0))
                     }
                 }
             }

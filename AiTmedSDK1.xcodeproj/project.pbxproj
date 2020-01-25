@@ -40,6 +40,7 @@
 		8E79746323C7D43000819670 /* Dictionary+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E79746223C7D43000819670 /* Dictionary+.swift */; };
 		8E79746523C7D43E00819670 /* String+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E79746423C7D43E00819670 /* String+.swift */; };
 		8E79746A23C7FB1300819670 /* Keyboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E79746923C7FB1300819670 /* Keyboard.swift */; };
+		8E875D0723DB8A77005EB28C /* AiTmedCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E875D0623DB8A77005EB28C /* AiTmedCache.swift */; };
 		8E9FE3B123C54BDC0046AD9D /* AiTmedSDK1.h in Headers */ = {isa = PBXBuildFile; fileRef = 8E9FE3AF23C54BDC0046AD9D /* AiTmedSDK1.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8E9FE3BE23C54BFA0046AD9D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E9FE3BD23C54BFA0046AD9D /* AppDelegate.swift */; };
 		8E9FE3C323C54BFA0046AD9D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8E9FE3C123C54BFA0046AD9D /* Main.storyboard */; };
@@ -184,6 +185,7 @@
 		8E79746223C7D43000819670 /* Dictionary+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Dictionary+.swift"; sourceTree = "<group>"; };
 		8E79746423C7D43E00819670 /* String+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+.swift"; sourceTree = "<group>"; };
 		8E79746923C7FB1300819670 /* Keyboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Keyboard.swift; sourceTree = "<group>"; };
+		8E875D0623DB8A77005EB28C /* AiTmedCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AiTmedCache.swift; sourceTree = "<group>"; };
 		8E9FE3AC23C54BDC0046AD9D /* AiTmedSDK1.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AiTmedSDK1.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8E9FE3AF23C54BDC0046AD9D /* AiTmedSDK1.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AiTmedSDK1.h; sourceTree = "<group>"; };
 		8E9FE3B023C54BDC0046AD9D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -600,6 +602,7 @@
 			isa = PBXGroup;
 			children = (
 				8E9FE42F23C552F50046AD9D /* Credential.swift */,
+				8E875D0623DB8A77005EB28C /* AiTmedCache.swift */,
 			);
 			path = Cache;
 			sourceTree = "<group>";
@@ -988,6 +991,7 @@
 				8EF1C7BA23D13C0000CCB4FE /* GRPC.swift in Sources */,
 				8EF1C7B423D11DD900CCB4FE /* User.swift in Sources */,
 				8EF1C7AF23D10D1500CCB4FE /* CreateEdgeArgs.swift in Sources */,
+				8E875D0723DB8A77005EB28C /* AiTmedCache.swift in Sources */,
 				8E79743E23C6703200819670 /* Helper.swift in Sources */,
 				8E9FE44B23C553290046AD9D /* Document+type.swift in Sources */,
 			);

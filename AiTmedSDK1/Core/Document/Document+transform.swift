@@ -22,13 +22,18 @@ extension AiTmed {
             
             var doc = Doc()
             //firstly, check whether need zip
-            var data = args.rawContent
+            var data = args.content
             
             //compose name dict
             var dict: [String: Any] = ["title": args.title, "type": args.mediaType.rawValue]
             
-            //if encrypt, fetch besak
             DispatchQueue.global().async {
+                //if zip needed
+                if args.isZipped {
+                    data = data.zip()
+                }
+                
+                //if encrypt, fetch besak
                 if args.isEncrypt {
                     let result = AiTmed.beskInEdge(args.folderID)
                     switch result {

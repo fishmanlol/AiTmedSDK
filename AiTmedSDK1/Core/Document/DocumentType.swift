@@ -20,6 +20,21 @@ struct DocumentType: ExpressibleByIntegerLiteral {
         self.value = value
     }
     
+    static func initWithArgs(args: CreateDocumentArgs) -> DocumentType {
+        let type = DocumentType(value: 0)
+        
+        type.isOnServer = args.isOnServer
+        type.isZipped = args.isZipped
+        type.isBinary = args.isBinary
+        type.isEncrypt = args.isEncrypt
+        type.isExtraKeyNeeded = args.isExtraKeyNeeded
+        type.isEditable = args.isEditable
+        type.applicationDataType = args.applicationDataType
+        type.mediaTypeKind = args.mediaType.kind
+        
+        return type
+    }
+    
     private let isOnServerPosition = 0
     private let isZippedPosition = 1
     private let isBinaryPosition = 2

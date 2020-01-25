@@ -38,6 +38,10 @@ class CreateEdgeArgs {
         self.besak = besak
         self.eesak = eesak
     }
+    
+    convenience init(type: Int32, name: String, bvid: Data? = nil, evid: Data? = nil) {
+        self.init(type: type, name: name, isEncrypt: false, bvid: bvid, evid: evid)!
+    }
 }
 
 class UpdateEdgeArgs: CreateEdgeArgs {

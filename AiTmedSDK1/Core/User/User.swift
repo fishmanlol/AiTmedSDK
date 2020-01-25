@@ -6,8 +6,8 @@
 //  Copyright © 2020 Yi Tong. All rights reserved.
 //
 
-import PromiseKit
 import Foundation
+import PromiseKit
 
 extension AiTmed {
     //MARK: - Has credential
@@ -21,7 +21,7 @@ extension AiTmed {
         }
     }
     
-    //MARK: - Retrieve credential
+    //MARK: - async, retrieve credential
     public static func retrieveCredential(args: RetrieveCredentialArgs, completion: @escaping (Swift.Result<Void, AiTmedError>) -> Void) {
         guard let name = [AiTmedNameKey.phoneNumber: args.phoneNumber, AiTmedNameKey.OPTCode: args.code].toJSON() else {
             completion(.failure(.unkown))
@@ -38,6 +38,23 @@ extension AiTmed {
             completion(.failure(error.toAiTmedError()))
         })
     }
+    
+//    //MARK: - async, retrieve credential
+//    public static func retrieveCredential(args: RetrieveCredentialArgs) -> Swift.Result<Void, AiTmedError> {
+//        guard let name = [AiTmedNameKey.phoneNumber: args.phoneNumber, AiTmedNameKey.OPTCode: args.code].toJSON() else {
+//            return .failure(.unkown)
+//        }
+//
+//        let arguments = CreateEdgeArgs(type: AiTmedType.retrieveCredential, name: name)
+//
+//        firstly { () -> Promise<Edge> in
+//            createEdge(args: arguments)
+//            }.done({ (edge) in
+//                completion(.success(()))
+//            }).catch({ (error) in
+//                completion(.failure(error.toAiTmedError()))
+//            })
+//    }
     
     //MARK: - Log in
     public static func login(args: LoginArgs, completion: @escaping (Swift.Result<Void, AiTmedError>) -> Void) {

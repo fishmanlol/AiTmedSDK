@@ -42,6 +42,7 @@ public enum AiTmedError: Error {
         case passwordNeeded
         case credentialNeeded
         case signInNeeded
+        case JWTExpired(String)
         
         var title: String {
             return "credential error"

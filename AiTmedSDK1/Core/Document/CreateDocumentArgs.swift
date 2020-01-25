@@ -10,7 +10,7 @@ import Foundation
 
 class CreateDocumentArgs {
     let title: String
-    let rawContent: Data
+    let content: Data//this is raw data
     let applicationDataType: ApplicationDataType
     let mediaType: MediaType
     let folderID: Data
@@ -21,9 +21,9 @@ class CreateDocumentArgs {
     let isExtraKeyNeeded: Bool
     let isEditable: Bool
     
-    init(title: String, rawContent: Data, applicationDataType: ApplicationDataType, mediaType: MediaType, isEncrypt: Bool, folderID: Data, isOnServer: Bool, isZipped: Bool, isBinary: Bool = false, isExtraKeyNeeded: Bool = false, isEditable: Bool = true) {
+    init(title: String, content: Data, applicationDataType: ApplicationDataType, mediaType: MediaType, isEncrypt: Bool, folderID: Data, isOnServer: Bool, isZipped: Bool, isBinary: Bool = false, isExtraKeyNeeded: Bool = false, isEditable: Bool = true) {
         self.title = title
-        self.rawContent = rawContent
+        self.content = content
         self.applicationDataType = applicationDataType
         self.mediaType = mediaType
         self.folderID = folderID
@@ -39,8 +39,8 @@ class CreateDocumentArgs {
 class UpdateDocumentArgs: CreateDocumentArgs {
     let id: Data
 
-    init(id: Data, title: String, rawContent: Data, applicationDataType: ApplicationDataType, mediaType: MediaType, isEncrypt: Bool, folderID: Data, isOnServer: Bool, isZipped: Bool, isBinary: Bool = false, isExtraKeyNeeded: Bool = false, isEditable: Bool = true) {
+    init(id: Data, title: String, content: Data, applicationDataType: ApplicationDataType, mediaType: MediaType, isEncrypt: Bool, folderID: Data, isOnServer: Bool, isZipped: Bool, isBinary: Bool = false, isExtraKeyNeeded: Bool = false, isEditable: Bool = true) {
         self.id = id
-        super.init(title: title, rawContent: rawContent, applicationDataType: applicationDataType, mediaType: mediaType, isEncrypt: isEncrypt, folderID: folderID, isOnServer: isOnServer, isZipped: isZipped)
+        super.init(title: title, content: content, applicationDataType: applicationDataType, mediaType: mediaType, isEncrypt: isEncrypt, folderID: folderID, isOnServer: isOnServer, isZipped: isZipped)
     }
 }

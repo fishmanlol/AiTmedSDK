@@ -99,16 +99,10 @@ extension AiTmed {
                 let deletePromises = docs.map { deleteDocument(args: DeleteArgs(id: $0.id)) }
                 return when(fulfilled: deletePromises)
             }).then({ (_) -> Promise<Void> in
-                return Promise<Void> { resolver1 in
-                    shared.g.delete(ids: [args.id], jwt: shared.c.jwt, completion: { (result) in
-                        switch result {
-                        case .failure(let error):
-                            resolver1.reject(error)
-                        case .success(_):
-                            resolver1.fulfill(())
-                        }
-                    })
-                }
+                DispatchQueue.global().async(.promise, execute: { () -> Void in
+                    let (_, jwt) = try shared.g.delete(ids: [args.id], jwt: shared.c.jwt)
+                    shared.c.jwt = jwt
+                })
             }).done({ (_) in
                 resolver.fulfill(())
             }).catch({ (error) in

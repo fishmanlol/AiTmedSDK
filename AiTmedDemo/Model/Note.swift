@@ -14,13 +14,13 @@ class Note {
     var id: Data
     unowned var notebook: Notebook
     var title: String = ""
-    var rawContent: Data = Data()
+    var content: Data = Data()
     var ctime: Date = Date()
     var mtime: Date = Date()
     var isBroken = false
     var isEncrypt = false
     var displayContent: String {
-        return String(data: rawContent, encoding: .utf8) ?? ""
+        return String(data: content, encoding: .utf8) ?? ""
     }
     
     init(id: Data, notebook: Notebook, isEncrypt: Bool, title: String = "", content: Data = Data(), isBroken: Bool = false, mtime: Date = Date(), ctime: Date = Date()) {
@@ -28,7 +28,7 @@ class Note {
         self.id = id
         self.notebook = notebook
         self.title = title
-        self.rawContent = content
+        self.content = content
         self.isBroken = isBroken
         self.mtime = mtime
         self.ctime = ctime
@@ -43,7 +43,7 @@ class Note {
             case .success(let _note):
                 strongSelf.id = _note.id
                 strongSelf.title = _note.title
-                strongSelf.rawContent = _note.content
+                strongSelf.content = _note.content
                 strongSelf.ctime = _note.ctime
                 strongSelf.mtime = _note.mtime
                 strongSelf.isEncrypt = _note.isEncrypt
