@@ -13,19 +13,21 @@ import PromiseKit
 extension AiTmed {
     //MARK: - Create
     static func createDocument(args: CreateDocumentArgs) -> Promise<Document> {
-        DispatchQueue.global().async(.promise, execute: { () -> Document in
+        return DispatchQueue.global().async(.promise, execute: { () -> Document in
             var content = args.content
             
             let _ = try checkStatus().wait()//check status
-            
+            print("before zip: ", [UInt8](args.content))
             if args.isZipped {//zip
                 content = try zip(args.content).wait()
+                print("create zipped:", [UInt8](content))
             }
             
             if args.isEncrypt {//encrypt
                 let besak = try besakInEdge(args.folderID).wait()
                 let sak = try getSak(besak: besak, sendPK: shared.c.pk, recvSK: shared.c.sk!).wait()
                 content = try encrypt(content, sak: sak).wait()
+                print("create encrypt:", [UInt8](args.content))
             }
             
             if !args.isBinary {//base64
@@ -56,83 +58,87 @@ extension AiTmed {
                 let deat = try doc.deat.toJSONDict().wait()
                 guard let urlString = deat["url"] as? String,
                         let sig = deat["sig"] as? String,
-                        let expire = deat["exptime"] as? String else {
+                        let _ = deat["exptime"] as? String else {
                         throw AiTmedError.unkown
-                        return
                 }
                 
-                
+                //compose upload url: 'url' + ? + 'sig'
+                let uploadURL = urlString + "?" + sig
+                try upload(content, to: uploadURL).wait()
             }
+            
+            return Document(id: doc.id, folderID: doc.eid, title: args.title, content: args.content, isBroken: false, mediaType: args.mediaType, type: type, mtime: doc.mtime, ctime: doc.ctime)
         })
-        
-        return Promise<Document> { resolver1 in
-            firstly { () -> Promise<(Doc, Data)> in
-                shared.transform(args: args)//transform arguments to Doc object which will used to be create
-            }.then { (_doc, data) -> Promise<((URL, Data)?, Document)> in
-                
-                return Promise<((URL, Data)?, Document)> { resolver2 in
-                    shared.g.createDoc(doc: _doc, jwt: shared.c.jwt, completion: { (result) in
-                        switch result {
-                        case .failure(let error):
-                            resolver2.reject(error)
-                        case .success(let (doc, jwt)):
-                            shared.c.jwt = jwt
-                            
-                            let documentType = DocumentType(value: UInt32(doc.type))
-                            let document = Document(id: doc.id, folderID: doc.eid, title: args.title, content: args.content, isBroken: false, mediaType: args.mediaType, type: documentType, mtime: doc.mtime, ctime: doc.ctime)
-                            
-                            if documentType.isOnServer {
-                                resolver2.fulfill((nil, document))
-                            } else {//on S3
-                                //unwrap deat
-                                if let dict = doc.deat.toJSONDict(),
-                                    let urlString = dict["url"] as? String,
-                                    let sig = dict["sig"] as? String,
-                                    let url = URL(string: urlString + "?" + sig),
-                                    let _ = dict["exptime"] as? String {
-                                    resolver2.fulfill(((url, data), document))
-                                } else {
-                                    print("create document deat parse error")
-                                    resolver2.reject(AiTmedError.unkown)
-                                }
-                            }
-                        }
-                    })
-                }
-            }.then ({ (uploadInfo, document) -> Promise<Document> in //upload or not
-                if let info = uploadInfo {//we need upload
-                    let (url, data) = info
-                    return Promise<Document> { resolver3 in
-                        Alamofire.upload(data, to: url, method: .put, headers: nil).responseString(completionHandler: { (r) in
-                            print("upload: \n \(url)")
-                            print(r.description)
-                            if let error = r.error {
-                                print("createDocument failed: \(error.localizedDescription)")
-                                resolver3.reject(error)
-                                return
-                            }
-                            
-                            switch r.result {
-                            case .failure(let error):
-                                print("error: ", error)
-                                resolver3.reject(AiTmedError.unkown)
-                            case .success(let str):
-                                print("success: ", str)
-                                resolver3.fulfill(document)
-                            }
-                        })
-                    }
-                } else {//we don't need upload
-                    return Promise.value(document)
-                }
-            }).done({ (document) in
-                resolver1.fulfill(document)
-            }).catch({ (error) in
-                print("create document error: \(error.localizedDescription)")
-                resolver1.reject(error)
-            })
-        }
     }
+        
+        
+//        return Promise<Document> { resolver1 in
+//            firstly { () -> Promise<(Doc, Data)> in
+//                shared.transform(args: args)//transform arguments to Doc object which will used to be create
+//            }.then { (_doc, data) -> Promise<((URL, Data)?, Document)> in
+//
+//                return Promise<((URL, Data)?, Document)> { resolver2 in
+//                    shared.g.createDoc(doc: _doc, jwt: shared.c.jwt, completion: { (result) in
+//                        switch result {
+//                        case .failure(let error):
+//                            resolver2.reject(error)
+//                        case .success(let (doc, jwt)):
+//                            shared.c.jwt = jwt
+//
+//                            let documentType = DocumentType(value: UInt32(doc.type))
+//                            let document = Document(id: doc.id, folderID: doc.eid, title: args.title, content: args.content, isBroken: false, mediaType: args.mediaType, type: documentType, mtime: doc.mtime, ctime: doc.ctime)
+//
+//                            if documentType.isOnServer {
+//                                resolver2.fulfill((nil, document))
+//                            } else {//on S3
+//                                //unwrap deat
+//                                if let dict = doc.deat.toJSONDict(),
+//                                    let urlString = dict["url"] as? String,
+//                                    let sig = dict["sig"] as? String,
+//                                    let url = URL(string: urlString + "?" + sig),
+//                                    let _ = dict["exptime"] as? String {
+//                                    resolver2.fulfill(((url, data), document))
+//                                } else {
+//                                    print("create document deat parse error")
+//                                    resolver2.reject(AiTmedError.unkown)
+//                                }
+//                            }
+//                        }
+//                    })
+//                }
+//            }.then ({ (uploadInfo, document) -> Promise<Document> in //upload or not
+//                if let info = uploadInfo {//we need upload
+//                    let (url, data) = info
+//                    return Promise<Document> { resolver3 in
+//                        Alamofire.upload(data, to: url, method: .put, headers: nil).responseString(completionHandler: { (r) in
+//                            print("upload: \n \(url)")
+//                            print(r.description)
+//                            if let error = r.error {
+//                                print("createDocument failed: \(error.localizedDescription)")
+//                                resolver3.reject(error)
+//                                return
+//                            }
+//
+//                            switch r.result {
+//                            case .failure(let error):
+//                                print("error: ", error)
+//                                resolver3.reject(AiTmedError.unkown)
+//                            case .success(let str):
+//                                print("success: ", str)
+//                                resolver3.fulfill(document)
+//                            }
+//                        })
+//                    }
+//                } else {//we don't need upload
+//                    return Promise.value(document)
+//                }
+//            }).done({ (document) in
+//                resolver1.fulfill(document)
+//            }).catch({ (error) in
+//                print("create document error: \(error.localizedDescription)")
+//                resolver1.reject(error)
+//            })
+//        }
     
     static func retrieveDoc(args: RetrieveDocArgs) -> Promise<[Doc]> {
         return Promise<[Doc]> { resolver in
@@ -149,6 +155,14 @@ extension AiTmed {
     }
     
     static func retrieveDocuments(args: RetrieveDocArgs) -> Promise<[Document]> {
+        return DispatchQueue.global().async(.promise) { () -> [Document] in
+            let docs = try retrieveDoc(args: args).wait()
+            let documentPromises = docs.map { Document.initWithDoc($0) }
+            return try when(fulfilled: documentPromises).wait()
+        }
+    }
+    
+    static func _retrieveDocuments(args: RetrieveDocArgs) -> Promise<[Document]> {
         return Promise<[Document]> { resolver in
             shared.g.retrieveDoc(args: args, jwt: shared.c.jwt, completion: { (result) in
                 switch result {
@@ -252,7 +266,7 @@ extension AiTmed {
                             
                             if documentType.isZipped {
                                 
-                                if let unzipped = unprocceedData.unzip() {
+                                if let unzipped = try? unprocceedData.unzip() {
                                     print("unzip success")
                                     unprocceedData = unzipped
                                     print("title: \(title)------------after zip, document type: \(documentType.isZipped), actual zip: \(unprocceedData.isZipped()), base64: \(unprocceedData.base64EncodedString())")

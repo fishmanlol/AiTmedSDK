@@ -19,6 +19,9 @@
 		1090FA7723C5AA4F002B05E6 /* AiTmedType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1090FA7223C5AA4F002B05E6 /* AiTmedType.swift */; };
 		109D16AF23C8544E007064B2 /* NotebookViewController+EditingControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 109D16AE23C8544E007064B2 /* NotebookViewController+EditingControllerDelegate.swift */; };
 		8E2388AE23D2420100B40C52 /* Error+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E2388AD23D2420100B40C52 /* Error+.swift */; };
+		8E3BB1B423DFA7BF002DA5FE /* AiTmedSDK1Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E3BB1B323DFA7BF002DA5FE /* AiTmedSDK1Tests.swift */; };
+		8E3BB1B623DFA7BF002DA5FE /* AiTmedSDK1.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E9FE3AC23C54BDC0046AD9D /* AiTmedSDK1.framework */; };
+		8E3BB1BF23DFAFEF002DA5FE /* Zip.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E3BB1BE23DFAFEF002DA5FE /* Zip.swift */; };
 		8E511D9523C80F9E008C5321 /* UIViewController+froze.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E511D9423C80F9E008C5321 /* UIViewController+froze.swift */; };
 		8E59BEE023D8DCA00008C1BF /* DocumentType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E59BEDF23D8DCA00008C1BF /* DocumentType.swift */; };
 		8E79742923C6573300819670 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E79742823C6573300819670 /* User.swift */; };
@@ -125,6 +128,20 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		8E3BB1B723DFA7BF002DA5FE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8E9FE3A323C54BDC0046AD9D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8E9FE3AB23C54BDC0046AD9D;
+			remoteInfo = AiTmedSDK1;
+		};
+		8E3BB1BC23DFACB0002DA5FE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8E9FE3A323C54BDC0046AD9D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8E9FE3BA23C54BFA0046AD9D;
+			remoteInfo = AiTmedDemo;
+		};
 		8E79745823C6A47200819670 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 8E9FE3A323C54BDC0046AD9D /* Project object */;
@@ -163,6 +180,10 @@
 		109D16AE23C8544E007064B2 /* NotebookViewController+EditingControllerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NotebookViewController+EditingControllerDelegate.swift"; sourceTree = "<group>"; };
 		57FDED9EF3127EFCBF4C1B00 /* Pods_AiTmedSDK1.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AiTmedSDK1.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8E2388AD23D2420100B40C52 /* Error+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Error+.swift"; sourceTree = "<group>"; };
+		8E3BB1B123DFA7BE002DA5FE /* AiTmedSDK1Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AiTmedSDK1Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		8E3BB1B323DFA7BF002DA5FE /* AiTmedSDK1Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AiTmedSDK1Tests.swift; sourceTree = "<group>"; };
+		8E3BB1B523DFA7BF002DA5FE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		8E3BB1BE23DFAFEF002DA5FE /* Zip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Zip.swift; sourceTree = "<group>"; };
 		8E511D9423C80F9E008C5321 /* UIViewController+froze.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+froze.swift"; sourceTree = "<group>"; };
 		8E59BEDF23D8DCA00008C1BF /* DocumentType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentType.swift; sourceTree = "<group>"; };
 		8E79742823C6573300819670 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
@@ -277,6 +298,14 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		8E3BB1AE23DFA7BE002DA5FE /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8E3BB1B623DFA7BF002DA5FE /* AiTmedSDK1.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		8E9FE3A923C54BDC0046AD9D /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -304,8 +333,18 @@
 				1090FA6F23C5AA4F002B05E6 /* AiTmedError.swift */,
 				1090FA7123C5AA4F002B05E6 /* AiTmedNameKey.swift */,
 				1090FA7223C5AA4F002B05E6 /* AiTmedType.swift */,
+				8E3BB1BE23DFAFEF002DA5FE /* Zip.swift */,
 			);
 			path = Other;
+			sourceTree = "<group>";
+		};
+		8E3BB1B223DFA7BF002DA5FE /* AiTmedSDK1Tests */ = {
+			isa = PBXGroup;
+			children = (
+				8E3BB1B323DFA7BF002DA5FE /* AiTmedSDK1Tests.swift */,
+				8E3BB1B523DFA7BF002DA5FE /* Info.plist */,
+			);
+			path = AiTmedSDK1Tests;
 			sourceTree = "<group>";
 		};
 		8E79745D23C6B20C00819670 /* NotebookEditingController */ = {
@@ -321,6 +360,7 @@
 			children = (
 				8E9FE3AE23C54BDC0046AD9D /* AiTmedSDK1 */,
 				8E9FE3BC23C54BFA0046AD9D /* AiTmedDemo */,
+				8E3BB1B223DFA7BF002DA5FE /* AiTmedSDK1Tests */,
 				8E9FE3AD23C54BDC0046AD9D /* Products */,
 				B370B79D016476FD385BCDF5 /* Pods */,
 				E1DC5E3E4AA1F0DFCC9D9828 /* Frameworks */,
@@ -332,6 +372,7 @@
 			children = (
 				8E9FE3AC23C54BDC0046AD9D /* AiTmedSDK1.framework */,
 				8E9FE3BB23C54BFA0046AD9D /* AiTmedDemo.app */,
+				8E3BB1B123DFA7BE002DA5FE /* AiTmedSDK1Tests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -761,6 +802,25 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		8E3BB1B023DFA7BE002DA5FE /* AiTmedSDK1Tests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8E3BB1B923DFA7BF002DA5FE /* Build configuration list for PBXNativeTarget "AiTmedSDK1Tests" */;
+			buildPhases = (
+				8E3BB1AD23DFA7BE002DA5FE /* Sources */,
+				8E3BB1AE23DFA7BE002DA5FE /* Frameworks */,
+				8E3BB1AF23DFA7BE002DA5FE /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				8E3BB1B823DFA7BF002DA5FE /* PBXTargetDependency */,
+				8E3BB1BD23DFACB0002DA5FE /* PBXTargetDependency */,
+			);
+			name = AiTmedSDK1Tests;
+			productName = AiTmedSDK1Tests;
+			productReference = 8E3BB1B123DFA7BE002DA5FE /* AiTmedSDK1Tests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		8E9FE3AB23C54BDC0046AD9D /* AiTmedSDK1 */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 8E9FE3B423C54BDC0046AD9D /* Build configuration list for PBXNativeTarget "AiTmedSDK1" */;
@@ -812,6 +872,10 @@
 				LastUpgradeCheck = 1020;
 				ORGANIZATIONNAME = "Yi Tong";
 				TargetAttributes = {
+					8E3BB1B023DFA7BE002DA5FE = {
+						CreatedOnToolsVersion = 10.2.1;
+						TestTargetID = 8E9FE3BA23C54BFA0046AD9D;
+					};
 					8E9FE3AB23C54BDC0046AD9D = {
 						CreatedOnToolsVersion = 10.2.1;
 					};
@@ -835,11 +899,19 @@
 			targets = (
 				8E9FE3AB23C54BDC0046AD9D /* AiTmedSDK1 */,
 				8E9FE3BA23C54BFA0046AD9D /* AiTmedDemo */,
+				8E3BB1B023DFA7BE002DA5FE /* AiTmedSDK1Tests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		8E3BB1AF23DFA7BE002DA5FE /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		8E9FE3AA23C54BDC0046AD9D /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -949,6 +1021,14 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		8E3BB1AD23DFA7BE002DA5FE /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8E3BB1B423DFA7BF002DA5FE /* AiTmedSDK1Tests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		8E9FE3A823C54BDC0046AD9D /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -964,6 +1044,7 @@
 				8E9FE42D23C552F00046AD9D /* ecos_api.grpc.swift in Sources */,
 				8E9FE43023C552F50046AD9D /* Credential.swift in Sources */,
 				8E9FE43A23C553000046AD9D /* Data+.swift in Sources */,
+				8E3BB1BF23DFAFEF002DA5FE /* Zip.swift in Sources */,
 				8E79746523C7D43E00819670 /* String+.swift in Sources */,
 				8E9FE43323C552FA0046AD9D /* Encryption.swift in Sources */,
 				8EF1C7A123D0F1EA00CCB4FE /* Edge+transform.swift in Sources */,
@@ -1068,6 +1149,16 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		8E3BB1B823DFA7BF002DA5FE /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 8E9FE3AB23C54BDC0046AD9D /* AiTmedSDK1 */;
+			targetProxy = 8E3BB1B723DFA7BF002DA5FE /* PBXContainerItemProxy */;
+		};
+		8E3BB1BD23DFACB0002DA5FE /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 8E9FE3BA23C54BFA0046AD9D /* AiTmedDemo */;
+			targetProxy = 8E3BB1BC23DFACB0002DA5FE /* PBXContainerItemProxy */;
+		};
 		8E79745923C6A47200819670 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 8E9FE3AB23C54BDC0046AD9D /* AiTmedSDK1 */;
@@ -1095,6 +1186,44 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		8E3BB1BA23DFA7BF002DA5FE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = DKH5D278T8;
+				INFOPLIST_FILE = AiTmedSDK1Tests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.AiTmed.AiTmedSDK1Tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/AiTmedDemo.app/AiTmedDemo";
+			};
+			name = Debug;
+		};
+		8E3BB1BB23DFA7BF002DA5FE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = DKH5D278T8;
+				INFOPLIST_FILE = AiTmedSDK1Tests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.AiTmed.AiTmedSDK1Tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/AiTmedDemo.app/AiTmedDemo";
+			};
+			name = Release;
+		};
 		8E9FE3B223C54BDC0046AD9D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1318,6 +1447,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		8E3BB1B923DFA7BF002DA5FE /* Build configuration list for PBXNativeTarget "AiTmedSDK1Tests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8E3BB1BA23DFA7BF002DA5FE /* Debug */,
+				8E3BB1BB23DFA7BF002DA5FE /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		8E9FE3A623C54BDC0046AD9D /* Build configuration list for PBXProject "AiTmedSDK1" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

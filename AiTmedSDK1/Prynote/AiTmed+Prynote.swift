@@ -12,15 +12,15 @@ import PromiseKit
 extension AiTmed {
     //MARK: - Note
     public static func addNote(folderID: Data, title: String, content: Data, isEncrypt: Bool, completion: @escaping (Swift.Result<_Note, AiTmedError>) -> Void) {
-        let args = CreateDocumentArgs(title: title, content: content, applicationDataType: .data, mediaType: .plain, isEncrypt: isEncrypt, folderID: folderID, isOnServer: true, isZipped: true)
+        let args = CreateDocumentArgs(title: title, content: content, applicationDataType: .data, mediaType: .plain, isEncrypt: isEncrypt, folderID: folderID, isOnServer: false, isZipped: false)
 
         firstly { () -> Promise<Document> in
             createDocument(args: args)
-            }.done { (document) in
-                let _note = _Note(id: document.id, title: document.title, content: document.content, mediaType: document.mediaType, isEncrypt: document.type.isEncrypt, ctime: document.ctime, mtime: document.mtime, isBroken: document.isBroken)
-                completion(.success(_note))
-            }.catch { (error) in
-                completion(.failure(error.toAiTmedError()))
+        }.done { (document) in
+            let _note = _Note(id: document.id, title: document.title, content: document.content, mediaType: document.mediaType, isEncrypt: document.type.isEncrypt, ctime: document.ctime, mtime: document.mtime, isBroken: document.isBroken)
+            completion(.success(_note))
+        }.catch { (error) in
+            completion(.failure(error.toAiTmedError()))
         }
     }
     
@@ -44,14 +44,14 @@ extension AiTmed {
         let args = RetrieveDocArgs(folderID: notebookID)
         firstly {
             AiTmed.retrieveDocuments(args: args)
-            }.map { (documents) -> [_Note] in
-                return documents.map {
-                    return _Note(id: $0.id, title: $0.title, content: $0.content, mediaType: $0.mediaType, isEncrypt: $0.type.isEncrypt, ctime: $0.ctime, mtime: $0.mtime, isBroken: $0.isBroken)
-                }
-            }.done { (_notes) in
-                completion(.success(_notes))
-            }.catch { (error) in
-                completion(.failure(error.toAiTmedError()))
+        }.map { (documents) -> [_Note] in
+            return documents.map {
+                _Note(id: $0.id, title: $0.title, content: $0.content, mediaType: $0.mediaType, isEncrypt: $0.type.isEncrypt, ctime: $0.ctime, mtime: $0.mtime, isBroken: $0.isBroken)
+            }
+        }.done { (_notes) in
+            completion(.success(_notes))
+        }.catch { (error) in
+            completion(.failure(error.toAiTmedError()))
         }
     }
 

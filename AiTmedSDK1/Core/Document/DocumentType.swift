@@ -21,7 +21,7 @@ struct DocumentType: ExpressibleByIntegerLiteral {
     }
     
     static func initWithArgs(args: CreateDocumentArgs) -> DocumentType {
-        let type = DocumentType(value: 0)
+        var type = DocumentType(value: 0)
         
         type.isOnServer = args.isOnServer
         type.isZipped = args.isZipped

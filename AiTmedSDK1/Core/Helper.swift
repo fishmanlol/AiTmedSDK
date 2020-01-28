@@ -8,6 +8,7 @@
 
 import Foundation
 import PromiseKit
+import Alamofire
 
 extension AiTmed {
     static func beskInEdge(_ id: Data) -> Swift.Result<Key?, AiTmedError> {
@@ -76,7 +77,13 @@ extension AiTmed {
     }
     
     static func zip(_ data: Data) -> Promise<Data> {
-        return Promise<Data>.value(data.zip())
+        return Promise<Data> { resolver in
+            if let zipped = try? data.zip() {
+                resolver.fulfill(zipped)
+            } else {
+                resolver.reject(AiTmedError.unkown)
+            }
+        }
     }
     
     static func encrypt(_ data: Data, sak: Key) -> Promise<Data> {
@@ -86,6 +93,39 @@ extension AiTmed {
             } else {
                 resolver.reject(AiTmedError.unkown)
             }
+        }
+    }
+    
+    static func upload(_ data: Data, to url: URLConvertible) -> Promise<Void> {
+        return Promise<Void> { resolver in
+            Alamofire.upload(data, to: url).response { (response) in
+                guard let statusCode = response.response?.statusCode,
+                    (200..<300).contains(statusCode) else {
+                        resolver.reject(response.error ?? AiTmedError.unkown)
+                        return
+                }
+                
+                resolver.fulfill(())
+            }
+        }
+    }
+    
+    static func download(from url: URLConvertible) -> Promise<Data> {
+        return Promise<Data> { resolver in
+            Alamofire.download(url).responseData(completionHandler: { (response) in
+                guard let statusCode = response.response?.statusCode,
+                    (200..<300).contains(statusCode) else {
+                        resolver.reject(response.error ?? AiTmedError.unkown)
+                        return
+                }
+                
+                switch response.result {
+                case .failure(let error):
+                    resolver.reject(error)
+                case .success(let data):
+                    resolver.fulfill(data)
+                }
+            })
         }
     }
 }

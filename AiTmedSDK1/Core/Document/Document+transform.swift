@@ -29,8 +29,8 @@ extension AiTmed {
             
             DispatchQueue.global().async {
                 //if zip needed
-                if args.isZipped {
-                    data = data.zip()
+                if args.isZipped, let zipped = try? data.zip() {
+                    data = zipped
                 }
                 
                 //if encrypt, fetch besak

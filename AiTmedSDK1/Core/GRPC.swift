@@ -296,34 +296,36 @@ class GRPC {
     }
     
     ///promise
-    func delete(ids: [Data], jwt: String) -> Promise<Void> {
-        var request = Aitmed_Ecos_V1beta1_dxReq()
-        request.id = ids
-        request.jwt = jwt
-        
-        print("delete request json: \n", (try? request.jsonString()) ?? "")
-        
-        do {
-            try client.dx(request) { (response, result) in
-                guard let response = response else {
-                    print("delete has no response(\(result.statusCode)): \(result.description)")
-                    completion(.failure(.grpcFailed(.unkown)))
-                    return
+    func delete(ids: [Data], jwt: String) -> Promise<(Void, String)> {
+        return Promise<(Void, String)> { resolver in
+            var request = Aitmed_Ecos_V1beta1_dxReq()
+            request.id = ids
+            request.jwt = jwt
+            
+            print("delete request json: \n", (try? request.jsonString()) ?? "")
+            
+            do {
+                try client.dx(request) { (response, result) in
+                    guard let response = response else {
+                        print("delete has no response(\(result.statusCode)): \(result.description)")
+                        resolver.reject(AiTmedError.grpcFailed(.unkown))
+                        return
+                    }
+                    
+                    print("delete response: \n", (try? response.jsonString()) ?? "")
+                    
+                    if response.code == 0 {
+                        resolver.fulfill(((), response.jwt))
+                    } else if response.code == 113 {
+                        resolver.reject(AiTmedError.credentialFailed(.JWTExpired(response.jwt)))
+                    } else {
+                        resolver.reject(AiTmedError.apiResultFailed(.unkown))
+                    }
                 }
-                
-                print("delete response: \n", (try? response.jsonString()) ?? "")
-                
-                if response.code == 0 {
-                    completion(.success(response.jwt))
-                } else if response.code == 113 {
-                    completion(.failure(.credentialFailed(.JWTExpired(response.jwt))))
-                } else {
-                    completion(.failure(.apiResultFailed(.unkown)))
-                }
+            } catch {
+                print("grpc error: \(error.localizedDescription)")
+                resolver.reject(AiTmedError.grpcFailed(.unkown))
             }
-        } catch {
-            print("grpc error: \(error.localizedDescription)")
-            completion(.failure(.grpcFailed(.unkown)))
         }
     }
     
