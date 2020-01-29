@@ -10,14 +10,23 @@ import Foundation
 
 extension String {
     func toJSONDict() -> [String: Any]? {
-        if let data = self.data(using: .utf8) {
+        print("before:", self)
+        let filtered = removeControlCharacters()
+        print("after:", filtered)
+        if let data = filtered.data(using: .utf8) {
             do {
-                return try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]
+                let json = try JSONSerialization.jsonObject(with: data, options: [])
+                return json as? [String: Any]
             } catch {
                 print(error.localizedDescription)
             }
         }
         
         return nil
+    }
+    
+    private func removeControlCharacters() -> String {
+        let cc = CharacterSet.controlCharacters
+        return String(filter { cc.contains($0.unicodeScalars.first! )})
     }
 }

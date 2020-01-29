@@ -64,81 +64,14 @@ extension AiTmed {
                 
                 //compose upload url: 'url' + ? + 'sig'
                 let uploadURL = urlString + "?" + sig
+                print("upload url: \(uploadURL)")
                 try upload(content, to: uploadURL).wait()
+                print("upload success!")
             }
             
             return Document(id: doc.id, folderID: doc.eid, title: args.title, content: args.content, isBroken: false, mediaType: args.mediaType, type: type, mtime: doc.mtime, ctime: doc.ctime)
         })
     }
-        
-        
-//        return Promise<Document> { resolver1 in
-//            firstly { () -> Promise<(Doc, Data)> in
-//                shared.transform(args: args)//transform arguments to Doc object which will used to be create
-//            }.then { (_doc, data) -> Promise<((URL, Data)?, Document)> in
-//
-//                return Promise<((URL, Data)?, Document)> { resolver2 in
-//                    shared.g.createDoc(doc: _doc, jwt: shared.c.jwt, completion: { (result) in
-//                        switch result {
-//                        case .failure(let error):
-//                            resolver2.reject(error)
-//                        case .success(let (doc, jwt)):
-//                            shared.c.jwt = jwt
-//
-//                            let documentType = DocumentType(value: UInt32(doc.type))
-//                            let document = Document(id: doc.id, folderID: doc.eid, title: args.title, content: args.content, isBroken: false, mediaType: args.mediaType, type: documentType, mtime: doc.mtime, ctime: doc.ctime)
-//
-//                            if documentType.isOnServer {
-//                                resolver2.fulfill((nil, document))
-//                            } else {//on S3
-//                                //unwrap deat
-//                                if let dict = doc.deat.toJSONDict(),
-//                                    let urlString = dict["url"] as? String,
-//                                    let sig = dict["sig"] as? String,
-//                                    let url = URL(string: urlString + "?" + sig),
-//                                    let _ = dict["exptime"] as? String {
-//                                    resolver2.fulfill(((url, data), document))
-//                                } else {
-//                                    print("create document deat parse error")
-//                                    resolver2.reject(AiTmedError.unkown)
-//                                }
-//                            }
-//                        }
-//                    })
-//                }
-//            }.then ({ (uploadInfo, document) -> Promise<Document> in //upload or not
-//                if let info = uploadInfo {//we need upload
-//                    let (url, data) = info
-//                    return Promise<Document> { resolver3 in
-//                        Alamofire.upload(data, to: url, method: .put, headers: nil).responseString(completionHandler: { (r) in
-//                            print("upload: \n \(url)")
-//                            print(r.description)
-//                            if let error = r.error {
-//                                print("createDocument failed: \(error.localizedDescription)")
-//                                resolver3.reject(error)
-//                                return
-//                            }
-//
-//                            switch r.result {
-//                            case .failure(let error):
-//                                print("error: ", error)
-//                                resolver3.reject(AiTmedError.unkown)
-//                            case .success(let str):
-//                                print("success: ", str)
-//                                resolver3.fulfill(document)
-//                            }
-//                        })
-//                    }
-//                } else {//we don't need upload
-//                    return Promise.value(document)
-//                }
-//            }).done({ (document) in
-//                resolver1.fulfill(document)
-//            }).catch({ (error) in
-//                print("create document error: \(error.localizedDescription)")
-//                resolver1.reject(error)
-//            })
-//        }
     
     static func retrieveDoc(args: RetrieveDocArgs) -> Promise<[Doc]> {
         return Promise<[Doc]> { resolver in

@@ -98,9 +98,10 @@ extension AiTmed {
     
     static func upload(_ data: Data, to url: URLConvertible) -> Promise<Void> {
         return Promise<Void> { resolver in
-            Alamofire.upload(data, to: url).response { (response) in
+            Alamofire.upload(data, to: url, method: .put, headers: nil).response  { (response) in
                 guard let statusCode = response.response?.statusCode,
                     (200..<300).contains(statusCode) else {
+                        
                         resolver.reject(response.error ?? AiTmedError.unkown)
                         return
                 }

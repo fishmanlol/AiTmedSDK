@@ -105,41 +105,6 @@ public class RetrieveDocArgs {
     }
 }
 
-
-
-//public class CreateFileArgs {
-//    var title: String?
-//    var content: Data?
-//    var isEncrypt: Bool
-//    var folderID: Data
-//    var mime: MimeType = .data
-//    internal var type: Int32!
-//
-//    public init(title: String?, content: Data?, isEncrypt: Bool, folderID: Data) {
-//        self.title = title
-//        self.content = content
-//        self.isEncrypt = isEncrypt
-//        self.folderID = folderID
-//    }
-//}
-
-
-//public class CreateNoteArgs: CreateFileArgs {
-//    public override init(title: String?, content: Data?, isEncrypt: Bool, folderID: Data) {
-//        super.init(title: title, content: content, isEncrypt: isEncrypt, folderID: folderID)
-//        mime = .plain
-//
-//        if let content = content, let zipped = content.zip(), !zipped.isEmbedded {
-//            type = AiTmedType.s3Data
-//            if isEncrypt {//encrypt
-//
-//            }
-//        } else {
-//            type = AiTmedType.embedData
-//        }
-//    }
-//}
-
 struct Validator {
     static func phoneNumber(_ phoneNumber: String) -> Bool {
         let reg = #"^\+\d{1,4} \d{1,18}$"#

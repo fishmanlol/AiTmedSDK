@@ -12,6 +12,7 @@ import PromiseKit
 class GRPC {
     let grpcTimeout: TimeInterval = 5
     let host = "testapi2.aitmed.com:443"
+    let cache = Cache<Data, Any>(entryLifetime: 2, maximumEntryCount: Int.max)
     lazy var client: Aitmed_Ecos_V1beta1_EcosAPIServiceClient = {
         let c = Aitmed_Ecos_V1beta1_EcosAPIServiceClient(address: host, secure: true)
         c.timeout = grpcTimeout
@@ -27,7 +28,7 @@ class GRPC {
         print("create edge request json: \n", (try? request.jsonString()) ?? "")
         
         do {
-            try client.ce(request) { (response, result) in
+            try client.ce(request) { [weak cache] (response, result) in
                 guard let response = response else {
                     print("create edge has no response(\(result.statusCode)): \(result.description)")
                     completion(.failure(.grpcFailed(.unkown)))
@@ -37,6 +38,7 @@ class GRPC {
                 print("Create edge response: \n", (try? response.jsonString()) ?? "")
                 
                 if response.code == 0 {
+                    cache?[response.edge.id] = response.edge
                     completion(.success((response.edge, response.jwt)))
                 } else if response.code == 1020 {
                     completion(.failure(.apiResultFailed(.userNotExist)))
@@ -64,6 +66,7 @@ class GRPC {
             let response = try client.ce(request)
             
             if response.code == 0 {
+                cache[response.edge.id] = response.edge
                 return (response.edge, response.jwt)
             } else if response.code == 1020 {
                 throw AiTmedError.apiResultFailed(.userNotExist)
@@ -87,7 +90,7 @@ class GRPC {
             print("create edge request json: \n", (try? request.jsonString()) ?? "")
             
             do {
-                try client.ce(request) { (response, result) in
+                try client.ce(request) { [weak cache] (response, result) in
                     guard let response = response else {
                         print("create edge has no response(\(result.statusCode)): \(result.description)")
                         resolver.reject(AiTmedError.grpcFailed(.unkown))
@@ -97,6 +100,7 @@ class GRPC {
                     print("Create edge response: \n", (try? response.jsonString()) ?? "")
                     
                     if response.code == 0 {
+                        cache?[response.edge.id] = response.edge
                         resolver.fulfill((response.edge, response.jwt))
                     } else if response.code == 1020 {
                         resolver.reject(AiTmedError.apiResultFailed(.userNotExist))
@@ -120,7 +124,6 @@ class GRPC {
         request.objType = ObjectType.edge.code
         request.jwt = jwt
         request.xfname = args.xfname
-
         
         if let type = args.type {
             request.type = type
@@ -133,7 +136,7 @@ class GRPC {
         print("retreive edge request json: \n", (try? request.jsonString()) ?? "")
         
         do {
-            try client.re(request) { (response, result) in
+            try client.re(request) { [weak cache] (response, result) in
                 guard let response = response else {
                     print("retrieve edge has no response(\(result.statusCode)): \(result.description)")
                     completion(.failure(.grpcFailed(.unkown)))
@@ -143,6 +146,8 @@ class GRPC {
                 print("retrieve edge response: \n", (try? response.jsonString()) ?? "")
                 
                 if response.code == 0 {
+                    let ids = response.edge.map { $0.id }
+                    cache?[edges: ids] = response.edge
                     completion(.success((response.edge, response.jwt)))
                 } else if response.code == 113 {
                     completion(.failure(.credentialFailed(.JWTExpired(response.jwt))))
@@ -180,6 +185,8 @@ class GRPC {
             print("retrieve edge response: \n", (try? response.jsonString()) ?? "")
             
             if response.code == 0 {
+                let ids = response.edge.map { $0.id }
+                cache[edges: ids] = response.edge
                 return (response.edge, response.jwt)
             } else if response.code == 113 {
                 throw AiTmedError.credentialFailed(.JWTExpired(response.jwt))
@@ -213,7 +220,7 @@ class GRPC {
             print("retreive edge request json: \n", (try? request.jsonString()) ?? "")
             
             do {
-                try client.re(request) { (response, result) in
+                try client.re(request) { [weak cache] (response, result) in
                     guard let response = response else {
                         print("retrieve edge has no response(\(result.statusCode)): \(result.description)")
                         resolver.reject(AiTmedError.grpcFailed(.unkown))
@@ -223,6 +230,8 @@ class GRPC {
                     print("retrieve edge response: \n", (try? response.jsonString()) ?? "")
                     
                     if response.code == 0 {
+                        let ids = response.edge.map { $0.id }
+                        cache?[edges: ids] = response.edge
                         resolver.fulfill((response.edge, response.jwt))
                     } else if response.code == 113 {
                         resolver.reject(AiTmedError.credentialFailed(.JWTExpired(response.jwt)))
@@ -246,7 +255,7 @@ class GRPC {
         print("delete request json: \n", (try? request.jsonString()) ?? "")
         
         do {
-            try client.dx(request) { (response, result) in
+            try client.dx(request) { [weak cache] (response, result) in
                 guard let response = response else {
                     print("delete has no response(\(result.statusCode)): \(result.description)")
                     completion(.failure(.grpcFailed(.unkown)))
@@ -256,6 +265,7 @@ class GRPC {
                 print("delete response: \n", (try? response.jsonString()) ?? "")
                 
                 if response.code == 0 {
+                    cache?.removeValues(forKeys: ids)
                     completion(.success(response.jwt))
                 } else if response.code == 113 {
                     completion(.failure(.credentialFailed(.JWTExpired(response.jwt))))
@@ -283,6 +293,7 @@ class GRPC {
             print("delete response: \n", (try? response.jsonString()) ?? "")
             
             if response.code == 0 {
+                cache.removeValues(forKeys: ids)
                 return  ((), response.jwt)
             } else if response.code == 113 {
                 throw AiTmedError.credentialFailed(.JWTExpired(response.jwt))
@@ -305,7 +316,7 @@ class GRPC {
             print("delete request json: \n", (try? request.jsonString()) ?? "")
             
             do {
-                try client.dx(request) { (response, result) in
+                try client.dx(request) { [weak cache] (response, result) in
                     guard let response = response else {
                         print("delete has no response(\(result.statusCode)): \(result.description)")
                         resolver.reject(AiTmedError.grpcFailed(.unkown))
@@ -315,6 +326,7 @@ class GRPC {
                     print("delete response: \n", (try? response.jsonString()) ?? "")
                     
                     if response.code == 0 {
+                        cache?.removeValues(forKeys: ids)
                         resolver.fulfill(((), response.jwt))
                     } else if response.code == 113 {
                         resolver.reject(AiTmedError.credentialFailed(.JWTExpired(response.jwt)))
@@ -338,7 +350,7 @@ class GRPC {
         print("create vertex request json: \n", (try? request.jsonString()) ?? "")
         
         do {
-            try client.cv(request, completion: { (response, result) in
+            try client.cv(request, completion: { [weak cache] (response, result) in
                 guard let response = response else {
                     print("create vertex has no response(\(result.statusCode)): \(result.description)")
                     completion(.failure(.grpcFailed(.unkown)))
@@ -348,6 +360,7 @@ class GRPC {
                 print("create vertex response: \n", (try? response.jsonString()) ?? "")
                 
                 if response.code == 0 {
+                    cache?[vertex: response.vertex.id] = response.vertex
                     completion(.success((response.vertex, response.jwt)))
                 } else if response.code == 113 {
                     completion(.failure(.credentialFailed(.JWTExpired(response.jwt))))
@@ -375,6 +388,7 @@ class GRPC {
             print("create vertex response: \n", (try? response.jsonString()) ?? "")
             
             if response.code == 0 {
+                cache[vertex: response.vertex.id] = response.vertex
                 return (response.vertex, response.jwt)
             } else if response.code == 113 {
                 throw AiTmedError.credentialFailed(.JWTExpired(response.jwt))
@@ -396,7 +410,7 @@ class GRPC {
         print("create doc request json: \n", (try? request.jsonString()) ?? "")
         
         do {
-            try client.cd(request, completion: { (response, result) in
+            try client.cd(request, completion: { [weak cache] (response, result) in
                 guard let response = response else {
                     print("create doc has no response(\(result.statusCode)): \(result.description)")
                     completion(.failure(.grpcFailed(.unkown)))
@@ -406,6 +420,7 @@ class GRPC {
                 print("create doc response: \n", (try? response.jsonString()) ?? "")
                 
                 if response.code == 0 {
+                    cache?[doc: response.doc.id] = response.doc
                     completion(.success((response.doc, response.jwt)))
                 } else if response.code == 113 {
                     completion(.failure(.credentialFailed(.JWTExpired(response.jwt))))
@@ -433,6 +448,7 @@ class GRPC {
             print("create doc response: \n", (try? response.jsonString()) ?? "")
             
             if response.code == 0 {
+                cache[doc: response.doc.id] = response.doc
                 return (response.doc, response.jwt)
             } else if response.code == 113 {
                 throw AiTmedError.credentialFailed(.JWTExpired(response.jwt))
@@ -456,7 +472,7 @@ class GRPC {
         print("retreive doc request json: \n", (try? request.jsonString()) ?? "")
         
         do {
-            try client.rd(request) { (response, result) in
+            try client.rd(request) { [weak cache] (response, result) in
                 guard let response = response else {
                     print("retrieve doc has no response(\(result.statusCode)): \(result.description)")
                     completion(.failure(.grpcFailed(.unkown)))
@@ -466,6 +482,8 @@ class GRPC {
                 print("retrieve doc response: \n", (try? response.jsonString()) ?? "")
                 
                 if response.code == 0 {
+                    let ids = response.doc.map { $0.id }
+                    cache?[docs: ids] = response.doc
                     completion(.success((response.doc, response.jwt)))
                 } else if response.code == 113 {
                     completion(.failure(.credentialFailed(.JWTExpired(response.jwt))))
@@ -495,6 +513,8 @@ class GRPC {
             print("retrieve doc response: \n", (try? response.jsonString()) ?? "")
             
             if response.code == 0 {
+                let ids = response.doc.map { $0.id }
+                cache[docs: ids] = response.doc
                 return (response.doc, response.jwt)
             } else if response.code == 113 {
                 throw AiTmedError.credentialFailed(.JWTExpired(response.jwt))

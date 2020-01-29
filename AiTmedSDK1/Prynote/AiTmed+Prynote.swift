@@ -12,7 +12,7 @@ import PromiseKit
 extension AiTmed {
     //MARK: - Note
     public static func addNote(folderID: Data, title: String, content: Data, isEncrypt: Bool, completion: @escaping (Swift.Result<_Note, AiTmedError>) -> Void) {
-        let args = CreateDocumentArgs(title: title, content: content, applicationDataType: .data, mediaType: .plain, isEncrypt: isEncrypt, folderID: folderID, isOnServer: false, isZipped: false)
+        let args = CreateDocumentArgs(title: title, content: content, applicationDataType: .data, mediaType: .plain, isEncrypt: isEncrypt, folderID: folderID, isOnServer: false, isZipped: true)
 
         firstly { () -> Promise<Document> in
             createDocument(args: args)

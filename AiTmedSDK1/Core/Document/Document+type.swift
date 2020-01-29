@@ -130,7 +130,7 @@ struct Document {
             }
             
             return Document(id: id, folderID: folderID, title: title, content: content, isBroken: false, mediaType: mediaType, type: type, mtime: mtime, ctime: ctime)
-        }//[49, 50, 51, 49, 50, 51, 49, 50, 51]
+        }
     }
 }
 

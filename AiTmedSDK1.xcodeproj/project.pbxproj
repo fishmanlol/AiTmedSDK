@@ -43,7 +43,6 @@
 		8E79746323C7D43000819670 /* Dictionary+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E79746223C7D43000819670 /* Dictionary+.swift */; };
 		8E79746523C7D43E00819670 /* String+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E79746423C7D43E00819670 /* String+.swift */; };
 		8E79746A23C7FB1300819670 /* Keyboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E79746923C7FB1300819670 /* Keyboard.swift */; };
-		8E875D0723DB8A77005EB28C /* AiTmedCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E875D0623DB8A77005EB28C /* AiTmedCache.swift */; };
 		8E9FE3B123C54BDC0046AD9D /* AiTmedSDK1.h in Headers */ = {isa = PBXBuildFile; fileRef = 8E9FE3AF23C54BDC0046AD9D /* AiTmedSDK1.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8E9FE3BE23C54BFA0046AD9D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E9FE3BD23C54BFA0046AD9D /* AppDelegate.swift */; };
 		8E9FE3C323C54BFA0046AD9D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8E9FE3C123C54BFA0046AD9D /* Main.storyboard */; };
@@ -106,6 +105,8 @@
 		8E9FE46323C564E70046AD9D /* AiTmed+Prynote.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E9FE46223C564E70046AD9D /* AiTmed+Prynote.swift */; };
 		8E9FE46523C56F780046AD9D /* _Note.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E9FE46423C56F780046AD9D /* _Note.swift */; };
 		8E9FE46723C56FE70046AD9D /* _Notebook.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E9FE46623C56FE70046AD9D /* _Notebook.swift */; };
+		8EB8418023E0F4CB00A2E157 /* Cache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EB8417F23E0F4CB00A2E157 /* Cache.swift */; };
+		8EB8418223E0F50F00A2E157 /* Cache+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EB8418123E0F50F00A2E157 /* Cache+.swift */; };
 		8ED8DAED23CD26E300A33AE7 /* NotebookListController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ED8DAEC23CD26E300A33AE7 /* NotebookListController.swift */; };
 		8ED8DAF423CD49BF00A33AE7 /* EmptyFooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ED8DAF323CD49BF00A33AE7 /* EmptyFooterView.swift */; };
 		8EE0C04723CE6D770050141C /* EditorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EE0C04623CE6D760050141C /* EditorViewController.swift */; };
@@ -206,7 +207,6 @@
 		8E79746223C7D43000819670 /* Dictionary+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Dictionary+.swift"; sourceTree = "<group>"; };
 		8E79746423C7D43E00819670 /* String+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+.swift"; sourceTree = "<group>"; };
 		8E79746923C7FB1300819670 /* Keyboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Keyboard.swift; sourceTree = "<group>"; };
-		8E875D0623DB8A77005EB28C /* AiTmedCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AiTmedCache.swift; sourceTree = "<group>"; };
 		8E9FE3AC23C54BDC0046AD9D /* AiTmedSDK1.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AiTmedSDK1.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8E9FE3AF23C54BDC0046AD9D /* AiTmedSDK1.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AiTmedSDK1.h; sourceTree = "<group>"; };
 		8E9FE3B023C54BDC0046AD9D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -273,6 +273,8 @@
 		8E9FE46223C564E70046AD9D /* AiTmed+Prynote.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AiTmed+Prynote.swift"; sourceTree = "<group>"; };
 		8E9FE46423C56F780046AD9D /* _Note.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = _Note.swift; sourceTree = "<group>"; };
 		8E9FE46623C56FE70046AD9D /* _Notebook.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = _Notebook.swift; sourceTree = "<group>"; };
+		8EB8417F23E0F4CB00A2E157 /* Cache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Cache.swift; sourceTree = "<group>"; };
+		8EB8418123E0F50F00A2E157 /* Cache+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Cache+.swift"; sourceTree = "<group>"; };
 		8ED8DAEC23CD26E300A33AE7 /* NotebookListController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotebookListController.swift; sourceTree = "<group>"; };
 		8ED8DAF323CD49BF00A33AE7 /* EmptyFooterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyFooterView.swift; sourceTree = "<group>"; };
 		8EE0C04623CE6D760050141C /* EditorViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditorViewController.swift; sourceTree = "<group>"; };
@@ -642,8 +644,8 @@
 		8E9FE42E23C552F50046AD9D /* Cache */ = {
 			isa = PBXGroup;
 			children = (
+				8EB8417F23E0F4CB00A2E157 /* Cache.swift */,
 				8E9FE42F23C552F50046AD9D /* Credential.swift */,
-				8E875D0623DB8A77005EB28C /* AiTmedCache.swift */,
 			);
 			path = Cache;
 			sourceTree = "<group>";
@@ -660,6 +662,7 @@
 			isa = PBXGroup;
 			children = (
 				8E9FE43523C553000046AD9D /* UserDefaults+.swift */,
+				8EB8418123E0F50F00A2E157 /* Cache+.swift */,
 				8E2388AD23D2420100B40C52 /* Error+.swift */,
 				8E9FE43623C553000046AD9D /* Keychain.swift */,
 				8E9FE43723C553000046AD9D /* Data+.swift */,
@@ -1061,9 +1064,11 @@
 				8E9FE46323C564E70046AD9D /* AiTmed+Prynote.swift in Sources */,
 				1090FA7723C5AA4F002B05E6 /* AiTmedType.swift in Sources */,
 				1090FA7523C5AA4F002B05E6 /* AiTmedArguments.swift in Sources */,
+				8EB8418023E0F4CB00A2E157 /* Cache.swift in Sources */,
 				8E9FE42B23C552F00046AD9D /* ecos_api.pb.swift in Sources */,
 				8EF1C78723D0D8EB00CCB4FE /* Document+transform.swift in Sources */,
 				8EF1C79923D0DD6100CCB4FE /* Vertex+arguments.swift in Sources */,
+				8EB8418223E0F50F00A2E157 /* Cache+.swift in Sources */,
 				8EF1C7A423D1085200CCB4FE /* Common.swift in Sources */,
 				8E9FE43923C553000046AD9D /* Keychain.swift in Sources */,
 				1090FA7423C5AA4F002B05E6 /* AiTmedError.swift in Sources */,
@@ -1072,7 +1077,6 @@
 				8EF1C7BA23D13C0000CCB4FE /* GRPC.swift in Sources */,
 				8EF1C7B423D11DD900CCB4FE /* User.swift in Sources */,
 				8EF1C7AF23D10D1500CCB4FE /* CreateEdgeArgs.swift in Sources */,
-				8E875D0723DB8A77005EB28C /* AiTmedCache.swift in Sources */,
 				8E79743E23C6703200819670 /* Helper.swift in Sources */,
 				8E9FE44B23C553290046AD9D /* Document+type.swift in Sources */,
 			);

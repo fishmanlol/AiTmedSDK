@@ -20,6 +20,9 @@ class Note {
     var isBroken = false
     var isEncrypt = false
     var displayContent: String {
+        if isBroken {
+            return "Broken"
+        }
         return String(data: content, encoding: .utf8) ?? ""
     }
     
