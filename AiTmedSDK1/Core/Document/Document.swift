@@ -245,66 +245,6 @@ extension AiTmed {
         }
     }
     
-//    static func retrieveDocument(args: RetrieveDocArgs, completion: @escaping (Swift.Result<[Document], AiTmedError>) -> Void) {
-//        shared._retrieveDoc(args: args, jwt: shared.c.jwt) { (result) in
-//            switch result {
-//            case .failure(let error):
-//                completion(.failure(error))
-//            case .success(let (docs, jwt)):
-//                shared.c.jwt = jwt
-//                var documents: [Document] = []
-//                let group = DispatchGroup()
-//                for var document in docs.map({ Document($0) }) {
-//                    group.enter()
-//
-//                    if document.isOnS3, let downloadURL = document.downloadURL {
-//                        Alamofire.download(downloadURL).responseData(completionHandler: { (response) in
-//                            print("download url: \(downloadURL)")
-//                            switch response.result {
-//                            case .failure(let error):
-//                                document.isBroken = true
-//                            case .success(let data):
-//                                if document.isZipped {
-//                                    document.content = data.unzip()
-//                                } else {
-//                                    document.content = data
-//                                }
-//                            }
-//
-//                            documents.append(document)
-//                            group.leave()
-//                        })
-//                    } else {
-//                        documents.append(document)
-//                        group.leave()
-//                    }
-//                }
-//
-//                group.notify(queue: DispatchQueue.main, execute: {
-//                    print("documents----------------------------------", documents)
-//                    completion(.success(documents))
-//                })
-//            }
-//        }
-//    }
-    
-//    static func deleteDocument(args: DeleteArgs, completion: @escaping (Swift.Result<Void, AiTmedError>) -> Void) {
-//        guard let c = shared.c, c.status == .login else {
-//            completion(.failure(.credentialFailed(.credentialNeeded)))
-//            return
-//        }
-//
-//        shared._delete(ids: [args.id], jwt: shared.c!.jwt) { (result: Swift.Result<String, AiTmedError>) in
-//            switch result {
-//            case .failure(let error):
-//                completion(.failure(error))
-//            case .success(let jwt):
-//                shared.c.jwt = jwt
-//                completion(.success(()))
-//            }
-//        }
-//    }
-    
     static func deleteDocument(args: DeleteArgs) -> Promise<Void> {
         return Promise<Void> { resolver in
             if let error = shared.checkStatus() {

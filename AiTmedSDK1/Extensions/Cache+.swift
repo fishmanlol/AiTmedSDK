@@ -12,32 +12,22 @@ extension Cache {
     //edge
     subscript(edge edge: Data) -> Edge? {
         get {
-            fatalError()
+            return self[edge as! Key] as? Edge
         }
         
         set {
-            fatalError()
-        }
-    }
-    
-    subscript(edges edges: [Data]) -> [Edge]? {
-        get {
-            fatalError()
-        }
-        
-        set {
-            fatalError()
+            self[edge as! Key] = newValue as? Value
         }
     }
     
     //vertex
     subscript(vertex vertex: Data) -> Vertex? {
         get {
-            fatalError()
+            return self[vertex as! Key] as? Vertex
         }
         
         set {
-            fatalError()
+            self[vertex as! Key] = newValue as? Value
         }
     }
     
@@ -45,21 +35,11 @@ extension Cache {
     //doc
     subscript(doc doc: Data) -> Doc? {
         get {
-            fatalError()
+            return self[doc as! Key] as? Doc
         }
         
         set {
-            fatalError()
-        }
-    }
-    
-    subscript(docs docs: [Data]) -> [Doc]? {
-        get {
-            fatalError()
-        }
-        
-        set {
-            fatalError()
+            self[doc as! Key] = newValue as? Value
         }
     }
     

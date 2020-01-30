@@ -10,6 +10,7 @@ target 'AiTmedDemo' do
   pod 'IQKeyboardManagerSwift'
   pod 'R.swift'
   pod 'Reveal-SDK', :configurations => ['Debug']
+  pod 'SideMenu'
   # Pods for AiTmedDemo
 
 end

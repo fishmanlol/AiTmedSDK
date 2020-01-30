@@ -40,19 +40,35 @@ extension AiTmed {
     }
     
     ///Delete vertex
-    static func deleteVertex(args: DeleteArgs, completion: @escaping (Swift.Result<Void, AiTmedError>) -> Void) {
-        guard let c = shared.c, c.status == .login else {
-            completion(.failure(.credentialFailed(.credentialNeeded)))
+    static func deleteVertex(args: DeleteArgs) -> Promise<Void> {
+        return DispatchQueue.global().async(.promise, execute: { () -> Void in
+            try checkStatus().wait()
+            let deleteList = [AiTmedType.root, AiTmedType.notebook]
+            let retrievePromises = deleteList.map {
+                retrieveEdges(args: RetrieveArgs(ids: [], xfname: "", type: $0, maxCount: nil))
+            }
+            let allEdges = try when(fulfilled: retrievePromises).flatMapValues({$0}).wait()
+            let deleteEdgePromises = allEdges.map {
+                deleteEdge(args: DeleteArgs(id: $0.id))
+            }
+            try when(fulfilled: deleteEdgePromises).wait()
             return
-        }
-        
-        let deleteList = [AiTmedType.root, AiTmedType.notebook]
-        let group = DispatchGroup()
-        var success = true
-        
-        for item in deleteList {
-            group.enter()
-            let retrieveNotebookArgs = RetrieveArgs(ids: [], xfname: "bvid", type: item, maxCount: nil)
+        })
+    }
+    
+//    static func _deleteVertex(args: DeleteArgs, completion: @escaping (Swift.Result<Void, AiTmedError>) -> Void) {
+//        guard let c = shared.c, c.status == .login else {
+//            completion(.failure(.credentialFailed(.credentialNeeded)))
+//            return
+//        }
+//
+//        let deleteList = [AiTmedType.root, AiTmedType.notebook]
+//
+//        var success = true
+//
+//        for item in deleteList {
+//            group.enter()
+//            let retrieveNotebookArgs = RetrieveArgs(ids: [], xfname: "bvid", type: item, maxCount: nil)
 //            AiTmed.retrieveEdges(args: retrieveNotebookArgs) { (result) in
 //                switch result {
 //                case .failure(_):
@@ -89,8 +105,8 @@ extension AiTmed {
 //                    })
 //                }
 //            }
-        }
-    }
+//        }
+//    }
     
     static func updateVertex(args: UpdateVertexArgs) -> Promise<Vertex> {
         return createVertex(args: args)

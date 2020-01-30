@@ -25,6 +25,7 @@ class GRPC {
         request.edge = edge
         request.jwt = jwt
         
+        print("create edge name: ", edge.name)
         print("create edge request json: \n", (try? request.jsonString()) ?? "")
         
         do {
@@ -60,6 +61,7 @@ class GRPC {
         request.edge = edge
         request.jwt = jwt
         
+        print("create edge name: ", edge.name)
         print("create edge request json: \n", (try? request.jsonString()) ?? "")
         
         do {
@@ -86,7 +88,7 @@ class GRPC {
             var request = Aitmed_Ecos_V1beta1_ceReq()
             request.edge = edge
             request.jwt = jwt
-            
+            print("create edge name: ", edge.name)
             print("create edge request json: \n", (try? request.jsonString()) ?? "")
             
             do {
@@ -146,8 +148,7 @@ class GRPC {
                 print("retrieve edge response: \n", (try? response.jsonString()) ?? "")
                 
                 if response.code == 0 {
-                    let ids = response.edge.map { $0.id }
-                    cache?[edges: ids] = response.edge
+                    response.edge.forEach { cache?[$0.id] = $0 }
                     completion(.success((response.edge, response.jwt)))
                 } else if response.code == 113 {
                     completion(.failure(.credentialFailed(.JWTExpired(response.jwt))))
@@ -185,8 +186,7 @@ class GRPC {
             print("retrieve edge response: \n", (try? response.jsonString()) ?? "")
             
             if response.code == 0 {
-                let ids = response.edge.map { $0.id }
-                cache[edges: ids] = response.edge
+                response.edge.forEach { cache[$0.id] = $0 }
                 return (response.edge, response.jwt)
             } else if response.code == 113 {
                 throw AiTmedError.credentialFailed(.JWTExpired(response.jwt))
@@ -230,8 +230,7 @@ class GRPC {
                     print("retrieve edge response: \n", (try? response.jsonString()) ?? "")
                     
                     if response.code == 0 {
-                        let ids = response.edge.map { $0.id }
-                        cache?[edges: ids] = response.edge
+                        response.edge.forEach { cache?[$0.id] = $0 }
                         resolver.fulfill((response.edge, response.jwt))
                     } else if response.code == 113 {
                         resolver.reject(AiTmedError.credentialFailed(.JWTExpired(response.jwt)))
@@ -482,8 +481,7 @@ class GRPC {
                 print("retrieve doc response: \n", (try? response.jsonString()) ?? "")
                 
                 if response.code == 0 {
-                    let ids = response.doc.map { $0.id }
-                    cache?[docs: ids] = response.doc
+                    response.doc.forEach { cache?[doc: $0.id] = $0 }
                     completion(.success((response.doc, response.jwt)))
                 } else if response.code == 113 {
                     completion(.failure(.credentialFailed(.JWTExpired(response.jwt))))
@@ -513,8 +511,7 @@ class GRPC {
             print("retrieve doc response: \n", (try? response.jsonString()) ?? "")
             
             if response.code == 0 {
-                let ids = response.doc.map { $0.id }
-                cache[docs: ids] = response.doc
+                response.doc.forEach { cache[doc: $0.id] = $0 }
                 return (response.doc, response.jwt)
             } else if response.code == 113 {
                 throw AiTmedError.credentialFailed(.JWTExpired(response.jwt))

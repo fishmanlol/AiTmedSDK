@@ -11,9 +11,7 @@ import Foundation
 extension String {
     func toJSONDict() -> [String: Any]? {
         print("before:", self)
-        let filtered = removeControlCharacters()
-        print("after:", filtered)
-        if let data = filtered.data(using: .utf8) {
+        if let data = data(using: .utf8) {
             do {
                 let json = try JSONSerialization.jsonObject(with: data, options: [])
                 return json as? [String: Any]
@@ -23,10 +21,5 @@ extension String {
         }
         
         return nil
-    }
-    
-    private func removeControlCharacters() -> String {
-        let cc = CharacterSet.controlCharacters
-        return String(filter { cc.contains($0.unicodeScalars.first! )})
     }
 }

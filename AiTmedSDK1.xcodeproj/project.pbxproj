@@ -105,6 +105,7 @@
 		8E9FE46323C564E70046AD9D /* AiTmed+Prynote.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E9FE46223C564E70046AD9D /* AiTmed+Prynote.swift */; };
 		8E9FE46523C56F780046AD9D /* _Note.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E9FE46423C56F780046AD9D /* _Note.swift */; };
 		8E9FE46723C56FE70046AD9D /* _Notebook.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E9FE46623C56FE70046AD9D /* _Notebook.swift */; };
+		8EB781AD23E20032002CE2BC /* SettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EB781AC23E20032002CE2BC /* SettingViewController.swift */; };
 		8EB8418023E0F4CB00A2E157 /* Cache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EB8417F23E0F4CB00A2E157 /* Cache.swift */; };
 		8EB8418223E0F50F00A2E157 /* Cache+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EB8418123E0F50F00A2E157 /* Cache+.swift */; };
 		8ED8DAED23CD26E300A33AE7 /* NotebookListController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ED8DAEC23CD26E300A33AE7 /* NotebookListController.swift */; };
@@ -273,6 +274,7 @@
 		8E9FE46223C564E70046AD9D /* AiTmed+Prynote.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AiTmed+Prynote.swift"; sourceTree = "<group>"; };
 		8E9FE46423C56F780046AD9D /* _Note.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = _Note.swift; sourceTree = "<group>"; };
 		8E9FE46623C56FE70046AD9D /* _Notebook.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = _Notebook.swift; sourceTree = "<group>"; };
+		8EB781AC23E20032002CE2BC /* SettingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingViewController.swift; sourceTree = "<group>"; };
 		8EB8417F23E0F4CB00A2E157 /* Cache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Cache.swift; sourceTree = "<group>"; };
 		8EB8418123E0F50F00A2E157 /* Cache+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Cache+.swift"; sourceTree = "<group>"; };
 		8ED8DAEC23CD26E300A33AE7 /* NotebookListController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotebookListController.swift; sourceTree = "<group>"; };
@@ -523,6 +525,7 @@
 		8E9FE40223C54EF90046AD9D /* Controller */ = {
 			isa = PBXGroup;
 			children = (
+				8EB781AE23E2003F002CE2BC /* Setting */,
 				8E9FE45523C555F60046AD9D /* MasterController */,
 				8E9FE40723C54F420046AD9D /* Placeholder */,
 				8E9FE40523C54F170046AD9D /* Editor */,
@@ -709,6 +712,14 @@
 				10810E8F23CC1DE00066AA9C /* MasterController+StateCoordinatorDelegate.swift */,
 			);
 			path = MasterController;
+			sourceTree = "<group>";
+		};
+		8EB781AE23E2003F002CE2BC /* Setting */ = {
+			isa = PBXGroup;
+			children = (
+				8EB781AC23E20032002CE2BC /* SettingViewController.swift */,
+			);
+			path = Setting;
 			sourceTree = "<group>";
 		};
 		8ED8DAF223CD49A700A33AE7 /* EmptyFooterView */ = {
@@ -1143,6 +1154,7 @@
 				10810E8C23CC190B0066AA9C /* NotesViewController+Editor.swift in Sources */,
 				8E79744C23C6999100819670 /* NotesGroup.swift in Sources */,
 				8E9FE45423C555A40046AD9D /* PlaceholderViewController.swift in Sources */,
+				8EB781AD23E20032002CE2BC /* SettingViewController.swift in Sources */,
 				10810E8E23CC190B0066AA9C /* NotesViewController.swift in Sources */,
 				8E9FE3E123C54E6A0046AD9D /* TYLabel.swift in Sources */,
 				8E9FE3F623C54E8C0046AD9D /* Double.swift in Sources */,

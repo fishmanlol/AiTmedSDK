@@ -23,11 +23,7 @@ struct Credential {
         }
     }
     
-    var sk: Key? {
-        didSet {
-            keyChain["sk" + phoneNumber] = sk
-        }
-    }
+    var sk: Key?
     
     var status: Status {
         get {
@@ -75,10 +71,9 @@ struct Credential {
         self.esk = esk
         self.jwt = jwt
         self.userId = userId
-        
-        if let sk: Key = keyChain["sk" + phoneNumber] {
-            self.sk = sk
-        }
+//        if let sk: Key = keyChain["sk" + phoneNumber] {
+//            self.sk = sk
+//        }
     }
     
     func save() {
@@ -87,9 +82,9 @@ struct Credential {
         defaults.setValue(jwt, forKey: "jwt" + phoneNumber)
         defaults.setValue(userId, forKey: "userId" + phoneNumber)
         
-        if let sk = sk {
-            keyChain["sk" + phoneNumber] = sk
-        }
+//        if let sk = sk {
+//            keyChain["sk" + phoneNumber] = sk
+//        }
     }
     
     enum Status {

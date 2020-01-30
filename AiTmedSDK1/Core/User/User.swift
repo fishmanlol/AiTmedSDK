@@ -64,16 +64,23 @@ extension AiTmed {
             return
         }
         
+        guard let sk = shared.e.generateSk(from: c.esk, using: args.password) else {
+            completion(.failure(AiTmedError.unkown))
+            return
+        }
+        
         shared.c = c
         let arguments = CreateEdgeArgs(type: AiTmedType.login, name: "", isEncrypt: false, bvid: c.userId, evid: nil)!
         
         firstly { () -> Promise<Edge> in
             createEdge(args: arguments)
         }.done({ (edge) in
+            shared.c.sk = sk
             completion(.success(()))
         }).catch({ (error) in
             completion(.failure(error.toAiTmedError()))
         })
+
     }
     
     //MARK: - Log out
@@ -102,6 +109,7 @@ extension AiTmed {
         firstly { () -> Promise<Vertex> in
             createVertex(args: arguments)
         }.done { (edge) in
+            shared.c.sk = keyPair.secretKey
             completion(.success(()))
         }.catch { (error) in
             completion(.failure(error.toAiTmedError()))
@@ -115,7 +123,13 @@ extension AiTmed {
             return
         }
         
-        deleteVertex(args: DeleteArgs(id: shared.c.userId), completion: completion)
+        firstly { () -> Promise<Void> in
+            deleteVertex(args: DeleteArgs(id: shared.c.userId))
+        }.done { (_) in
+            completion(.success(()))
+        }.catch { (error) in
+            completion(.failure(error.toAiTmedError()))
+        }
     }
     
     //MARK: - Send verification code
