@@ -101,8 +101,24 @@ class EditorViewController: UIViewController {
     }
     
     @objc func didTrashItemTapped() {
-//        displayWaitingView(msg: "Removing...")
-//        note.notebook.remove(note)
+        displayAlert(title: "Do you want to delete this note?", msg: nil, hasCancel: true, actionTitle: "Yes", style: .destructive) {
+            if case let .update(note) = self.mode {
+                WaitingView.scheduleDisplayOnWindow(delay: 0.5, msg: "Deleting...")
+                self.notebook.deleteNote(id: note.id, completion: { [weak self] (result) in
+                    WaitingView.dismissOnWindow()
+                    switch result {
+                    case .failure(let error):
+                        self?.displayAutoDismissAlert(msg: error.message)
+                    case .success(_):
+                        DispatchQueue.main.async {
+                            self?.stateCoordinator.select(nil)
+                        }
+                    }
+                })
+            } else {
+                self.stateCoordinator.select(nil)
+            }
+        }
     }
     
     @objc func didCameraItemTapped() {
@@ -110,7 +126,7 @@ class EditorViewController: UIViewController {
     }
     
     @objc func didComposeItemTapped() {
-//        notebook.add(note)
+        stateCoordinator.willCreateNote(in: notebook)
     }
     
     @objc func didShareToItemTapped() {

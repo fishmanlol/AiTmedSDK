@@ -21,18 +21,34 @@ extension MasterController: StateCoordinatorDelegate {
         if isHorizontallyRegular {
             rootSplit.viewControllers = [navigation, editor]
         } else {
-            navigation.pushViewController(editor, animated: true)
+            if navigation.topViewController is EditorViewController {
+                let vcs = Array(navigation.viewControllers.dropLast()) + [freshEditor(notebook: notebook, mode: .create)]
+                navigation.setViewControllers(vcs, animated: true)
+            } else {
+                navigation.pushViewController(editor, animated: true)
+            }
         }
     }
     
-    func didSelectedNote(_ note: Note) {
-        let editor = freshEditor(notebook: note.notebook, mode: .update(note))
+    func didSelectedNote(_ note: Note?) {
         let navigation = primaryNav(rootSplit)
-        
-        if isHorizontallyRegular {
-            rootSplit.viewControllers = [navigation, editor]
+        if let n = note {
+            let editor = freshEditor(notebook: n.notebook, mode: .update(n))
+            
+            if isHorizontallyRegular {
+                rootSplit.viewControllers = [navigation, editor]
+            } else {
+                navigation.pushViewController(editor, animated: true)
+            }
         } else {
-            navigation.pushViewController(editor, animated: true)
+            if isHorizontallyRegular {
+                rootSplit.viewControllers = [navigation, freshPlaceholderViewController()]
+            } else {
+                if navigation.topViewController is EditorViewController {
+                    navigation.popViewController(animated: true)
+                }
+            }
         }
+        
     }
 }

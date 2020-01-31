@@ -92,8 +92,6 @@
 		8E9FE43A23C553000046AD9D /* Data+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E9FE43723C553000046AD9D /* Data+.swift */; };
 		8E9FE44723C553120046AD9D /* AiTmed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E9FE44623C553120046AD9D /* AiTmed.swift */; };
 		8E9FE44B23C553290046AD9D /* Document+type.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E9FE44A23C553290046AD9D /* Document+type.swift */; };
-		8E9FE44D23C553300046AD9D /* Prynote.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E9FE44C23C553300046AD9D /* Prynote.swift */; };
-		8E9FE44F23C553360046AD9D /* Notebook.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E9FE44E23C553360046AD9D /* Notebook.swift */; };
 		8E9FE45223C554810046AD9D /* R.generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E9FE45123C554810046AD9D /* R.generated.swift */; };
 		8E9FE45423C555A40046AD9D /* PlaceholderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E9FE45323C555A40046AD9D /* PlaceholderViewController.swift */; };
 		8E9FE45723C556640046AD9D /* MasterController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E9FE45623C556640046AD9D /* MasterController.swift */; };
@@ -261,8 +259,6 @@
 		8E9FE43723C553000046AD9D /* Data+.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Data+.swift"; sourceTree = "<group>"; };
 		8E9FE44623C553120046AD9D /* AiTmed.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AiTmed.swift; sourceTree = "<group>"; };
 		8E9FE44A23C553290046AD9D /* Document+type.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Document+type.swift"; sourceTree = "<group>"; };
-		8E9FE44C23C553300046AD9D /* Prynote.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Prynote.swift; sourceTree = "<group>"; };
-		8E9FE44E23C553360046AD9D /* Notebook.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Notebook.swift; sourceTree = "<group>"; };
 		8E9FE45123C554810046AD9D /* R.generated.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = R.generated.swift; sourceTree = SOURCE_ROOT; };
 		8E9FE45323C555A40046AD9D /* PlaceholderViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceholderViewController.swift; sourceTree = "<group>"; };
 		8E9FE45623C556640046AD9D /* MasterController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasterController.swift; sourceTree = "<group>"; };
@@ -682,8 +678,6 @@
 				8E9FE46223C564E70046AD9D /* AiTmed+Prynote.swift */,
 				8E9FE46623C56FE70046AD9D /* _Notebook.swift */,
 				8E9FE46423C56F780046AD9D /* _Note.swift */,
-				8E9FE44E23C553360046AD9D /* Notebook.swift */,
-				8E9FE44C23C553300046AD9D /* Prynote.swift */,
 			);
 			path = Prynote;
 			sourceTree = "<group>";
@@ -1049,7 +1043,6 @@
 			files = (
 				8E9FE42C23C552F00046AD9D /* types.pb.swift in Sources */,
 				1090FA7623C5AA4F002B05E6 /* AiTmedNameKey.swift in Sources */,
-				8E9FE44F23C553360046AD9D /* Notebook.swift in Sources */,
 				8EF1C7B123D11CBB00CCB4FE /* Vertex+transform.swift in Sources */,
 				8EF1C79B23D0ED8300CCB4FE /* Edge.swift in Sources */,
 				8E79742D23C65EE600819670 /* AiTmed+transform.swift in Sources */,
@@ -1064,7 +1057,6 @@
 				8EF1C7A123D0F1EA00CCB4FE /* Edge+transform.swift in Sources */,
 				8E79742F23C65F5800819670 /* AiTmed+grpc.swift in Sources */,
 				8EF1C7A623D108BF00CCB4FE /* Document.swift in Sources */,
-				8E9FE44D23C553300046AD9D /* Prynote.swift in Sources */,
 				8E79746323C7D43000819670 /* Dictionary+.swift in Sources */,
 				8E9FE43823C553000046AD9D /* UserDefaults+.swift in Sources */,
 				1090FA7323C5AA4F002B05E6 /* AiTmedDeatKey.swift in Sources */,

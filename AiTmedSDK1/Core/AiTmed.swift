@@ -23,7 +23,7 @@ typealias Vertex = Aitmed_Ecos_V1beta1_Vertex
 typealias Doc = Aitmed_Ecos_V1beta1_Doc
 
 public class AiTmed {
-    ///Only use credential after login or create user!!!
+    ///Only use credential after login or create user
     var c: Credential!
     ///Encryption tool
     let e = Encryption()

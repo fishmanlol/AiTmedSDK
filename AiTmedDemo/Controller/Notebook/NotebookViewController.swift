@@ -74,4 +74,12 @@ class NotebookViewController: UITableViewController {
         asyncReloadIfNeeded(indexPath(of: .all))
         asyncReloadIfNeeded(indexPath(of: .single(notebook)))
     }
+    
+    @objc func didRemoveNote(no: Notification) {
+        guard let notebook = no.object as? Notebook else { return }
+        
+        asyncReloadIfNeeded(indexPath(of: .all))
+        asyncReloadIfNeeded(indexPath(of: .single(notebook)))
+    }
 }
+

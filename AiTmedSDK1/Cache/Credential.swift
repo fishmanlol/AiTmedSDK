@@ -71,9 +71,6 @@ struct Credential {
         self.esk = esk
         self.jwt = jwt
         self.userId = userId
-//        if let sk: Key = keyChain["sk" + phoneNumber] {
-//            self.sk = sk
-//        }
     }
     
     func save() {
@@ -81,10 +78,14 @@ struct Credential {
         defaults.setKey(esk, forKey: "esk" + phoneNumber)
         defaults.setValue(jwt, forKey: "jwt" + phoneNumber)
         defaults.setValue(userId, forKey: "userId" + phoneNumber)
-        
-//        if let sk = sk {
-//            keyChain["sk" + phoneNumber] = sk
-//        }
+    }
+    
+    mutating func clear() {
+        defaults.removeObject(forKey: "pk" + phoneNumber)
+        defaults.removeObject(forKey: "esk" + phoneNumber)
+        defaults.removeObject(forKey: "jwt" + phoneNumber)
+        defaults.removeObject(forKey: "userId" + phoneNumber)
+        sk = nil
     }
     
     enum Status {

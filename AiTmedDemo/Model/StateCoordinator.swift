@@ -10,7 +10,7 @@ import Foundation
 
 protocol StateCoordinatorDelegate: class {
     func didSelectedNotesGroup(_ notesGroup: NotesGroup)
-    func didSelectedNote(_ note: Note)
+    func didSelectedNote(_ note: Note?)
     func willCreateNote(in notebook: Notebook)
     func didCreate(_ note: Note, in notebook: Notebook)
     func didDelete(_ note: Note)
@@ -29,7 +29,7 @@ class StateCoordinator {
         delegate?.didSelectedNotesGroup(notesGroup)
     }
     
-    func select(_ note: Note) {
+    func select(_ note: Note?) {
         delegate?.didSelectedNote(note)
     }
     

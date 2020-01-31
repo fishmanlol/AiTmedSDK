@@ -45,68 +45,19 @@ extension AiTmed {
             try checkStatus().wait()
             let deleteList = [AiTmedType.root, AiTmedType.notebook]
             let retrievePromises = deleteList.map {
-                retrieveEdges(args: RetrieveArgs(ids: [], xfname: "", type: $0, maxCount: nil))
+                retrieveEdges(args: RetrieveArgs(ids: [], xfname: "bvid", type: $0, maxCount: nil))
             }
             let allEdges = try when(fulfilled: retrievePromises).flatMapValues({$0}).wait()
             let deleteEdgePromises = allEdges.map {
                 deleteEdge(args: DeleteArgs(id: $0.id))
             }
             try when(fulfilled: deleteEdgePromises).wait()
+            
+            let (_, jwt) = try shared.g.delete(ids: [args.id], jwt: shared.c.jwt).wait()
+            shared.c.jwt = jwt
             return
         })
     }
-    
-//    static func _deleteVertex(args: DeleteArgs, completion: @escaping (Swift.Result<Void, AiTmedError>) -> Void) {
-//        guard let c = shared.c, c.status == .login else {
-//            completion(.failure(.credentialFailed(.credentialNeeded)))
-//            return
-//        }
-//
-//        let deleteList = [AiTmedType.root, AiTmedType.notebook]
-//
-//        var success = true
-//
-//        for item in deleteList {
-//            group.enter()
-//            let retrieveNotebookArgs = RetrieveArgs(ids: [], xfname: "bvid", type: item, maxCount: nil)
-//            AiTmed.retrieveEdges(args: retrieveNotebookArgs) { (result) in
-//                switch result {
-//                case .failure(_):
-//                    success = false
-//                case .success(let edges):
-//                    for edge in edges {
-//                        group.enter()
-//                        deleteEdge(args: DeleteArgs(id: edge.id), completion: { (result) in
-//                            switch result {
-//                            case .failure(_):
-//                                success = false
-//                            case .success(_):
-//                                break
-//                            }
-//
-//                            group.leave()
-//                        })
-//                    }
-//
-//                    group.notify(queue: DispatchQueue.global(), execute: {
-//                        if success {
-//                            shared._delete(ids: [args.id], jwt: shared.c.jwt, completion: { (result) in
-//                                switch result {
-//                                case .failure(_):
-//                                    completion(.failure(.unkown))
-//                                case .success(let j):
-//                                    shared.c.jwt = j
-//                                    completion(.success(()))
-//                                }
-//                            })
-//                        } else {
-//                            completion(.failure(.unkown))
-//                        }
-//                    })
-//                }
-//            }
-//        }
-//    }
     
     static func updateVertex(args: UpdateVertexArgs) -> Promise<Vertex> {
         return createVertex(args: args)

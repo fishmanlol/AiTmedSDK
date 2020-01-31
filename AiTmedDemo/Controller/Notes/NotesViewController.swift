@@ -83,25 +83,14 @@ class NotesViewController: UITableViewController {
     }
     
     @objc func didRemoveNote(no: Notification) {
-//        guard let note = no.userInfo?[Constant.UserInfoKey.note] as? Note,
-//                let index = notes.firstIndex(of: note) else { return }
-//        notes.remove(at: index)
-//        dismissWaitingView()
-//        DispatchQueue.main.async {
-////            self.stateCoordinator?.select(self.notes.first, in: self.notebook)
-//            self.tableView.deleteRows(at: [IndexPath(row: index, section: 0)], with: .automatic)
-//            self.updateToolbar()
-//            if !self.notes.isEmpty {
-//                self.tableView.selectRow(at: IndexPath(row: 0, section: 0), animated: false, scrollPosition: .top)
-//            }
-//        }
+        DispatchQueue.main.async {
+            self.tableView.reloadData()
+        }
     }
     
     private func setUp() {
         //tableview
         tableView.register(UINib(resource: R.nib.noteCell), forCellReuseIdentifier: Constant.Identifier.NOTECELL)
-//        tableView.emptyDataSetSource = self
-//        tableView.emptyDataSetDelegate = self
         tableView.tableFooterView = UIView()
         tableView.backgroundView = UIImageView(image: R.image.paper_light())
         tableView.allowsMultipleSelection = false
@@ -110,8 +99,6 @@ class NotesViewController: UITableViewController {
         navigationItem.title = group.title
         
         //Observers
-//        NotificationCenter.default
-//            .addObserver(self, selector: #selector(didLoadAllNotes), name: .didLoadAllNotes, object: storage)
         NotificationCenter.default.addObserver(self, selector: #selector(didLoadAllNotesInNotebook), name: .didLoadAllNotesInNotebook, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(didAddNote), name: .didAddNote, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(didUpdateNote), name: .didUpdateNote, object: nil)
@@ -146,24 +133,10 @@ extension NotesViewController: EmptyFooterViewDatasource {
     }
     
     func buttonTitle(forEmptyFooter footer: EmptyFooterView!) -> NSAttributedString? {
-        return NSAttributedString(string: "New notes", attributes: [NSAttributedString.Key.foregroundColor: view.tintColor, NSAttributedString.Key.underlineStyle: NSUnderlineStyle.single.rawValue])
+        return NSAttributedString(string: "New note", attributes: [NSAttributedString.Key.foregroundColor: view.tintColor, NSAttributedString.Key.underlineStyle: NSUnderlineStyle.single.rawValue])
     }
     
     func emptyFooterViewDidButtonTapped(_ v: EmptyFooterView) {
         didWriteItemTapped()
     }
 }
-
-//extension NotesViewController: DZNEmptyDataSetSource, DZNEmptyDataSetDelegate {
-//    func title(forEmptyDataSet scrollView: UIScrollView!) -> NSAttributedString! {
-//        return NSAttributedString(string: "You don't have any notes now")
-//    }
-//
-//    func buttonTitle(forEmptyDataSet scrollView: UIScrollView!, for state: UIControl.State) -> NSAttributedString! {
-//        return NSAttributedString(string: "New notes", attributes: [NSAttributedString.Key.foregroundColor: view.tintColor, NSAttributedString.Key.underlineStyle: NSUnderlineStyle.single.rawValue])
-//    }
-//
-//    func emptyDataSetDidTapButton(_ scrollView: UIScrollView!) {
-//        didWriteItemTapped()
-//    }
-//}

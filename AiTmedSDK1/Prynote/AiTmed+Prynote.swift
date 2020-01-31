@@ -37,7 +37,13 @@ extension AiTmed {
     }
     
     public static func deleteNote(id: Data, completion: @escaping (Swift.Result<Void, AiTmedError>) -> Void) {
-//        deleteDoc(id: id, completion: completion)
+        firstly { () -> Promise<Void> in
+            deleteDocument(args: DeleteArgs(id: id))
+        }.done { (_) in
+            completion(.success(()))
+        }.catch { (error) in
+            completion(.failure(error.toAiTmedError()))
+        }
     }
     
     public static func retrieveNotes(notebookID: Data, completion: @escaping (Swift.Result<[_Note], AiTmedError>) -> Void) {

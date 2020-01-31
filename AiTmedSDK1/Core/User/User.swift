@@ -21,6 +21,16 @@ extension AiTmed {
         }
     }
     
+    public static func hasCredential(for phoneNumber: String) -> Promise<Void> {
+        return Promise<Void> { resolver in
+            if hasCredential(for: phoneNumber) {
+                resolver.fulfill(())
+            } else {
+                resolver.reject(AiTmedError.credentialFailed(.credentialNeeded))
+            }
+        }
+    }
+    
     //MARK: - async, retrieve credential
     public static func retrieveCredential(args: RetrieveCredentialArgs, completion: @escaping (Swift.Result<Void, AiTmedError>) -> Void) {
         guard let name = [AiTmedNameKey.phoneNumber: args.phoneNumber, AiTmedNameKey.OPTCode: args.code].toJSON() else {
@@ -39,22 +49,18 @@ extension AiTmed {
         })
     }
     
-//    //MARK: - async, retrieve credential
-//    public static func retrieveCredential(args: RetrieveCredentialArgs) -> Swift.Result<Void, AiTmedError> {
-//        guard let name = [AiTmedNameKey.phoneNumber: args.phoneNumber, AiTmedNameKey.OPTCode: args.code].toJSON() else {
-//            return .failure(.unkown)
-//        }
-//
-//        let arguments = CreateEdgeArgs(type: AiTmedType.retrieveCredential, name: name)
-//
-//        firstly { () -> Promise<Edge> in
-//            createEdge(args: arguments)
-//            }.done({ (edge) in
-//                completion(.success(()))
-//            }).catch({ (error) in
-//                completion(.failure(error.toAiTmedError()))
-//            })
-//    }
+    public static func retrieveCredential(args: RetrieveCredentialArgs) -> Promise<Void> {
+        return Promise<Void> { resolver in
+            retrieveCredential(args: args) { result in
+                switch result {
+                case .failure(let error):
+                    resolver.reject(error)
+                case .success(_):
+                    resolver.fulfill(())
+                }
+            }
+        }
+    }
     
     //MARK: - Log in
     public static func login(args: LoginArgs, completion: @escaping (Swift.Result<Void, AiTmedError>) -> Void) {
@@ -80,7 +86,19 @@ extension AiTmed {
         }).catch({ (error) in
             completion(.failure(error.toAiTmedError()))
         })
-
+    }
+    
+    public static func login(args: LoginArgs) -> Promise<Void> {
+        return Promise<Void> { resovler in
+            login(args: args, completion: { (result) in
+                switch result {
+                case .failure(let error):
+                    resovler.reject(error)
+                case .success(_):
+                    resovler.fulfill(())
+                }
+            })
+        }
     }
     
     //MARK: - Log out
@@ -116,6 +134,19 @@ extension AiTmed {
         }
     }
     
+    public static func createUser(args: CreateUserArgs) -> Promise<Void> {
+        return Promise<Void> { resovler in
+            createUser(args: args) { result in
+                switch result {
+                case .failure(let error):
+                    resovler.reject(error)
+                case .success(_):
+                    resovler.fulfill(())
+                }
+            }
+        }
+    }
+    
     //MARK: - Delete user
     public static func deleteUser(completion: @escaping (Swift.Result<Void, AiTmedError>) -> Void) {
         guard let c = shared.c, c.status == .login else {
@@ -125,10 +156,24 @@ extension AiTmed {
         
         firstly { () -> Promise<Void> in
             deleteVertex(args: DeleteArgs(id: shared.c.userId))
-        }.done { (_) in
-            completion(.success(()))
-        }.catch { (error) in
-            completion(.failure(error.toAiTmedError()))
+            }.done { (_) in
+                shared.c.clear()
+                completion(.success(()))
+            }.catch { (error) in
+                completion(.failure(error.toAiTmedError()))
+        }
+    }
+    
+    public static func deleteUser() -> Promise<Void> {
+        return Promise<Void> { resolver in
+            deleteUser(completion: { (result) in
+                switch result {
+                case .failure(let error):
+                    resolver.reject(error)
+                case .success(_):
+                    resolver.fulfill(())
+                }
+            })
         }
     }
     
@@ -146,6 +191,19 @@ extension AiTmed {
             completion(.success(()))
         }.catch { (error) in
             completion(Swift.Result.failure(error.toAiTmedError()))
+        }
+    }
+    
+    public static func sendOPTCode(args: SendOPTCodeArgs) -> Promise<Void> {
+        return Promise<Void> { resolver in
+            sendOPTCode(args: args, completion: { (result) in
+                switch result {
+                case .failure(let error):
+                    resolver.reject(error)
+                case .success(_):
+                    resolver.fulfill(())
+                }
+            })
         }
     }
 }

@@ -31,8 +31,6 @@ class NotebookListController: UIViewController {
         }
     }
     
-    
-    
     private func setUp() {
         let tableView = UITableView(frame: .zero, style: .grouped)
         tableView.backgroundColor = .white
@@ -110,14 +108,18 @@ extension NotebookListController: UITableViewDataSource {
     private func configure(_ cell: NotebookListCell, with indexPath: IndexPath) {
         let notebook = Storage.default.notebooks[indexPath.row]
         cell.titleLabel?.text = notebook.title
-        if indexPath.row == selectedIndex {
-            cell.fixedImageView?.image = R.image.check()
+        
+        if notebook.isEncrypt {
+            cell.fixedImageView.image = R.image.lock()
         } else {
-            if notebook.isEncrypt {
-                cell.fixedImageView.image = R.image.lock()
-            } else {
-                cell.fixedImageView?.image = R.image.folder()
-            }
+            cell.fixedImageView?.image = R.image.folder()
+        }
+        
+        
+        if indexPath.row == selectedIndex {
+            cell.accessoryType = .checkmark
+        } else {
+            cell.accessoryType = .none
         }
     }
 }
@@ -167,7 +169,7 @@ class NotebookListHeader: UIView {
     private func setUp() {
         let addButton = UIButton(type: .system)
         addButton.setContentHuggingPriority(.required, for: .horizontal)
-        addButton.setImage(R.image.add_circle(), for: .normal)
+        addButton.setImage(R.image.add(), for: .normal)
         addButton.addTarget(delegate, action: #selector(NotebookListHeaderDelegate.headerDidTapAddButton), for: .touchUpInside)
         self.addButton = addButton
         addSubview(addButton)

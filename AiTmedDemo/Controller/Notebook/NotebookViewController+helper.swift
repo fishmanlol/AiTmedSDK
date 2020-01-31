@@ -71,6 +71,7 @@ extension NotebookViewController {
         
         //Observers
         NotificationCenter.default.addObserver(self, selector: #selector(didLoadAllNotesInNotebook), name: .didLoadAllNotesInNotebook, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(didRemoveNote), name: .didRemoveNote, object: nil)
     }
     
     func asyncReloadIfNeeded(_ indexPath: IndexPath) {

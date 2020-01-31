@@ -56,16 +56,4 @@ class Note {
             }
         }
     }
-    
-    func delete(completion: @escaping (Result<Void, PrynoteError>) -> Void) {
-        AiTmed.deleteNote(id: id) { (result) in
-            switch result {
-            case .failure(let error):
-                completion(.failure(.unkown))
-            case .success(_):
-                NotificationCenter.default.post(name: .didRemoveNote, object: self)
-                completion(.success(()))
-            }
-        }
-    }
 }

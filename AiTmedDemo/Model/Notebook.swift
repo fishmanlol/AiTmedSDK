@@ -60,6 +60,19 @@ class Notebook {
         }
     }
     
+    func deleteNote(id: Data, completion: @escaping (Result<Void, PrynoteError>) -> Void) {
+        AiTmed.deleteNote(id: id) { [weak self] (result) in
+            switch result {
+            case .failure(let error):
+                completion(.failure(.unkown))
+            case .success(_):
+                NotificationCenter.default.post(name: .didRemoveNote, object: self)
+                self?.notes.removeAll(where: { $0.id == id })
+                completion(.success(()))
+            }
+        }
+    }
+    
     func update(title: String, completion: @escaping (Result<Void, PrynoteError>) -> Void) {
         AiTmed.updateNotebook(id: id, title: title, isEncrypt: isEncrypt) { (result) in
             switch result {
