@@ -56,13 +56,6 @@ class NotesViewController: UITableViewController {
         }
     }
     
-    @objc func didLoadAllNotes(no: Notification) {
-//        dismissWaitingView()
-//        DispatchQueue.main.async {
-//            self.tableView.reloadData()
-//        }
-    }
-    
     @objc func didLoadAllNotesInNotebook(no: Notification) {
         DispatchQueue.main.async {
             self.tableView.reloadData()
@@ -133,7 +126,7 @@ extension NotesViewController: EmptyFooterViewDatasource {
     }
     
     func buttonTitle(forEmptyFooter footer: EmptyFooterView!) -> NSAttributedString? {
-        return NSAttributedString(string: "New note", attributes: [NSAttributedString.Key.foregroundColor: view.tintColor, NSAttributedString.Key.underlineStyle: NSUnderlineStyle.single.rawValue])
+        return NSAttributedString(string: "New note", attributes: [NSAttributedString.Key.foregroundColor: view.tintColor as Any, NSAttributedString.Key.underlineStyle: NSUnderlineStyle.single.rawValue])
     }
     
     func emptyFooterViewDidButtonTapped(_ v: EmptyFooterView) {

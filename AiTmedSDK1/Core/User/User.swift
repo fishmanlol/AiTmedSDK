@@ -71,7 +71,7 @@ extension AiTmed {
         }
         
         guard let sk = shared.e.generateSk(from: c.esk, using: args.password) else {
-            completion(.failure(AiTmedError.unkown))
+            completion(.failure(AiTmedError.credentialFailed(.passwordWrong)))
             return
         }
         

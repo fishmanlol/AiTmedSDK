@@ -12,7 +12,9 @@ import PromiseKit
 extension AiTmed {
     //MARK: - Note
     public static func addNote(folderID: Data, title: String, content: Data, isEncrypt: Bool, completion: @escaping (Swift.Result<_Note, AiTmedError>) -> Void) {
-        let args = CreateDocumentArgs(title: title, content: content, applicationDataType: .data, mediaType: .plain, isEncrypt: isEncrypt, folderID: folderID, isOnServer: false, isZipped: true)
+        let isOnServer = content.isEmbedSatisfied
+        let isZipped = content.isZipSatisfied
+        let args = CreateDocumentArgs(title: title, content: content, applicationDataType: .data, mediaType: .plain, isEncrypt: isEncrypt, folderID: folderID, isOnServer: isOnServer, isZipped: isZipped)
 
         firstly { () -> Promise<Document> in
             createDocument(args: args)
@@ -47,7 +49,7 @@ extension AiTmed {
     }
     
     public static func retrieveNotes(notebookID: Data, completion: @escaping (Swift.Result<[_Note], AiTmedError>) -> Void) {
-        let args = RetrieveDocArgs(folderID: notebookID)
+        let args = RetrieveArgs(ids: [notebookID], xfname: "eid")
         firstly {
             AiTmed.retrieveDocuments(args: args)
         }.map { (documents) -> [_Note] in

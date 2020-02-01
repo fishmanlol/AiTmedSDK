@@ -37,7 +37,7 @@ class Note {
         self.ctime = ctime
     }
     
-    func update(title: String, content: Data, completion: @escaping (Result<Void, PrynoteError>) -> Void) {
+    func update(title: String, content: Data, completion: @escaping (Result<Note, PrynoteError>) -> Void) {
         AiTmed.updateNote(id: id, notebookID: notebook.id, title: title, content: content, isEncrypt: isEncrypt) { [weak self] result in
             guard let strongSelf = self else { return }
             switch result {
@@ -51,8 +51,8 @@ class Note {
                 strongSelf.mtime = _note.mtime
                 strongSelf.isEncrypt = _note.isEncrypt
                 strongSelf.isBroken = _note.isBroken
-                NotificationCenter.default.post(name: .didUpdateNote, object: self)
-                completion(.success(()))
+                NotificationCenter.default.post(name: .didUpdateNote, object: strongSelf)
+                completion(.success(strongSelf))
             }
         }
     }

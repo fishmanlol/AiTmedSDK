@@ -48,6 +48,8 @@ class EditorViewController: UIViewController {
         }
     }
     
+    var isSaveNeeded = false
+    
     override func loadView() {
         super.loadView()
         let sv = UIScrollView(frame: UIScreen.main.bounds)
@@ -126,7 +128,35 @@ class EditorViewController: UIViewController {
     }
     
     @objc func didComposeItemTapped() {
-        stateCoordinator.willCreateNote(in: notebook)
+        if isSaveNeeded {
+            let saveAction = UIAlertAction(title: "Save", style: .default) { (_) in
+                self.isLoading = true
+                self.save(completion: { [weak self] (result) in
+                    guard let strongSelf = self else { return }
+                    DispatchQueue.main.async {
+                        strongSelf.isLoading = false
+                        switch result {
+                        case .failure(let error):
+                            strongSelf.displayAutoDismissAlert(msg: error.message)
+                        case .success(let note):
+                            strongSelf.isSaveNeeded = false
+                            strongSelf.mode = .update(note)
+                            strongSelf.stateCoordinator.willCreateNote(in: strongSelf.notebook)
+                            print("saved")
+                        }
+                    }
+                })
+            }
+            
+            let discardAction = UIAlertAction(title: "Discard", style: .destructive) { (_) in
+                self.stateCoordinator.willCreateNote(in: self.notebook)
+            }
+            
+            displayAlertSheet(title: "Do you want to save your update?", msg: nil, hasCancel: true, actions: [saveAction, discardAction])
+            
+        } else {
+            stateCoordinator.willCreateNote(in: notebook)
+        }
     }
     
     @objc func didShareToItemTapped() {
@@ -136,34 +166,29 @@ class EditorViewController: UIViewController {
     @objc func didDoneItemTapped() {
         view.endEditing(true)
         isLoading = true
+        save { [weak self] (result) in
+            DispatchQueue.main.async {
+                self?.isLoading = false
+                switch result {
+                case .failure(let error):
+                    self?.displayAutoDismissAlert(msg: error.message)
+                case .success(let note):
+                    self?.isSaveNeeded = false
+                    self?.mode = .update(note)
+                    print("saved")
+                }
+            }
+        }
+    }
+    
+    private func save(completion: @escaping (Result<Note, PrynoteError>) -> Void) {
         let title = titleTextField.text ?? ""
         let content = contentTextView.text.data(using: .utf8) ?? Data()
         switch mode {
         case .create:
-            notebook.addNote(title: title, content: content) { [weak self] (result) in
-                DispatchQueue.main.async {
-                    self?.isLoading = false
-                    switch result {
-                    case .failure(let error):
-                        self?.displayAutoDismissAlert(msg: error.message)
-                    case .success(let note):
-                        self?.mode = .update(note)
-                        print("create success!")
-                    }
-                }
-            }
+            notebook.addNote(title: title, content: content, completion: completion)
         case .update(let note):
-            note.update(title: title, content: content) { [weak self] (result) in
-                DispatchQueue.main.async {
-                    self?.isLoading = false
-                    switch result {
-                    case .failure(let error):
-                        self?.displayAutoDismissAlert(msg: error.message)
-                    case .success(_):
-                        print("update success!")
-                    }
-                }
-            }
+            note.update(title: title, content: content, completion: completion)
         }
     }
     
@@ -195,6 +220,7 @@ class EditorViewController: UIViewController {
         let titleTextField = UITextField()
         titleTextField.font = UIFont.systemFont(ofSize: 27, weight: .medium)
         titleTextField.placeholder = "Title..."
+        titleTextField.delegate = self
         self.titleTextField = titleTextField
         contentView.addSubview(titleTextField)
         titleTextField.snp.makeConstraints { (make) in
@@ -214,6 +240,7 @@ class EditorViewController: UIViewController {
         contentTextView.returnKeyType = .next
         contentTextView.enablesReturnKeyAutomatically = true
         contentTextView.backgroundColor = .clear
+        contentTextView.delegate = self
         self.contentTextView = contentTextView
         contentView.addSubview(contentTextView)
         contentTextView.snp.makeConstraints { (make) in
@@ -254,5 +281,16 @@ class EditorViewController: UIViewController {
             titleTextField.text = note.title
             contentTextView.text = note.displayContent
         }
+    }
+}
+
+extension EditorViewController: UITextViewDelegate, UITextFieldDelegate {
+    func textViewDidChange(_ textView: UITextView) {
+        isSaveNeeded = true
+    }
+    
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        isSaveNeeded = true
+        return true
     }
 }

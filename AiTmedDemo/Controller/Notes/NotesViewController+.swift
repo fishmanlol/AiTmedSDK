@@ -48,6 +48,12 @@ extension NotesViewController {
         return 60
     }
     
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            
+        }
+    }
+    
     private func configure(_ cell: NoteCell, with note: Note) {
         cell.titleLabel.text = note.title
         cell.detailLabel.text = note.displayContent

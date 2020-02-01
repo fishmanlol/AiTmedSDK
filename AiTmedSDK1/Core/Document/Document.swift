@@ -73,7 +73,8 @@ extension AiTmed {
         })
     }
     
-    static func retrieveDoc(args: RetrieveDocArgs) -> Promise<[Doc]> {
+    ///retrieve docs id
+    static func retrieveDocs(args: RetrieveArgs) -> Promise<[Doc]> {
         return Promise<[Doc]> { resolver in
             shared.g.retrieveDoc(args: args, jwt: shared.c.jwt, completion: { (result) in
                 switch result {
@@ -87,9 +88,10 @@ extension AiTmed {
         }
     }
     
-    static func retrieveDocuments(args: RetrieveDocArgs) -> Promise<[Document]> {
+    ///retrieve documents using folder id
+    static func retrieveDocuments(args: RetrieveArgs) -> Promise<[Document]> {
         return DispatchQueue.global().async(.promise) { () -> [Document] in
-            let docs = try retrieveDoc(args: args).wait()
+            let docs = try retrieveDocs(args: args).wait()
             let documentPromises = docs.map { Document.initWithDoc($0) }
             return try when(fulfilled: documentPromises).wait()
         }

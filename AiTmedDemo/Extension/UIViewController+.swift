@@ -76,10 +76,22 @@ extension UIViewController {
             }
             alert.addAction(ok)
             if hasCancel {
-                let cancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+                let cancel = UIAlertAction(title: "Cancel", style: .cancel) { (_) in
+                    
+                }
                 alert.addAction(cancel)
             }
             
+            self.present(alert, animated: true, completion: nil)
+        }
+    }
+    
+    func displayAlertSheet(title: String?, msg: String?, hasCancel: Bool, actions: [UIAlertAction]) {
+        DispatchQueue.main.async {
+            let alert = UIAlertController(title: title, message: msg, preferredStyle: .actionSheet)
+            actions.forEach { alert.addAction($0) }
+            let cancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+            alert.addAction(cancel)
             self.present(alert, animated: true, completion: nil)
         }
     }

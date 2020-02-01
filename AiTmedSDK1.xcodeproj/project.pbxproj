@@ -26,8 +26,6 @@
 		8E59BEE023D8DCA00008C1BF /* DocumentType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E59BEDF23D8DCA00008C1BF /* DocumentType.swift */; };
 		8E79742923C6573300819670 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E79742823C6573300819670 /* User.swift */; };
 		8E79742B23C65B9E00819670 /* Storage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E79742A23C65B9E00819670 /* Storage.swift */; };
-		8E79742D23C65EE600819670 /* AiTmed+transform.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E79742C23C65EE600819670 /* AiTmed+transform.swift */; };
-		8E79742F23C65F5800819670 /* AiTmed+grpc.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E79742E23C65F5800819670 /* AiTmed+grpc.swift */; };
 		8E79743E23C6703200819670 /* Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E79743D23C6703200819670 /* Helper.swift */; };
 		8E79744223C68AE900819670 /* StateCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E79744123C68AE900819670 /* StateCoordinator.swift */; };
 		8E79744423C690ED00819670 /* NotebookViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E79744323C690ED00819670 /* NotebookViewController.swift */; };
@@ -188,8 +186,6 @@
 		8E59BEDF23D8DCA00008C1BF /* DocumentType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentType.swift; sourceTree = "<group>"; };
 		8E79742823C6573300819670 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		8E79742A23C65B9E00819670 /* Storage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Storage.swift; sourceTree = "<group>"; };
-		8E79742C23C65EE600819670 /* AiTmed+transform.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AiTmed+transform.swift"; sourceTree = "<group>"; };
-		8E79742E23C65F5800819670 /* AiTmed+grpc.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AiTmed+grpc.swift"; sourceTree = "<group>"; };
 		8E79743D23C6703200819670 /* Helper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Helper.swift; sourceTree = "<group>"; };
 		8E79744123C68AE900819670 /* StateCoordinator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StateCoordinator.swift; sourceTree = "<group>"; };
 		8E79744323C690ED00819670 /* NotebookViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotebookViewController.swift; sourceTree = "<group>"; };
@@ -333,6 +329,8 @@
 				1090FA6F23C5AA4F002B05E6 /* AiTmedError.swift */,
 				1090FA7123C5AA4F002B05E6 /* AiTmedNameKey.swift */,
 				1090FA7223C5AA4F002B05E6 /* AiTmedType.swift */,
+				8E79743D23C6703200819670 /* Helper.swift */,
+				8EF1C7A323D1085200CCB4FE /* Common.swift */,
 				8E3BB1BE23DFAFEF002DA5FE /* Zip.swift */,
 			);
 			path = Other;
@@ -382,13 +380,8 @@
 			children = (
 				8E9FE3AF23C54BDC0046AD9D /* AiTmedSDK1.h */,
 				8E9FE3B023C54BDC0046AD9D /* Info.plist */,
-				1090FA6D23C5AA47002B05E6 /* Other */,
 				8E9FE44923C5531F0046AD9D /* Core */,
 				8E9FE44823C553170046AD9D /* Prynote */,
-				8E9FE43423C553000046AD9D /* Extensions */,
-				8E9FE43123C552F90046AD9D /* Encryption */,
-				8E9FE42E23C552F50046AD9D /* Cache */,
-				8E9FE42723C552EF0046AD9D /* base */,
 			);
 			path = AiTmedSDK1;
 			sourceTree = "<group>";
@@ -630,14 +623,15 @@
 			path = TY;
 			sourceTree = "<group>";
 		};
-		8E9FE42723C552EF0046AD9D /* base */ = {
+		8E9FE42723C552EF0046AD9D /* grpc */ = {
 			isa = PBXGroup;
 			children = (
+				8EF1C7B923D13C0000CCB4FE /* GRPC.swift */,
 				8E9FE42823C552EF0046AD9D /* ecos_api.pb.swift */,
 				8E9FE42923C552EF0046AD9D /* types.pb.swift */,
 				8E9FE42A23C552EF0046AD9D /* ecos_api.grpc.swift */,
 			);
-			path = base;
+			path = grpc;
 			sourceTree = "<group>";
 		};
 		8E9FE42E23C552F50046AD9D /* Cache */ = {
@@ -686,15 +680,15 @@
 			isa = PBXGroup;
 			children = (
 				8E9FE44623C553120046AD9D /* AiTmed.swift */,
-				8E79743D23C6703200819670 /* Helper.swift */,
-				8EF1C7A323D1085200CCB4FE /* Common.swift */,
-				8EF1C7B923D13C0000CCB4FE /* GRPC.swift */,
+				1090FA6D23C5AA47002B05E6 /* Other */,
+				8E9FE43123C552F90046AD9D /* Encryption */,
+				8E9FE42E23C552F50046AD9D /* Cache */,
+				8E9FE42723C552EF0046AD9D /* grpc */,
+				8E9FE43423C553000046AD9D /* Extensions */,
 				8EF1C7B223D11DC100CCB4FE /* User */,
 				8EF1C78B23D0DB1500CCB4FE /* Document */,
 				8EF1C78A23D0DB1200CCB4FE /* Edge */,
 				8EF1C78923D0DB0F00CCB4FE /* Vertex */,
-				8E79742E23C65F5800819670 /* AiTmed+grpc.swift */,
-				8E79742C23C65EE600819670 /* AiTmed+transform.swift */,
 			);
 			path = Core;
 			sourceTree = "<group>";
@@ -1045,7 +1039,6 @@
 				1090FA7623C5AA4F002B05E6 /* AiTmedNameKey.swift in Sources */,
 				8EF1C7B123D11CBB00CCB4FE /* Vertex+transform.swift in Sources */,
 				8EF1C79B23D0ED8300CCB4FE /* Edge.swift in Sources */,
-				8E79742D23C65EE600819670 /* AiTmed+transform.swift in Sources */,
 				8EF1C79723D0DC5F00CCB4FE /* Vertex.swift in Sources */,
 				8E9FE44723C553120046AD9D /* AiTmed.swift in Sources */,
 				8E9FE42D23C552F00046AD9D /* ecos_api.grpc.swift in Sources */,
@@ -1055,7 +1048,6 @@
 				8E79746523C7D43E00819670 /* String+.swift in Sources */,
 				8E9FE43323C552FA0046AD9D /* Encryption.swift in Sources */,
 				8EF1C7A123D0F1EA00CCB4FE /* Edge+transform.swift in Sources */,
-				8E79742F23C65F5800819670 /* AiTmed+grpc.swift in Sources */,
 				8EF1C7A623D108BF00CCB4FE /* Document.swift in Sources */,
 				8E79746323C7D43000819670 /* Dictionary+.swift in Sources */,
 				8E9FE43823C553000046AD9D /* UserDefaults+.swift in Sources */,

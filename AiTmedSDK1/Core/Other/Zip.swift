@@ -113,7 +113,7 @@ public struct GzipError: Swift.Error {
 }
 
 
-extension Data {
+public extension Data {
     
     var isEmbedSatisfied: Bool {
         return count < 256 * 1024
@@ -139,7 +139,7 @@ extension Data {
     /// - Parameter level: Compression level.
     /// - Returns: Gzip-compressed `Data` object.
     /// - Throws: `GzipError`
-    public func zip(level: CompressionLevel = .defaultCompression) throws -> Data {
+    func zip(level: CompressionLevel = .defaultCompression) throws -> Data {
         
         guard !self.isEmpty else {
             return Data()
@@ -201,7 +201,7 @@ extension Data {
     ///
     /// - Returns: Gzip-decompressed `Data` object.
     /// - Throws: `GzipError`
-    public func unzip() throws -> Data {
+    func unzip() throws -> Data {
         
         guard !self.isEmpty else {
             return Data()

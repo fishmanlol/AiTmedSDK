@@ -8,7 +8,6 @@
 import PromiseKit
 import Foundation
 
-
 extension AiTmed {
     //MARK: - Create
     static func createEdge(args: CreateEdgeArgs) -> Promise<Edge> {
@@ -94,7 +93,7 @@ extension AiTmed {
             }
             
             firstly { () -> Promise<[Doc]> in
-                retrieveDoc(args: RetrieveDocArgs(folderID: args.id))
+                retrieveDocs(args: RetrieveArgs(ids: [args.id], xfname: "eid"))
             }.then({ (docs) -> Promise<Void> in
                 let deletePromises = docs.map { deleteDocument(args: DeleteArgs(id: $0.id)) }
                 return when(fulfilled: deletePromises)

@@ -37,14 +37,6 @@ public struct RetrieveCredentialArgs {
     }
 }
 
-//public class RetrieveNotebooksArgs: RetrieveEdgeArgs {
-//    public override init(ids: [Data] = [], maxCount: Int32? = nil) {
-//        super.init(ids: ids, maxCount: maxCount)
-//        
-//        type = AiTmedType.notebook
-//    }
-//}
-
 public struct CreateNotebookArgs {
     let title: String
     let isEncrypt: Bool
@@ -96,7 +88,6 @@ public struct CreateUserArgs {
 
 
 //Doc
-
 public class RetrieveDocArgs {
     let folderID: Data
     

@@ -460,13 +460,48 @@ class GRPC {
         }
     }
     
+//    ///async
+//    func retrieveDoc(args: RetrieveDocArgs, jwt: String, completion: @escaping (Swift.Result<([Doc], String), AiTmedError>) -> Void) {
+//        var request = Aitmed_Ecos_V1beta1_rxReq()
+//        request.jwt = jwt
+//        request.objType = ObjectType.doc.code
+//        request.id = [args.folderID]
+//        request.xfname = "eid"
+//
+//        print("retreive doc request json: \n", (try? request.jsonString()) ?? "")
+//
+//        do {
+//            try client.rd(request) { [weak cache] (response, result) in
+//                guard let response = response else {
+//                    print("retrieve doc has no response(\(result.statusCode)): \(result.description)")
+//                    completion(.failure(.grpcFailed(.unkown)))
+//                    return
+//                }
+//
+//                print("retrieve doc response: \n", (try? response.jsonString()) ?? "")
+//
+//                if response.code == 0 {
+//                    response.doc.forEach { cache?[doc: $0.id] = $0 }
+//                    completion(.success((response.doc, response.jwt)))
+//                } else if response.code == 113 {
+//                    completion(.failure(.credentialFailed(.JWTExpired(response.jwt))))
+//                } else {
+//                    completion(.failure(.apiResultFailed(.unkown)))
+//                }
+//            }
+//        } catch {
+//            print("grpc error: \(error.localizedDescription)")
+//            completion(.failure(.grpcFailed(.unkown)))
+//        }
+//    }
+    
     ///async
-    func retrieveDoc(args: RetrieveDocArgs, jwt: String, completion: @escaping (Swift.Result<([Doc], String), AiTmedError>) -> Void) {
+    func retrieveDoc(args: RetrieveArgs, jwt: String, completion: @escaping (Swift.Result<([Doc], String), AiTmedError>) -> Void) {
         var request = Aitmed_Ecos_V1beta1_rxReq()
         request.jwt = jwt
         request.objType = ObjectType.doc.code
-        request.id = [args.folderID]
-        request.xfname = "eid"
+        request.id = args.ids
+        request.xfname = args.xfname
         
         print("retreive doc request json: \n", (try? request.jsonString()) ?? "")
         
@@ -496,12 +531,12 @@ class GRPC {
     }
     
     ///sync
-    func retrieveDoc(args: RetrieveDocArgs, jwt: String) throws -> ([Doc], String) {
+    func retrieveDoc(args: RetrieveArgs, jwt: String) throws -> ([Doc], String) {
         var request = Aitmed_Ecos_V1beta1_rxReq()
         request.jwt = jwt
         request.objType = ObjectType.doc.code
-        request.id = [args.folderID]
-        request.xfname = "eid"
+        request.id = args.ids
+        request.xfname = args.xfname
         
         print("retreive doc request json: \n", (try? request.jsonString()) ?? "")
         
